@@ -21,7 +21,7 @@ services:
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - DB_HOST=database
-      - POSTGRES_PORT=5432
+      - DB_PORT=5432
     depends_on:
       - database
     networks:
