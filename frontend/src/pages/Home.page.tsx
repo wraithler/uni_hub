@@ -1,11 +1,15 @@
-import { ColorSchemeToggle } from '../components/ColorSchemeToggle/ColorSchemeToggle';
-import { Welcome } from '../components/Welcome/Welcome';
+import {HeaderTabs} from "@/components/Header/HeaderTabs";
+import {HomeGrid} from "@/components/HomeGrid/HomeGrid";
+import {Container, Text} from "@mantine/core";
 
 export function HomePage() {
-  return (
-    <>
-      <Welcome />
-      <ColorSchemeToggle />
-    </>
-  );
+    return (
+        <>
+            <HeaderTabs/>
+            {/*<Container size="md" my="xs">*/}
+            {/*    <Text size="xl">Welcome back, Archie</Text>*/}
+            {/*</Container>*/}
+            <HomeGrid/>
+        </>
+    );
 }
