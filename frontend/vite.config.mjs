@@ -10,8 +10,11 @@ export default defineConfig({
     setupFiles: './vitest.setup.mjs',
   },
   server: {
-    host: '0.0.0.0',
     port: 3000,
+    host: true,
     strictPort: true
-  }
+  },
+  build: {
+    outDir: 'build',
+  },
 });
