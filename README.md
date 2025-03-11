@@ -18,6 +18,8 @@ Use Docker Compose to build and start all necessary containers. Run the followin
 docker-compose up --build
 ```
 
+You can remove the `--build` flag if you have already built the images and just want to start the containers.
+
 ---
 
 ### 3️⃣ **Apply Database Migrations**

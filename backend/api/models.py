@@ -1,8 +1,12 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
+from api.user_manager import EmailUserManager
+
 
 class User(AbstractUser):
+    email = models.EmailField(unique=True)
+    name = models.CharField(max_length=255)
     bio = models.TextField(blank=True, null=True)
     profile_picture = models.ImageField(
         upload_to="profile_pictures/", blank=True, null=True
@@ -11,6 +15,10 @@ class User(AbstractUser):
     year_of_study = models.IntegerField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    USERNAME_FIELD = "email"
+    REQUIRED_FIELDS = []
+    objects = EmailUserManager()
 
 
 class CommunityCategory(models.Model):
