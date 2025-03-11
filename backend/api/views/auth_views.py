@@ -1,3 +1,4 @@
+from drf_spectacular.utils import extend_schema
 from rest_framework import status
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
@@ -11,6 +12,20 @@ class RegisterView(APIView):
     permission_classes = [AllowAny]
     authentication_classes = []
 
+    @extend_schema(
+        request={
+            "application/json": {
+                "type": "object",
+                "properties": {
+                    "username": {"type": "string", "example": "admin"},
+                    "email": {"type": "string", "example": "test@email.com"},
+                    "password": {"type": "string", "example": "password123"},
+                },
+            }
+        },
+        responses={201: {"message": "User registered successfully!"}},
+        description="Register a new user with a username, email, and password.",
+    )
     def post(self, request):
         serializer = RegisterSerializer(data=request.data)
         if serializer.is_valid():
@@ -26,6 +41,21 @@ class LoginView(APIView):
     permission_classes = [AllowAny]
     authentication_classes = []
 
+    @extend_schema(
+        request={
+            "application/json": {
+                "type": "object",
+                "properties": {
+                    "username": {"type": "string", "example": "admin"},
+                    "password": {"type": "string", "example": "password123"},
+                },
+            }
+        },
+        responses={
+            200: {"type": "object", "properties": {"token": {"type": "string"}}},
+        },
+        description="Login with username and password to retrieve an access token.",
+    )
     def post(self, request):
         serializer = LoginSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
