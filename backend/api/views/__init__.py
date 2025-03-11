@@ -7,3 +7,4 @@ from .community_views import CommunityCreateView as CommunityCreateView
 from .community_views import CommunityCategoryListView as CommunityCategoryListView
 from .community_views import CommunityCategoryDetailView as CommunityCategoryDetailView
 from .community_views import CommunityCategoryCreateView as CommunityCategoryCreateView
+from .user_views import UserDetailView as UserDetailView
