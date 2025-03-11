@@ -1,4 +1,4 @@
-from rest_framework.generics import ListAPIView, RetrieveAPIView
+from rest_framework.generics import ListAPIView, RetrieveAPIView, CreateAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
@@ -17,6 +17,14 @@ class CommunityListView(ListAPIView):
 
 
 class CommunityDetailView(RetrieveAPIView):
+    queryset = Community.objects.all()
+    serializer_class = CommunitySerializer
+
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+
+
+class CommunityCreateView(CreateAPIView):
     queryset = Community.objects.all()
     serializer_class = CommunitySerializer
 

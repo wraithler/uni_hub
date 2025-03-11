@@ -42,6 +42,7 @@ class CommunityMembership(models.Model):
     class Meta:
         unique_together = ["user", "community"]
 
+
 class Post(models.Model):
     id = models.AutoField(primary_key=True)
     title = models.CharField(max_length=255)
@@ -53,6 +54,7 @@ class Post(models.Model):
 
     class Meta:
         ordering = ["-created_at"]
+
 
 class Comment(models.Model):
     id = models.AutoField(primary_key=True)
@@ -82,6 +84,7 @@ class Events(models.Model):
     class Meta:
         ordering = ["-created_at"]
 
+
 class EventAttendance(models.Model):
     id = models.AutoField(primary_key=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -89,6 +92,7 @@ class EventAttendance(models.Model):
 
     class Meta:
         unique_together = ["user", "event"]
+
 
 class Notification(models.Model):
     id = models.AutoField(primary_key=True)
@@ -119,6 +123,7 @@ class SocialPlatforms(models.Model):
 
     class Meta:
         ordering = ["name"]
+
 
 class UserSocialLinks(models.Model):
     id = models.AutoField(primary_key=True)
