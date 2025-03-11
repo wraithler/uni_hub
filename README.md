@@ -36,3 +36,12 @@ docker exec -it uni_hub-backend-1 python manage.py migrate
 - The frontend server will be running on `http://localhost:3000`.
 - The backend server will be running on `http://localhost:3001`.
 - You can access the API at `http://localhost:3001/api/docs/#/`.
+
+--- 
+
+### Unit Testing
+Use the following command to run the unit tests:
+
+```bash
+docker exec -it uni_hub-backend-1 python manage.py test
+```
