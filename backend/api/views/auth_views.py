@@ -39,4 +39,3 @@ class LoginView(APIView):
             {"message": "Login successful", "token": tokens},
             status=status.HTTP_200_OK,
         )
-
