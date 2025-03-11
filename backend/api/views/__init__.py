@@ -1,3 +1,4 @@
 from .auth_views import RegisterView, LoginView as RegisterView, LoginView
-from .home_views import HomeView
-from .community_views import CommunityListView, CommunityDetailView as CommunityListView, CommunityDetailView
+from .home_views import HomeView as HomeView
+from .community_views import CommunityListView as CommunityListView
+from .community_views import CommunityDetailView as CommunityDetailView
