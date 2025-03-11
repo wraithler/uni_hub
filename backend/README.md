@@ -1,5 +1,7 @@
 # 🎓 Uni Hub Backend
 
+**Ignore the steps below if you are only running inside Docker.**
+
 ## 📋 Setup Instructions
 
 Follow these steps to set up and run the Uni Hub backend project:
