@@ -10,7 +10,7 @@ from api.views import (
     CommunityCreateView,
     CommunityCategoryListView,
     CommunityCategoryCreateView,
-    CommunityCategoryDetailView,
+    CommunityCategoryDetailView, UserDetailView,
 )
 
 urlpatterns = [
@@ -39,4 +39,9 @@ urlpatterns = [
         CommunityCategoryCreateView.as_view(),
         name="community-category-create",
     ),
+    path(
+        "user/",
+        UserDetailView.as_view(),
+        name="user-detail",
+    )
 ]
