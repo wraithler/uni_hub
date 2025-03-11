@@ -7,8 +7,7 @@ RUN npm install
 
 COPY . .
 
-RUN npm run build
-
+ENV NODE_ENV=production
 EXPOSE 3000
 
-CMD ["npx", "serve", "-s", "build", "-l", "3000"]
+CMD ["sh", "-c", "if [ \"$NODE_ENV\" = \"development\" ]; then npm run dev; else npm run build && npx serve -s build -l 3000; fi"]

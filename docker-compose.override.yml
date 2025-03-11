@@ -3,9 +3,12 @@ version: '3'
 services:
   frontend:
     build:
-      context: ./frontend
+      context: frontend
+    volumes:
+      - ./frontend:/app  # ONLY FOR DEVELOPMENT (remove for production)
+      - /app/node_modules
     environment:
-      NODE_ENV: production
+      NODE_ENV: development  # ONLY FOR DEVELOPMENT (remove for production)
     ports:
       - "3000:3000"
     depends_on:
@@ -15,7 +18,9 @@ services:
 
   backend:
     build:
-      context: ./backend
+      context: backend
+    volumes:
+      - ./backend:/app  # ONLY FOR DEVELOPMENT (remove for production)
     ports:
       - "3001:3001"
     environment:
@@ -37,9 +42,14 @@ services:
       - POSTGRES_DB=${POSTGRES_DB}
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
     networks:
       - app-network
 
 networks:
   app-network:
     driver: bridge
+
+volumes:
+  postgres-data:
