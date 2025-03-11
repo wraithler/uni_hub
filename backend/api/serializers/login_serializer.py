@@ -2,16 +2,18 @@ from django.contrib.auth import authenticate
 from rest_framework import serializers
 from rest_framework.exceptions import AuthenticationFailed
 
+from api.models import User
+
 
 class LoginSerializer(serializers.Serializer):
-    username = serializers.CharField(required=True)
+    email = serializers.EmailField(required=True)
     password = serializers.CharField(write_only=True, required=True)
 
     def validate(self, data):
-        username = data.get("username")
+        email = data.get("email")
         password = data.get("password")
 
-        user = authenticate(username=username, password=password)
+        user = authenticate(email=email, password=password)
 
         if not user:
             raise AuthenticationFailed("Invalid username or password")
