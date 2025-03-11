@@ -9,7 +9,6 @@ import {
   IconStar,
 } from '@tabler/icons-react';
 import cx from 'clsx';
-import { useNavigate } from 'react-router-dom';
 import {
   Avatar,
   Burger,
@@ -26,13 +25,8 @@ import {
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import logo from '@/assets/images/logo.png';
+import { useUser } from '@/components/UserProvider';
 import classes from './HeaderTabs.module.css';
-
-const user = {
-  name: 'Test User',
-  email: 'testuser@email.com',
-  image: '',
-};
 
 const tabs = ['Home', 'Communities', 'Events', 'Support'];
 
@@ -41,8 +35,7 @@ export function HeaderTabs() {
   const [opened, { toggle }] = useDisclosure(false);
   const [userMenuOpened, setUserMenuOpened] = useState(false);
   const { colorScheme, setColorScheme } = useMantineColorScheme();
-
-  const navigate = useNavigate();
+  const { user, logout } = useUser();
 
   const items = tabs.map((tab) => (
     <Tabs.Tab value={tab} key={tab}>
@@ -76,9 +69,9 @@ export function HeaderTabs() {
                 className={cx(classes.user, { [classes.userActive]: userMenuOpened })}
               >
                 <Group gap={7}>
-                  <Avatar src={user.image} alt={user.name} radius="xl" size={20} />
+                  <Avatar src={user?.avatar} alt={user?.name} radius="xl" size={20} />
                   <Text fw={500} size="sm" lh={1} mr={3}>
-                    {user.name}
+                    {user?.name}
                   </Text>
                   <IconChevronDown size={12} stroke={1.5} />
                 </Group>
@@ -104,8 +97,7 @@ export function HeaderTabs() {
 
               <Menu.Label>Settings</Menu.Label>
               <MenuItem
-                onClick={() =>
-                  setColorScheme(colorScheme === 'light' ? 'dark' : 'light')}
+                onClick={() => setColorScheme(colorScheme === 'light' ? 'dark' : 'light')}
                 leftSection={<IconEye size={16} stroke={1.5} />}
               >
                 Use {colorScheme === 'light' ? 'dark' : 'light'} theme
@@ -119,7 +111,7 @@ export function HeaderTabs() {
               <Menu.Divider />
 
               <Menu.Item
-                onClick={() => navigate('/logout')}
+                onClick={() => logout()}
                 leftSection={<IconLogout size={16} stroke={1.5} />}
               >
                 Logout

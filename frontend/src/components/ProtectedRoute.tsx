@@ -3,6 +3,7 @@ import { jwtDecode } from 'jwt-decode';
 import { Navigate } from 'react-router-dom';
 import api from '@/api';
 import { ACCESS_TOKEN, REFRESH_TOKEN } from '@/constants';
+import { UserProvider } from './UserProvider';
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const [isAuthorised, setIsAuthorised] = useState<boolean | null>(null);
@@ -59,7 +60,7 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
     return <div>Loading...</div>;
   }
 
-  return isAuthorised ? children : <Navigate to="/login" />;
+  return isAuthorised ? <UserProvider>{children}</UserProvider> : <Navigate to="/login" />;
 }
 
 export default ProtectedRoute;

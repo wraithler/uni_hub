@@ -4,3 +4,4 @@ from .community_serializer import CommunitySerializer as CommunitySerializer
 from .community_serializer import (
     CommunityCategorySerializer as CommunityCategorySerializer,
 )
+from .user_serializer import UserSerializer as UserSerializer
