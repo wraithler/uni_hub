@@ -32,12 +32,12 @@ export function AuthenticationForm(props: PaperProps) {
 
     validate: {
       email: (val) => (/^\S+@\S+$/.test(val) ? null : 'Invalid email'),
-      // name: (val) => (val.length > 0 ? null : 'Name is required'),
+      name: (val) => (val.length < 6 && type === 'register' ? 'Name must be longer than 6 characters' : null),
+      password: (val) => (val.length < 8 ? 'Password must be longer than 8 characters' : null),
     },
   });
 
   const handleSubmit = async (values: typeof form.values) => {
-    console.log('values', values);
     try {
       const response = await api.post(`/api/${type}/`, values);
       if (type === 'login') {
@@ -48,7 +48,7 @@ export function AuthenticationForm(props: PaperProps) {
         toggle();
       }
     } catch (error) {
-      console.error(error);
+        form.setErrors({ password: 'Invalid username or password' });
     }
   };
 
@@ -75,6 +75,7 @@ export function AuthenticationForm(props: PaperProps) {
               value={form.values.name}
               onChange={(event) => form.setFieldValue('name', event.currentTarget.value)}
               radius="md"
+              error={form.errors.name && form.errors.name}
             />
           )}
 
@@ -84,6 +85,7 @@ export function AuthenticationForm(props: PaperProps) {
             placeholder="Your email"
             value={form.values.email}
             onChange={(event) => form.setFieldValue('email', event.currentTarget.value)}
+            error={form.errors.email && form.errors.email}
             radius="md"
           />
 
@@ -93,7 +95,7 @@ export function AuthenticationForm(props: PaperProps) {
             placeholder="Your password"
             value={form.values.password}
             onChange={(event) => form.setFieldValue('password', event.currentTarget.value)}
-            error={form.errors.password && 'Password should contain at least 8 characters'}
+            error={form.errors.password && form.errors.password}
             radius="md"
           />
 

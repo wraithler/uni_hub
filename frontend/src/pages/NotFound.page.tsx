@@ -1,4 +1,5 @@
-import { Button, Container, Group, Text, Title } from '@mantine/core';
+import { useNavigate } from 'react-router-dom';
+import { Button, Container, Group, Text } from '@mantine/core';
 import classes from './NotFound.module.css';
 
 function Illustration(props: React.ComponentPropsWithoutRef<'svg'>) {
@@ -13,6 +14,7 @@ function Illustration(props: React.ComponentPropsWithoutRef<'svg'>) {
 }
 
 export function NotFoundPage() {
+  const navigate = useNavigate();
   return (
     <Container className={classes.root}>
       <div className={classes.inner}>
@@ -23,7 +25,9 @@ export function NotFoundPage() {
             the page has been moved to another URL. If you think this is an error contact support.
           </Text>
           <Group justify="center">
-            <Button size="md">Take me back to home page</Button>
+            <Button size="md" onClick={() => navigate('/')}>
+              Take me back to home page
+            </Button>
           </Group>
         </div>
       </div>

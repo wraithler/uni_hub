@@ -25,8 +25,8 @@ import {
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import logo from '@/assets/images/logo.png';
+import { useUser } from '@/components/UserProvider';
 import classes from './HeaderTabs.module.css';
-import {useUser} from "@/components/UserProvider";
 
 const tabs = ['Home', 'Communities', 'Events', 'Support'];
 
@@ -97,8 +97,7 @@ export function HeaderTabs() {
 
               <Menu.Label>Settings</Menu.Label>
               <MenuItem
-                onClick={() =>
-                  setColorScheme(colorScheme === 'light' ? 'dark' : 'light')}
+                onClick={() => setColorScheme(colorScheme === 'light' ? 'dark' : 'light')}
                 leftSection={<IconEye size={16} stroke={1.5} />}
               >
                 Use {colorScheme === 'light' ? 'dark' : 'light'} theme
