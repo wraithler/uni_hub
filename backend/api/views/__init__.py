@@ -4,3 +4,6 @@ from .home_views import HomeView as HomeView
 from .community_views import CommunityListView as CommunityListView
 from .community_views import CommunityDetailView as CommunityDetailView
 from .community_views import CommunityCreateView as CommunityCreateView
+from .community_views import CommunityCategoryListView as CommunityCategoryListView
+from .community_views import CommunityCategoryDetailView as CommunityCategoryDetailView
+from .community_views import CommunityCategoryCreateView as CommunityCategoryCreateView
