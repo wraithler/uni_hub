@@ -35,9 +35,12 @@ class LoginView(APIView):
         user = serializer.validated_data["user"]
 
         refresh = RefreshToken.for_user(user)
-        tokens = {"refresh": str(refresh), "access": str(refresh.access_token)}
 
         return Response(
-            {"message": "Login successful", "token": tokens},
+            {
+                "message": "Login successful",
+                "access": str(refresh.access_token),
+                "refresh": str(refresh),
+            },
             status=status.HTTP_200_OK,
         )
