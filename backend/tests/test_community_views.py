@@ -32,11 +32,31 @@ class CommunityViewsTestCase(TestCase):
             created_by=self.user,
         )
 
+        self.fishing_community = Community.objects.create(
+            name="Fishing Community",
+            description="This is a fishing community",
+            category=CommunityCategory.objects.create(
+                name="Fishing",
+                description="This is a fishing category",
+            ),
+            created_by=self.user,
+        )
+
+        self.random_community = Community.objects.create(
+            name="Random Community",
+            description="This is a random community",
+            category=CommunityCategory.objects.create(
+                name="Topic",
+                description="This is a random category",
+            ),
+            created_by=self.user,
+        )
+
     def test_community_list_endpoint_authenticated(self):
         response = self.client.get("/api/communities/")
 
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(response.json()["results"]), 1)
+        self.assertEqual(len(response.json()["results"]), 3)
 
     def test_community_detail_endpoint_authenticated(self):
         response = self.client.get("/api/communities/1/")
@@ -59,3 +79,17 @@ class CommunityViewsTestCase(TestCase):
 
         # Response should be 401 Unauthorized
         self.assertEqual(response.status_code, 401)
+
+    def test_community_searching(self):
+        response = self.client.get("/api/communities/?search=fishing")
+
+        # Should return only the fishing community
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.json()["results"]), 1)
+
+    def test_community_searching_via_category(self):
+        response = self.client.get("/api/communities/?search=topic")
+
+        # Should return only the 'random' community (as the category is 'topic')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.json()["results"]), 1)
