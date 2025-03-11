@@ -7,7 +7,7 @@ Follow these steps to set up and run the Uni Hub project using Docker:
 ---
 
 ### 1️⃣ **Download .env File from Teams**
-Download the `.env` file from the Teams channel and place it in the root directory of the project. Ensure it is name `.env` and not `env`.
+Download the `.env` file from the Teams channel and place it in the root directory of the project. Ensure it is named `.env` and not `env`.
 
 ---
 
