@@ -35,3 +35,4 @@ docker exec -it uni_hub-backend-1 python manage.py migrate
 - Make sure Docker is installed and running properly on your system.
 - The frontend server will be running on `http://localhost:3000`.
 - The backend server will be running on `http://localhost:3001`.
+- You can access the API at `http://localhost:3001/api/docs/#/`.

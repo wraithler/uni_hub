@@ -6,7 +6,8 @@ from api.views import (
     RegisterView,
     LoginView,
     CommunityListView,
-    CommunityDetailView, CommunityCreateView,
+    CommunityDetailView,
+    CommunityCreateView,
 )
 
 urlpatterns = [
@@ -17,9 +18,7 @@ urlpatterns = [
     path(
         "communities/<int:pk>/", CommunityDetailView.as_view(), name="community-detail"
     ),
-    path(
-        "api/communities/create/", CommunityCreateView.as_view(), name="community-create"
-    ),
+    path("communities/create/", CommunityCreateView.as_view(), name="community-create"),
     path("schema/", SpectacularAPIView.as_view(), name="schema"),
     path("docs/", SpectacularSwaggerView.as_view(url_name="schema"), name="swagger-ui"),
 ]
