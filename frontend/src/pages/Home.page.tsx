@@ -1,11 +1,11 @@
-import { HeaderTabs } from '@/components/Header/HeaderTabs';
-import { HomeGrid } from '@/components/HomeGrid/HomeGrid';
+import {Layout} from "@/components/Layout";
+import {HomeGrid} from "@/components/HomeGrid/HomeGrid";
+import {CommunitySearchBar} from "@/components/CustomSearchBar";
 
 export function HomePage() {
-  return (
-    <>
-      <HeaderTabs />
-      <HomeGrid />
-    </>
-  );
+    return (
+        <Layout>
+            <CommunitySearchBar/>
+        </Layout>
+    );
 }
