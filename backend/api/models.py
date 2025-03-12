@@ -20,6 +20,10 @@ class User(AbstractUser):
     REQUIRED_FIELDS = []
     objects = EmailUserManager()
 
+    # Remove unused fields
+    first_name = None
+    last_name = None
+
 
 class CommunityCategory(models.Model):
     id = models.AutoField(primary_key=True)
@@ -35,6 +39,7 @@ class Community(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
+    emoji = models.CharField(max_length=255, blank=True, null=True)
 
     class Meta:
         ordering = ["-created_at"]
