@@ -8,3 +8,8 @@ from .community_views import CommunityCategoryListView as CommunityCategoryListV
 from .community_views import CommunityCategoryDetailView as CommunityCategoryDetailView
 from .community_views import CommunityCategoryCreateView as CommunityCategoryCreateView
 from .user_views import UserDetailView as UserDetailView
+from .event_views import EventListView as EventListView
+from .event_views import EventDetailView as EventDetailView
+from .event_views import EventCreateView as EventCreateView
+from .event_views import EventAttendanceView as EventAttendanceView
+from .event_views import VirtualEventAccessView as VirtualEventAccessView
