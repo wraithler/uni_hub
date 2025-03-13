@@ -41,6 +41,12 @@ class LoginView(APIView):
 
         user = serializer.validated_data["user"]
 
+        if not user.is_active or not user.is_email_verified:
+            return Response(
+                {"message": "User is not active or email is not verified"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
         refresh = RefreshToken.for_user(user)
 
         return Response(
