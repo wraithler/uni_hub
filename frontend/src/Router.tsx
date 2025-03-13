@@ -4,6 +4,7 @@ import { NotFoundPage } from '@/pages/NotFound.page';
 import { AuthPage } from './pages/Auth.page';
 import { HomePage } from './pages/Home.page';
 import {CommunitiesPage} from "@/pages/communities/Communities.page";
+import {VerifyEmailPage} from "@/pages/VerifyEmail.page";
 
 const router = createBrowserRouter([
   {
@@ -25,6 +26,10 @@ const router = createBrowserRouter([
   {
     path: '/login',
     element: <AuthPage />,
+  },
+  {
+    path: '/verify-email/:token',
+    element: <VerifyEmailPage />,
   },
   {
     path: '*',
