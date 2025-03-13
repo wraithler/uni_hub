@@ -8,11 +8,12 @@ from api.models import User
 class LoginTestCase(TestCase):
     def setUp(self):
         self.user = User.objects.create_user(
-            username="test_user", email="testuser@email.com", password="password123"
+            email="testuser@email.com", password="password123"
         )
+        self.user.is_email_verified = True
+        self.user.save()
 
         self.inactive_user = User.objects.create_user(
-            username="inactive_user",
             email="inactiveuser@email.com",
             password="password123",
         )
@@ -25,7 +26,7 @@ class LoginTestCase(TestCase):
 
     def test_login_with_valid_credentials(self):
         payload = {
-            "username": "test_user",
+            "email": "testuser@email.com",
             "password": "password123",
         }
 
@@ -33,9 +34,8 @@ class LoginTestCase(TestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-        self.assertIn("token", response.json())
-        self.assertIn("access", response.json()["token"])
-        self.assertIn("refresh", response.json()["token"])
+        self.assertIn("access", response.json())
+        self.assertIn("refresh", response.json())
 
     def test_login_with_no_credentials(self):
         payload = {}
@@ -46,7 +46,7 @@ class LoginTestCase(TestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_login_with_invalid_credentials(self):
-        payload = {"username": "test_user", "password": "password"}
+        payload = {"email": "testuser@email.com", "password": "password"}
 
         response = self.client.post(self.login_url, payload)
 
@@ -54,7 +54,7 @@ class LoginTestCase(TestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_login_with_inactive_user(self):
-        payload = {"username": "inactive_user", "password": "password123"}
+        payload = {"email": "inactiveuser@email.com", "password": "password123"}
 
         response = self.client.post(self.login_url, payload)
 
