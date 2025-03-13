@@ -31,7 +31,7 @@ function SelectOption({emoji, name, description, type, profile_picture, bio}: Se
         </Group>
     ) : (
         <Group>
-            <img src={profile_picture} alt={name} width={32} height={32} style={{borderRadius: '50%'}}/>
+            <img src={`http://localhost:3001/${profile_picture}`} alt={name} width={32} height={32} style={{borderRadius: '50%'}}/>
             <div>
                 <Text fz="sm" fw={500}>
                     {name}
