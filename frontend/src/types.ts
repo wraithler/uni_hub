@@ -1,8 +1,7 @@
 export interface User {
     id: number;
     name: string;
-    email: string;
-    avatar?: string;
+    profile_picture?: string;
 }
 
 export interface CommunityCategory {
