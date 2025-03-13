@@ -43,12 +43,12 @@ class LoginView(APIView):
 
         if not user.is_active:
             return Response(
-                {"message": "Your account is no longer active, please contact support"}, status=status.HTTP_400_BAD_REQUEST
+                {"message": "Your account is no longer active, please contact support"}, status=status.HTTP_403_FORBIDDEN
             )
 
         if not user.is_email_verified:
             return Response(
-                {"message": "Please verify your email address before logging in"}, status=status.HTTP_400_BAD_REQUEST
+                {"message": "Please verify your email address before logging in"}, status=status.HTTP_403_FORBIDDEN
             )
 
         refresh = RefreshToken.for_user(user)
