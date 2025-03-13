@@ -10,7 +10,7 @@ from api.views import (
     CommunityCreateView,
     CommunityCategoryListView,
     CommunityCategoryCreateView,
-    CommunityCategoryDetailView, UserDetailView,
+    CommunityCategoryDetailView, UserDetailView, GlobalSearchView,
 )
 
 urlpatterns = [
@@ -43,5 +43,10 @@ urlpatterns = [
         "user/",
         UserDetailView.as_view(),
         name="user-detail",
+    ),
+    path(
+        "search/",
+        GlobalSearchView.as_view(),
+        name="global-search",
     )
 ]

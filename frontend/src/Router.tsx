@@ -3,6 +3,7 @@ import ProtectedRoute from '@/components/ProtectedRoute';
 import { NotFoundPage } from '@/pages/NotFound.page';
 import { AuthPage } from './pages/Auth.page';
 import { HomePage } from './pages/Home.page';
+import {CommunitiesPage} from "@/pages/communities/Communities.page";
 
 const router = createBrowserRouter([
   {
@@ -10,6 +11,14 @@ const router = createBrowserRouter([
     element: (
       <ProtectedRoute>
         <HomePage />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: '/communities',
+    element: (
+      <ProtectedRoute>
+        <CommunitiesPage />
       </ProtectedRoute>
     ),
   },
