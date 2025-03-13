@@ -9,3 +9,4 @@ from .community_views import CommunityCategoryDetailView as CommunityCategoryDet
 from .community_views import CommunityCategoryCreateView as CommunityCategoryCreateView
 from .user_views import UserDetailView as UserDetailView
 from .global_search_view import GlobalSearchView as GlobalSearchView
+from .auth_views import VerifyEmailView as VerifyEmailView

@@ -26,6 +26,7 @@ services:
       - DB_PORT=5432
     depends_on:
       - database
+      - mailhog
     networks:
       - app-network
 
@@ -42,9 +43,12 @@ services:
 
   mailhog:
     image: mailhog/mailhog
+    container_name: mailhog
     ports:
       - "8025:8025" # Web UI
       - "1025:1025" # SMTP
+    networks:
+      - app-network
 
 networks:
   app-network:

@@ -10,7 +10,10 @@ from api.views import (
     CommunityCreateView,
     CommunityCategoryListView,
     CommunityCategoryCreateView,
-    CommunityCategoryDetailView, UserDetailView, GlobalSearchView,
+    CommunityCategoryDetailView,
+    UserDetailView,
+    GlobalSearchView,
+    VerifyEmailView,
 )
 
 urlpatterns = [
@@ -19,6 +22,7 @@ urlpatterns = [
     path("", HomeView.as_view()),
     path("register/", RegisterView.as_view(), name="register"),
     path("login/", LoginView.as_view(), name="login"),
+    path("verify-email/", VerifyEmailView.as_view(), name="verify-email"),
     path("communities/", CommunityListView.as_view(), name="community-list"),
     path(
         "communities/<int:pk>/", CommunityDetailView.as_view(), name="community-detail"
@@ -48,5 +52,5 @@ urlpatterns = [
         "search/",
         GlobalSearchView.as_view(),
         name="global-search",
-    )
+    ),
 ]

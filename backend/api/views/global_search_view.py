@@ -27,11 +27,16 @@ class GlobalSearchView(APIView):
     def get(self, request, *args, **kwargs):
         search_query = request.query_params.get("search", None).strip()
 
-        users = get_filtered_queryset(User, ["name", "bio", "profile_picture"], search_query)
-        communities = get_filtered_queryset(Community, ["name", "description", "category__name"], search_query)
+        users = get_filtered_queryset(
+            User, ["name", "bio", "profile_picture"], search_query
+        )
+        communities = get_filtered_queryset(
+            Community, ["name", "description", "category__name"], search_query
+        )
 
-        return Response({
-            "users": UserSerializer(users, many=True).data,
-            "communities": CommunitySerializer(communities, many=True).data
-        })
-
+        return Response(
+            {
+                "users": UserSerializer(users, many=True).data,
+                "communities": CommunitySerializer(communities, many=True).data,
+            }
+        )
