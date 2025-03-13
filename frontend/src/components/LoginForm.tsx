@@ -47,8 +47,8 @@ export function AuthenticationForm(props: PaperProps) {
       } else {
         toggle();
       }
-    } catch (error) {
-        form.setErrors({ password: 'Invalid username or password' });
+    } catch (error: any) {
+        form.setErrors({ password: error.response?.data?.message || "Something went wrong" });
     }
   };
 
