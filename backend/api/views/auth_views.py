@@ -41,6 +41,16 @@ class LoginView(APIView):
 
         user = serializer.validated_data["user"]
 
+        if not user.is_active:
+            return Response(
+                {"message": "Your account is no longer active, please contact support"}, status=status.HTTP_400_BAD_REQUEST
+            )
+
+        if not user.is_email_verified:
+            return Response(
+                {"message": "Please verify your email address before logging in"}, status=status.HTTP_400_BAD_REQUEST
+            )
+
         refresh = RefreshToken.for_user(user)
 
         return Response(
