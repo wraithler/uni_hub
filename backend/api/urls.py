@@ -11,6 +11,10 @@ from api.views import (
     CommunityCategoryListView,
     CommunityCategoryCreateView,
     CommunityCategoryDetailView, UserDetailView,
+    PostListView,
+    PostDetailView,
+    PostCreateView,
+    CommentCreateView,
 )
 
 urlpatterns = [
@@ -43,5 +47,29 @@ urlpatterns = [
         "user/",
         UserDetailView.as_view(),
         name="user-detail",
-    )
+    ),
+
+    path(
+        "posts/", 
+        PostListView.as_view(), 
+        name="post-list"
+    ),
+
+    path(
+        "posts/<int:pk>/", 
+        PostDetailView.as_view(), 
+        name="post-detail"
+    ),
+
+    path(
+        "posts/create/", 
+        PostCreateView.as_view(), 
+        name="post-create"
+    ),
+
+    path(
+        "posts/<int:post_id>/comments/create/", 
+        CommentCreateView.as_view(), 
+        name="comment-create"
+    ),
 ]
