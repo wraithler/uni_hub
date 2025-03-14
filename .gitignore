@@ -5,3 +5,9 @@
 ./backend/api/migrations/*
 # But do not ignore __init__.py
 !./backend/api/migrations/__init__.py
+
+# Ignore the virtual environment directory
+.venv
+
+# Ignore pyc files
+*.pyc
