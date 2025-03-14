@@ -1,12 +1,8 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
-from api.user_manager import EmailUserManager
-
 
 class User(AbstractUser):
-    email = models.EmailField(unique=True)
-    name = models.CharField(max_length=255)
     bio = models.TextField(blank=True, null=True)
     profile_picture = models.ImageField(
         upload_to="profile_pictures/", blank=True, null=True
@@ -15,15 +11,6 @@ class User(AbstractUser):
     year_of_study = models.IntegerField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    is_email_verified = models.BooleanField(default=False)
-
-    USERNAME_FIELD = "email"
-    REQUIRED_FIELDS = []
-    objects = EmailUserManager()
-
-    # Remove unused fields
-    first_name = None
-    last_name = None
 
 
 class CommunityCategory(models.Model):
@@ -40,7 +27,6 @@ class Community(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
-    emoji = models.CharField(max_length=255, blank=True, null=True)
 
     class Meta:
         ordering = ["-created_at"]
@@ -147,3 +133,13 @@ class UserSocialLinks(models.Model):
 
     class Meta:
         unique_together = ["user", "platform"]
+
+class Feedback(models.Model):
+    id = models.AutoField(primary_key=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    content = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = 'feedback'  
