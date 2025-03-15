@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from api.email_utils import send_email_verification, signer
+from api.utils.email_utils import send_email_verification, signer
 from api.models import User
 from api.serializers import RegisterSerializer, LoginSerializer
 
@@ -43,12 +43,14 @@ class LoginView(APIView):
 
         if not user.is_active:
             return Response(
-                {"message": "Your account is no longer active, please contact support"}, status=status.HTTP_403_FORBIDDEN
+                {"message": "Your account is no longer active, please contact support"},
+                status=status.HTTP_403_FORBIDDEN,
             )
 
         if not user.is_email_verified:
             return Response(
-                {"message": "Please verify your email address before logging in"}, status=status.HTTP_403_FORBIDDEN
+                {"message": "Please verify your email address before logging in"},
+                status=status.HTTP_403_FORBIDDEN,
             )
 
         refresh = RefreshToken.for_user(user)
