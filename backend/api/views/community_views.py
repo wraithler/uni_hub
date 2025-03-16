@@ -6,6 +6,7 @@ from api.mixins import SearchMixin
 from api.models import Community, CommunityCategory
 from api.pagination import CommunityPagination
 from api.serializers import CommunitySerializer, CommunityCategorySerializer
+from api.utils import mock_data_utils
 
 
 class CommunityListView(SearchMixin):
@@ -60,3 +61,4 @@ class CommunityCategoryCreateView(CreateAPIView):
 
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
+
