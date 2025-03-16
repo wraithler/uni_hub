@@ -1,16 +1,19 @@
 import factory.fuzzy
+from faker import Faker
 
-from api.models import Post, User, Community, CommunityCategory, PostLike, Comment
+from api.models import Post, User, Community, CommunityCategory, PostLike, Comment, Event, Friend
 
+fake = Faker()
 
 class UserFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = User
 
-    username = factory.Faker("user_name")
-    email = factory.Faker("email")
+    username = factory.LazyAttribute(lambda _: fake.unique.user_name())
+    email = factory.LazyAttribute(lambda _: fake.unique.email())
     name = factory.Faker("name")
     password = factory.Faker("password")
+    profile_picture = factory.Faker("image_url")
 
 
 class CommunityCategoryFactory(factory.django.DjangoModelFactory):
@@ -56,3 +59,25 @@ class PostCommentFactory(factory.django.DjangoModelFactory):
     content = factory.Faker("text")
     created_by = factory.SubFactory(UserFactory)
     post = factory.SubFactory(PostFactory)
+
+
+class EventFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = Event
+
+    title = factory.Faker("sentence", nb_words=4)
+    description = factory.Faker("text")
+    event_date = factory.Faker("date_time")
+    location = factory.Faker("address")
+    created_by = factory.SubFactory(UserFactory)
+    community = factory.SubFactory(CommunityFactory)
+    virtual_event = factory.Faker("boolean")
+    virtual_link = factory.LazyAttribute(lambda o: factory.Faker("url") if o.virtual_event else None)
+
+
+class FriendFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = Friend
+
+    user1 = factory.SubFactory(UserFactory)
+    user2 = factory.SubFactory(UserFactory)

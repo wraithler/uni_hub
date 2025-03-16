@@ -1,7 +1,7 @@
 from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
 
-from api.models import Post, Events
+from api.models import Post, Event
 
 
 class FeedView(ListAPIView):
@@ -19,7 +19,7 @@ class FeedView(ListAPIView):
 
     def __get_upcoming_events(self, user, n=10):
         """Get n upcoming events for the user"""
-        return Events.objects.filter(attendees=user).order_by("start_time")[:n]
+        return Event.objects.filter(attendees=user).order_by("start_time")[:n]
 
     def get_queryset(self):
         user = self.request.user

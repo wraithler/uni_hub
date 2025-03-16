@@ -27,21 +27,9 @@ class User(AbstractUser):
     first_name = None
     last_name = None
 
-    @property
-    def friends(self):
-        return User.objects.filter(
-            id__in=Friend.objects.filter(user1=self).values_list("user2", flat=True)
-        ) | User.objects.filter(
-            id__in=Friend.objects.filter(user2=self).values_list("user1", flat=True)
-        )
-
-    @property
-    def events(self):
-        return Events.objects.filter(
-            id__in=EventAttendance.objects.filter(user=self).values_list(
-                "event", flat=True
-            )
-        )
+    friends = models.ManyToManyField(
+        "User", through="Friend", related_name="friend_list", symmetrical=False,
+    )
 
 
 class CommunityCategory(models.Model):
@@ -93,20 +81,22 @@ class Post(models.Model):
         return (timezone.now() - self.created_at).total_seconds() // 3600
 
     def score(self, user):
-        """
-        score = (W1 * Engagement) + (W2 * Recency) + (W3 * Relevance) + (W4 * Connection)
-
-        Engagement = (post.likes * 3) + (comments * 5) + (shares * 7)
-        Recency = e^(-hours_since_posted / 6) (exponential decay)
-        Relevance = 10 if post.community in user.communities else 0
-        Connection = 15 if post.author in user.friends else 0
-        """
         w1, w2, w3, w4 = 0.3, 0.2, 0.2, 0.3
+
+        engagement_score = (self.likes.count() * 3) + (self.comments.count() * 5)
+
+        relevance_score = 100 if self.community in user.communities.all() else 0
+        connection_score = 150 if self.created_by in user.friend_list.all() else 0
+
+        scaling_factor = max(1, engagement_score / 100)
+
+        recency_score = math.exp(-self.hours_since_posted / 6)
+
         return (
-                w1 * ((self.likes.count() * 3) + (self.comments.count() * 5))
-                + w2 * (math.exp(-self.hours_since_posted / 6))
-                + w3 * (10 if self.community in user.communities.all() else 0)
-                + w4 * (15 if self.created_by in user.friends.all() else 0)
+            w1 * scaling_factor
+            + w2 * recency_score
+            + w3 * relevance_score
+            + w4 * connection_score
         )
 
     class Meta:
@@ -125,7 +115,7 @@ class Comment(models.Model):
         ordering = ["-created_at"]
 
 
-class Events(models.Model):
+class Event(models.Model):
     id = models.AutoField(primary_key=True)
     title = models.CharField(max_length=255)
     description = models.TextField()
@@ -153,7 +143,7 @@ class Events(models.Model):
 class EventAttendance(models.Model):
     id = models.AutoField(primary_key=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    event = models.ForeignKey(Events, on_delete=models.CASCADE)
+    event = models.ForeignKey(Event, on_delete=models.CASCADE)
 
     class Meta:
         unique_together = ["user", "event"]
