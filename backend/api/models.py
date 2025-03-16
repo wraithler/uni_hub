@@ -230,3 +230,17 @@ class PostView(models.Model):
 
     class Meta:
         unique_together = ["user", "post"]
+
+
+class PrivateChat(models.Model):
+    user1 = models.ForeignKey(User, on_delete=models.CASCADE, related_name="user1_chat")
+    user2 = models.ForeignKey(User, on_delete=models.CASCADE, related_name="user2_chat")
+
+    class Meta:
+        unique_together = ["user1", "user2"]
+
+class PrivateMessage(models.Model):
+    chat = models.ForeignKey(PrivateChat, on_delete=models.CASCADE)
+    sender = models.ForeignKey(User, on_delete=models.CASCADE)
+    content = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
