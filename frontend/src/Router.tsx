@@ -1,6 +1,6 @@
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import ProtectedRoute from '@/components/ProtectedRoute';
-import { NotFoundPage } from '@/pages/NotFound.page';
+import { NotFoundPage } from '@/pages/not_found/NotFound.page';
 import { AuthPage } from './pages/Auth.page';
 import { HomePage } from './pages/Home.page';
 import {CommunitiesPage} from "@/pages/communities/Communities.page";
