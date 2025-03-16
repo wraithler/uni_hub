@@ -1,8 +1,10 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
-
+from api.user_manager import EmailUserManager
 
 class User(AbstractUser):
+    email = models.EmailField(unique=True)
+    name = models.CharField(max_length=255, default="John Doe")
     bio = models.TextField(blank=True, null=True)
     profile_picture = models.ImageField(
         upload_to="profile_pictures/", blank=True, null=True
@@ -11,6 +13,11 @@ class User(AbstractUser):
     year_of_study = models.IntegerField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    is_email_verified = models.BooleanField(default=False)
+
+    USERNAME_FIELD = "email"
+    REQUIRED_FIELDS = []
+    objects = EmailUserManager()
 
 
 class CommunityCategory(models.Model):
@@ -135,11 +142,12 @@ class UserSocialLinks(models.Model):
         unique_together = ["user", "platform"]
 
 class Feedback(models.Model):
-    id = models.AutoField(primary_key=True)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    feedback_id = models.AutoField(primary_key=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)  
     content = models.TextField()
+    rating = models.IntegerField(choices=[(i, i) for i in range(1, 6)], default=1)  
+    is_anonymous = models.BooleanField(default=True)  
     created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        db_table = 'feedback'  
+        db_table = 'api_feedback'
