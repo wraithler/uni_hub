@@ -9,7 +9,7 @@ const mockdata = {
             "title": "Chess Tournament Finals",
             "content": "Head whether for piece describe environmental. Cover sell reason back. Firm identify cost its feeling through model.",
             "created_by_name": "Erica Chan",
-            "community_name": "♟️ Chess Community",
+            "community_name": "Chess Community",
             "created_by_profile_picture": "https://picsum.photos/339/723",
             "likes_count": 654,
             "comments_count": 100
@@ -177,7 +177,7 @@ export function HomePage() {
                         <Card.Section p="sm">
                             <Group justify="space-between">
                                 <Text size="xl">{post.title}</Text>
-                                <Badge size="sm" variant="light">
+                                <Badge size="md" variant="outline">
                                     {post.community_name}
                                 </Badge>
                             </Group>
