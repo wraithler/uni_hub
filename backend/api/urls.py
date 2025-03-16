@@ -1,6 +1,7 @@
 from django.urls import path
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 
+
 from api.views import (
     HomeView,
     RegisterView,
@@ -10,6 +11,14 @@ from api.views import (
     CommunityCreateView,
     FeedbackListView, 
     FeedbackCreateView, 
+    FeedbackDeleteView,
+    CommunityCategoryListView,
+    CommunityCategoryCreateView,
+    CommunityCategoryDetailView,
+    UserDetailView,
+    GlobalSearchView,
+    VerifyEmailView,
+    
 )
 
 urlpatterns = [
@@ -27,4 +36,31 @@ urlpatterns = [
       
     path("feedback/create/", FeedbackCreateView.as_view(), name="feedback-create"),  
     path("feedback/", FeedbackListView.as_view(), name="feedback-list"),
+    path('feedback/<int:feedback_id>/', FeedbackDeleteView.as_view(), name='feedback-delete'),
+
+    path(
+        "community-categories/",
+        CommunityCategoryListView.as_view(),
+        name="community-category-list",
+    ),
+    path(
+        "community-categories/<int:pk>/",
+        CommunityCategoryDetailView.as_view(),
+        name="community-category-detail",
+    ),
+    path(
+        "community-categories/create/",
+        CommunityCategoryCreateView.as_view(),
+        name="community-category-create",
+    ),
+    path(
+        "user/",
+        UserDetailView.as_view(),
+        name="user-detail",
+    ),
+    path(
+        "search/",
+        GlobalSearchView.as_view(),
+        name="global-search",
+    ),
 ]
