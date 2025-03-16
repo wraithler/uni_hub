@@ -21,3 +21,16 @@ export interface Community {
     emoji: string;
 }
 
+export interface Message {
+    id: string;
+    sender: User;
+    content: string;
+    created_at: Date;
+}
+
+export interface WebSocketMessage {
+    type: "message" | "typing" | "seen";
+    content?: string;
+    message_id?: string;
+    sender?: string;
+}
