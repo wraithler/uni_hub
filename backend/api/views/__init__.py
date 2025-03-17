@@ -12,3 +12,4 @@ from .global_search_view import GlobalSearchView as GlobalSearchView
 from .auth_views import VerifyEmailView as VerifyEmailView
 from .feedback_views import FeedbackListView, FeedbackCreateView, FeedbackDeleteView
 from .profile_Info_views import ProfileInfoView
+from .notif_pref_views import UserNotificationPreferenceView
