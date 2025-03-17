@@ -12,8 +12,7 @@ class ChatTestCase(TestCase):
 
     async def connect_to_chat(self, user):
         communicator = WebsocketCommunicator(
-            application,
-            f"ws/private_chat/{self.chat_id}/"
+            application, f"ws/private_chat/{self.chat_id}/"
         )
         connected, subprotocol = await communicator.connect()
 

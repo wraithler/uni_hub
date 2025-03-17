@@ -2,30 +2,49 @@ version: '3'
 
 services:
   frontend:
+    container_name: frontend
     build:
       context: ./frontend
     environment:
       NODE_ENV: production
     ports:
-      - "3000:3000"
+      - "${REACT_PORT}:${REACT_PORT}"
     depends_on:
       - backend
     networks:
       - app-network
 
   backend:
+    container_name: backend
     build:
       context: ./backend
     ports:
-      - "3001:3001"
+      - "${DJANGO_PORT}:${DJANGO_PORT}"
     environment:
-      - POSTGRES_DB=${POSTGRES_DB}
-      - POSTGRES_USER=${POSTGRES_USER}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-      - DB_HOST=database
-      - DB_PORT=5432
+      - DB_NAME=${DB_NAME}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
       - REDIS_HOST=redis
-      - REDIS_PORT=6379
+      - REDIS_PORT=${REDIS_PORT}
+      - DJANGO_DEBUG=false
+      - DJANGO_BASE_BACKEND_URL=${DJANGO_BASE_BACKEND_URL}
+      - DJANGO_BASE_FRONTEND_URL=${DJANGO_BASE_FRONTEND_URL}
+      - DJANGO_CORS_ORIGIN_WHITELIST=${DJANGO_CORS_ORIGIN_WHITELIST}
+      - DJANGO_LANGUAGE_CODE=${DJANGO_LANGUAGE_CODE}
+      - DJANGO_TIME_ZONE=${DJANGO_TIME_ZONE}
+      - SECRET_KEY=${SECRET_KEY}
+      - SECURE_SSL_REDIRECT=${SECURE_SSL_REDIRECT}
+      - SECURE_CONTENT_TYPE_NOSNIFF=${SECURE_CONTENT_TYPE_NOSNIFF}
+      - MAILHOG_UI_PORT=${MAILHOG_UI_PORT}
+      - MAILHOG_SMTP_PORT=${MAILHOG_SMTP_PORT}
+      - CELERY_BROKER_URL=${CELERY_BROKER_URL}
+      - EMAIL_HOST=${EMAIL_HOST}
+      - EMAIL_USE_TLS=${EMAIL_USE_TLS}
+      - EMAIL_USE_SSL=${EMAIL_USE_SSL}
+      - EMAIL_HOST_USER=${EMAIL_HOST_USER}
+      - EMAIL_HOST_PASSWORD=${EMAIL_HOST_PASSWORD}
     depends_on:
       - database
       - mailhog
@@ -35,12 +54,13 @@ services:
 
   database:
     image: postgres:15.10-alpine
+    container_name: postgres
     ports:
-      - "5432:5432"
+      - "${DB_PORT}:${DB_PORT}"
     environment:
-      - POSTGRES_DB=${POSTGRES_DB}
-      - POSTGRES_USER=${POSTGRES_USER}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - DB_NAME=${DB_NAME}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
     networks:
       - app-network
 
@@ -48,8 +68,8 @@ services:
     image: mailhog/mailhog
     container_name: mailhog
     ports:
-      - "8025:8025" # Web UI
-      - "1025:1025" # SMTP
+      - "${MAILHOG_UI_PORT}:${MAILHOG_UI_PORT}"
+      - "${MAILHOG_SMTP_PORT}:${MAILHOG_SMTP_PORT}"
     networks:
       - app-network
 
@@ -57,10 +77,84 @@ services:
     image: redis
     container_name: redis
     ports:
-      - "6379:6379"
+      - "${REDIS_PORT}:${REDIS_PORT}"
     restart: always
     networks:
       - app-network
+
+  celery:
+    container_name: celery
+    build:
+      context: ./backend
+    command: celery -A apps.tasks worker -l info --without-gossip --without-mingle --without-heartbeat
+    environment:
+      - DB_NAME=${DB_NAME}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
+      - REDIS_HOST=redis
+      - REDIS_PORT=${REDIS_PORT}
+      - DJANGO_DEBUG=false
+      - DJANGO_BASE_BACKEND_URL=${DJANGO_BASE_BACKEND_URL}
+      - DJANGO_BASE_FRONTEND_URL=${DJANGO_BASE_FRONTEND_URL}
+      - DJANGO_CORS_ORIGIN_WHITELIST=${DJANGO_CORS_ORIGIN_WHITELIST}
+      - DJANGO_LANGUAGE_CODE=${DJANGO_LANGUAGE_CODE}
+      - DJANGO_TIME_ZONE=${DJANGO_TIME_ZONE}
+      - SECRET_KEY=${SECRET_KEY}
+      - SECURE_SSL_REDIRECT=${SECURE_SSL_REDIRECT}
+      - SECURE_CONTENT_TYPE_NOSNIFF=${SECURE_CONTENT_TYPE_NOSNIFF}
+      - MAILHOG_UI_PORT=${MAILHOG_UI_PORT}
+      - MAILHOG_SMTP_PORT=${MAILHOG_SMTP_PORT}
+      - CELERY_BROKER_URL=${CELERY_BROKER_URL}
+      - EMAIL_HOST=${EMAIL_HOST}
+      - EMAIL_USE_TLS=${EMAIL_USE_TLS}
+      - EMAIL_USE_SSL=${EMAIL_USE_SSL}
+      - EMAIL_HOST_USER=${EMAIL_HOST_USER}
+      - EMAIL_HOST_PASSWORD=${EMAIL_HOST_PASSWORD}
+    depends_on:
+      - backend
+      - redis
+    networks:
+      - app-network
+
+  celery_beat:
+    container_name: celery_beat
+    build:
+      context: ./backend
+    command: celery -A apps.tasks beat --loglevel=info
+    environment:
+      - DB_NAME=${DB_NAME}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
+      - REDIS_HOST=redis
+      - REDIS_PORT=${REDIS_PORT}
+      - DJANGO_DEBUG=false
+      - DJANGO_BASE_BACKEND_URL=${DJANGO_BASE_BACKEND_URL}
+      - DJANGO_BASE_FRONTEND_URL=${DJANGO_BASE_FRONTEND_URL}
+      - DJANGO_CORS_ORIGIN_WHITELIST=${DJANGO_CORS_ORIGIN_WHITELIST}
+      - DJANGO_LANGUAGE_CODE=${DJANGO_LANGUAGE_CODE}
+      - DJANGO_TIME_ZONE=${DJANGO_TIME_ZONE}
+      - SECRET_KEY=${SECRET_KEY}
+      - SECURE_SSL_REDIRECT=${SECURE_SSL_REDIRECT}
+      - SECURE_CONTENT_TYPE_NOSNIFF=${SECURE_CONTENT_TYPE_NOSNIFF}
+      - MAILHOG_UI_PORT=${MAILHOG_UI_PORT}
+      - MAILHOG_SMTP_PORT=${MAILHOG_SMTP_PORT}
+      - CELERY_BROKER_URL=${CELERY_BROKER_URL}
+      - EMAIL_HOST=${EMAIL_HOST}
+      - EMAIL_USE_TLS=${EMAIL_USE_TLS}
+      - EMAIL_USE_SSL=${EMAIL_USE_SSL}
+      - EMAIL_HOST_USER=${EMAIL_HOST_USER}
+      - EMAIL_HOST_PASSWORD=${EMAIL_HOST_PASSWORD}
+    depends_on:
+      - backend
+      - redis
+      - celery
+    networks:
+      - app-network
+
 
 networks:
   app-network:

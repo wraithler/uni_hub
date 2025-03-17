@@ -1,9 +1,19 @@
 import factory.fuzzy
 from faker import Faker
 
-from api.models import Post, User, Community, CommunityCategory, PostLike, Comment, Event, Friend
+from api.models import (
+    Post,
+    User,
+    Community,
+    CommunityCategory,
+    PostLike,
+    Comment,
+    Event,
+    Friend,
+)
 
 fake = Faker()
+
 
 class UserFactory(factory.django.DjangoModelFactory):
     class Meta:
@@ -72,7 +82,9 @@ class EventFactory(factory.django.DjangoModelFactory):
     created_by = factory.SubFactory(UserFactory)
     community = factory.SubFactory(CommunityFactory)
     virtual_event = factory.Faker("boolean")
-    virtual_link = factory.LazyAttribute(lambda o: factory.Faker("url") if o.virtual_event else None)
+    virtual_link = factory.LazyAttribute(
+        lambda o: factory.Faker("url") if o.virtual_event else None
+    )
 
 
 class FriendFactory(factory.django.DjangoModelFactory):
