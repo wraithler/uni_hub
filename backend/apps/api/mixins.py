@@ -3,7 +3,11 @@ from typing import TYPE_CHECKING, Sequence, Type
 
 from django.conf import settings
 from django.contrib import auth
+from django.db.models import Q
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.authentication import BaseAuthentication, SessionAuthentication
+from rest_framework.filters import SearchFilter
+from rest_framework.generics import ListAPIView
 from rest_framework.permissions import BasePermission, IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
@@ -61,3 +65,22 @@ class ApiAuthMixin:
         JWTAuthentication,
     ]
     permission_classes: PermissionClassesType = (IsAuthenticated,)
+
+
+class SearchMixin(ListAPIView):
+    filter_backends = [DjangoFilterBackend, SearchFilter]
+    search_fields = []  # To be overridden in the child class
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        search_query = self.request.query_params.get("search", None)
+
+        if search_query and self.search_fields:
+            query_filter = Q()
+
+            for field in self.search_fields:
+                query_filter |= Q(**{f"{field}__icontains": search_query})
+
+            queryset = queryset.filter(query_filter)
+
+        return queryset

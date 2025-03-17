@@ -9,7 +9,7 @@ from apps.communities.selectors import community_get, community_list
 from apps.communities.services import community_create, community_update
 
 
-class CommunityDetailView(APIView):
+class CommunityDetailApi(APIView):
     class OutputSerializer(serializers.Serializer):
         name = serializers.CharField()
         description = serializers.CharField()
@@ -26,7 +26,7 @@ class CommunityDetailView(APIView):
         return Response(data)
 
 
-class CommunityListView(APIView):
+class CommunityListApi(APIView):
     class Pagination(LimitOffsetPagination):
         default_limit = 1
 
@@ -54,7 +54,8 @@ class CommunityListView(APIView):
             view=self,
         )
 
-class CommunityCreateView(APIView):
+
+class CommunityCreateApi(APIView):
     class InputSerializer(serializers.Serializer):
         name = serializers.CharField()
         description = serializers.CharField()
@@ -66,12 +67,12 @@ class CommunityCreateView(APIView):
 
         community = community_create(**serializer.validated_data)
 
-        data = CommunityDetailView.OutputSerializer(community).data
+        data = CommunityDetailApi.OutputSerializer(community).data
 
         return Response(data)
 
 
-class CommunityUpdateView(APIView):
+class CommunityUpdateApi(APIView):
     class InputSerializer(serializers.Serializer):
         name = serializers.CharField(required=False)
         description = serializers.CharField(required=False)
@@ -88,6 +89,6 @@ class CommunityUpdateView(APIView):
 
         community = community_update(community, **serializer.validated_data)
 
-        data = CommunityDetailView.OutputSerializer(community).data
+        data = CommunityDetailApi.OutputSerializer(community).data
 
         return Response(data)
