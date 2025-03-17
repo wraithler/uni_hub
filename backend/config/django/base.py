@@ -16,6 +16,8 @@ LOCAL_APPS = [
     "apps.users.apps.UsersConfig",
     "apps.tasks.apps.TasksConfig",
     "apps.communities.apps.CommunitiesConfig",
+    "apps.emails.apps.EmailsConfig",
+    "apps.core.apps.CoreConfig",
 ]  # TODO: Add others
 
 THIRD_PARTY_APPS = [

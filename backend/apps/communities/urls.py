@@ -1,6 +1,11 @@
 from django.urls import path
 
-from apps.communities.apis import CommunityListApi, CommunityCreateApi, CommunityDetailApi, CommunityUpdateApi
+from apps.communities.apis import (
+    CommunityListApi,
+    CommunityCreateApi,
+    CommunityDetailApi,
+    CommunityUpdateApi,
+)
 
 urlpatterns = [
     path("", CommunityListApi.as_view(), name="list"),
