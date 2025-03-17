@@ -7,6 +7,7 @@ class CommunityCategory(BaseModel):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=255, unique=True)
     description = models.TextField()
+    is_private = models.BooleanField(default=False)
 
     class Meta:
         verbose_name_plural = "Community Categories"
@@ -22,6 +23,7 @@ class Community(BaseModel):
     category = models.ForeignKey(CommunityCategory, on_delete=models.CASCADE)
     created_by = models.ForeignKey("users.BaseUser", on_delete=models.CASCADE)
     emoji = models.CharField(max_length=255, blank=True, null=True)
+    is_private = models.BooleanField(default=False)
 
     members = models.ManyToManyField(
         "users.BaseUser", through="CommunityMembership", related_name="communities"

@@ -39,11 +39,13 @@ class CommunityAdmin(admin.ModelAdmin):
         (None, {"fields": ("name", "description", "category")}),
     )
 
-    readonly_fields = ("created_at", "updated_at")
+    readonly_fields = ("created_at", "updated_at", "created_by")
 
     def save_model(self, request, obj, form, change):
         if change:
             return super().save_model(request, obj, form, change)
+
+        form.cleaned_data["created_by"] = request.user
 
         try:
             community_create(**form.cleaned_data)

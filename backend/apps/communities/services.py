@@ -4,6 +4,7 @@ from django.db import transaction
 
 from apps.common.services import model_update
 from apps.communities.models import CommunityCategory, Community
+from apps.users.models import BaseUser
 
 
 @transaction.atomic
@@ -26,8 +27,8 @@ def community_category_update(
     return community_category
 
 @transaction.atomic
-def community_create(*, name: str, description: str, category: CommunityCategory) -> Community:
-    community = Community.objects.create(name=name, description=description, category=category)
+def community_create(*, name: str, description: str, category: CommunityCategory, created_by: BaseUser=None) -> Community:
+    community = Community.objects.create(name=name, description=description, category=category, created_by=created_by)
 
     return community
 
