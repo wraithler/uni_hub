@@ -35,9 +35,7 @@ class CommunityAdmin(admin.ModelAdmin):
 
     list_filter = ("category",)
 
-    fieldsets = (
-        (None, {"fields": ("name", "description", "category")}),
-    )
+    fieldsets = ((None, {"fields": ("name", "description", "category")}),)
 
     readonly_fields = ("created_at", "updated_at", "created_by")
 

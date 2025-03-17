@@ -35,6 +35,7 @@ class Community(BaseModel):
     def __str__(self):
         return self.name
 
+
 class CommunityMembership(BaseModel):
     id = models.AutoField(primary_key=True)
     user = models.ForeignKey("users.BaseUser", on_delete=models.CASCADE)

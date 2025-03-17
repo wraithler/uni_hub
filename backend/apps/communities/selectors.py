@@ -12,6 +12,7 @@ def community_get(community_id) -> Optional[Community]:
 
     return community
 
+
 def community_list(*, filters=None) -> QuerySet[Community]:
     filters = filters or {}
 
@@ -19,10 +20,12 @@ def community_list(*, filters=None) -> QuerySet[Community]:
 
     return CommunityFilter(filters, qs).qs
 
+
 def community_category_get(community_category_id) -> Optional[CommunityCategory]:
     community_category = get_object(CommunityCategory, id=community_category_id)
 
     return community_category
+
 
 def community_category_list(*, filters=None) -> QuerySet[CommunityCategory]:
     filters = filters or {}

@@ -26,11 +26,21 @@ def community_category_update(
 
     return community_category
 
+
 @transaction.atomic
-def community_create(*, name: str, description: str, category: CommunityCategory, created_by: BaseUser=None) -> Community:
-    community = Community.objects.create(name=name, description=description, category=category, created_by=created_by)
+def community_create(
+    *,
+    name: str,
+    description: str,
+    category: CommunityCategory,
+    created_by: BaseUser = None,
+) -> Community:
+    community = Community.objects.create(
+        name=name, description=description, category=category, created_by=created_by
+    )
 
     return community
+
 
 @transaction.atomic
 def community_update(*, community: Community, data) -> Community:
