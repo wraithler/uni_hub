@@ -19,6 +19,7 @@ from api.views import (
     GlobalSearchView,
     VerifyEmailView,
     ProfileInfoView,
+    UserNotificationPreferenceView,
     
 )
 
@@ -66,4 +67,5 @@ urlpatterns = [
     ),
     
     path('profile/<int:user_id>/', ProfileInfoView.as_view(), name='profile-info'),
+    path('notification-preferences/<int:user_id>/', UserNotificationPreferenceView.as_view(), name='notification-preferences-detail'),
 ]
