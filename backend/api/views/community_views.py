@@ -61,4 +61,3 @@ class CommunityCategoryCreateView(CreateAPIView):
 
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
-

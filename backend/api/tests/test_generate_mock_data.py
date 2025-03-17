@@ -22,13 +22,23 @@ class MockDataTestCase(TestCase):
         class PostSerializer(serializers.ModelSerializer):
             likes_count = serializers.SerializerMethodField()
             comments_count = serializers.SerializerMethodField()
-            community_name = serializers.CharField(source='community.name')
-            created_by_name = serializers.CharField(source='created_by.name')
-            created_by_profile_picture = serializers.CharField(source='created_by.profile_picture')
+            community_name = serializers.CharField(source="community.name")
+            created_by_name = serializers.CharField(source="created_by.name")
+            created_by_profile_picture = serializers.CharField(
+                source="created_by.profile_picture"
+            )
 
             class Meta:
                 model = Post
-                fields = 'title', 'content', 'created_by_name', 'community_name', 'created_by_profile_picture', 'likes_count', 'comments_count'
+                fields = (
+                    "title",
+                    "content",
+                    "created_by_name",
+                    "community_name",
+                    "created_by_profile_picture",
+                    "likes_count",
+                    "comments_count",
+                )
 
             def get_likes_count(self, obj):
                 return obj.likes.count()
@@ -39,7 +49,7 @@ class MockDataTestCase(TestCase):
         class EventSerializer(serializers.ModelSerializer):
             class Meta:
                 model = Event
-                fields = '__all__'
+                fields = "__all__"
 
         post_data = PostSerializer(posts, many=True).data
         event_data = EventSerializer(events, many=True).data

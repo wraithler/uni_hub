@@ -28,7 +28,10 @@ class User(AbstractUser):
     last_name = None
 
     friends = models.ManyToManyField(
-        "User", through="Friend", related_name="friend_list", symmetrical=False,
+        "User",
+        through="Friend",
+        related_name="friend_list",
+        symmetrical=False,
     )
 
 
@@ -238,6 +241,7 @@ class PrivateChat(models.Model):
 
     class Meta:
         unique_together = ["user1", "user2"]
+
 
 class PrivateMessage(models.Model):
     chat = models.ForeignKey(PrivateChat, on_delete=models.CASCADE)

@@ -1,7 +1,14 @@
 import math
 from django.test import TestCase
 
-from api.factories import PostFactory, PostLikeFactory, PostCommentFactory, UserFactory, CommunityFactory, FriendFactory
+from api.factories import (
+    PostFactory,
+    PostLikeFactory,
+    PostCommentFactory,
+    UserFactory,
+    CommunityFactory,
+    FriendFactory,
+)
 
 
 class GetScoreTestCase(TestCase):
