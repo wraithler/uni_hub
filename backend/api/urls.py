@@ -18,6 +18,7 @@ from api.views import (
     UserDetailView,
     GlobalSearchView,
     VerifyEmailView,
+    ProfileInfoView,
     
 )
 
@@ -63,4 +64,6 @@ urlpatterns = [
         GlobalSearchView.as_view(),
         name="global-search",
     ),
+    
+    path('profile/<int:user_id>/', ProfileInfoView.as_view(), name='profile-info'),
 ]
