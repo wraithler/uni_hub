@@ -15,5 +15,5 @@ class ProfileInfoSerializer(serializers.ModelSerializer):
             "year_of_study",
             "created_at",
         ]
-        read_only_fields = ["first_name", "last_name", "username", "email", "bio", "academic_department", "year_of_study", "created_at"]
+        read_only_fields = ["created_at"]
 
