@@ -1,7 +1,7 @@
 import factory
 
-from api.factories import UserFactory
 from apps.communities.models import CommunityCategory, Community
+from apps.users.factories import BaseUserFactory
 
 
 class CommunityCategoryFactory(factory.django.DjangoModelFactory):
@@ -19,4 +19,4 @@ class CommunityFactory(factory.django.DjangoModelFactory):
     name = factory.Faker("sentence", nb_words=3)
     description = factory.Faker("text")
     category = factory.SubFactory(CommunityCategoryFactory)
-    created_by = factory.SubFactory(UserFactory)
+    created_by = factory.SubFactory(BaseUserFactory)
