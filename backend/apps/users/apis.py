@@ -1,6 +1,7 @@
 from django.http import Http404
 from rest_framework import serializers
 from rest_framework.pagination import LimitOffsetPagination
+from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -57,6 +58,9 @@ class UserListApi(APIView):
 
 
 class UserCreateApi(APIView):
+    authentication_classes = []
+    permission_classes = [AllowAny]
+
     class InputSerializer(serializers.Serializer):
         email = serializers.EmailField()
         username = serializers.CharField()
