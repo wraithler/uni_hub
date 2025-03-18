@@ -36,5 +36,5 @@ if SENTRY_DSN:
         environment=environment,
         traces_sampler=traces_sampler,
         integrations=[DjangoIntegration(), CeleryIntegration()],
-        send_default_pii=False,  # TODO: Test enabling for sending user specifics
+        send_default_pii=True,
     )
