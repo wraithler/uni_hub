@@ -9,7 +9,7 @@ services:
     ports:
       - "3000:3000"
     depends_on:
-        - backend
+      - backend
     networks:
       - app-network
 
@@ -24,9 +24,12 @@ services:
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - DB_HOST=database
       - DB_PORT=5432
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
     depends_on:
       - database
       - mailhog
+      - redis
     networks:
       - app-network
 
@@ -47,6 +50,15 @@ services:
     ports:
       - "8025:8025" # Web UI
       - "1025:1025" # SMTP
+    networks:
+      - app-network
+
+  redis:
+    image: redis
+    container_name: redis
+    ports:
+      - "6379:6379"
+    restart: always
     networks:
       - app-network
 
