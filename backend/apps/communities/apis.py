@@ -60,6 +60,7 @@ class CommunityCreateApi(APIView):
         name = serializers.CharField()
         description = serializers.CharField()
         emoji = serializers.CharField()
+        # TODO: Add category field
 
     def post(self, request):
         serializer = self.InputSerializer(data=request.data)
