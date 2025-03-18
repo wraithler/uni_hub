@@ -86,7 +86,7 @@ services:
     container_name: celery
     build:
       context: ./backend
-    command: celery -A apps.tasks worker -l info --without-gossip --without-mingle --without-heartbeat
+    command: celery -A apps.tasks worker --loglevel=debug --without-gossip --without-mingle --without-heartbeat
     environment:
       - DB_NAME=${DB_NAME}
       - DB_USER=${DB_USER}
@@ -122,7 +122,7 @@ services:
     container_name: celery_beat
     build:
       context: ./backend
-    command: celery -A apps.tasks beat --loglevel=info
+    command: celery -A apps.tasks beat -l info --scheduler django_celery_beat.schedulers:DatabaseScheduler
     environment:
       - DB_NAME=${DB_NAME}
       - DB_USER=${DB_USER}

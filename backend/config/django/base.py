@@ -38,8 +38,8 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "whitenoise.runserver_nostatic",
     "django.contrib.staticfiles",
-    *LOCAL_APPS,
     *THIRD_PARTY_APPS,
+    *LOCAL_APPS,
 ]
 
 MIDDLEWARE = [
@@ -143,3 +143,4 @@ from config.settings.jwt import *  # noqa
 from config.settings.storage import *  # noqa
 from config.settings.sentry import *  # noqa
 from config.settings.sessions import *  # noqa
+from config.settings.logging import *  # noqa
