@@ -12,6 +12,7 @@ from config.env import env
 
 logger = get_task_logger(__name__)
 
+
 @transaction.atomic
 def email_failed(email: Email) -> Email:
     if email.status != Email.Status.SENDING:
@@ -57,4 +58,6 @@ def email_send_all(emails: QuerySet[Email]) -> None:
         with transaction.atomic():
             Email.objects.filter(id=email.id).update(status=Email.Status.SENDING)
 
-        transaction.on_commit((lambda email_id: lambda: email_send_task.delay(email_id))(email.id))
+        transaction.on_commit(
+            (lambda email_id: lambda: email_send_task.delay(email_id))(email.id)
+        )

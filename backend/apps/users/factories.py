@@ -5,6 +5,7 @@ from apps.users.models import BaseUser
 
 fake = Faker()
 
+
 class BaseUserFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = BaseUser

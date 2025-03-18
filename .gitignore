@@ -11,3 +11,6 @@
 
 # Ignore pyc files
 *.pyc
+
+# Ignore oauth_settings.yml
+oauth_settings.yml

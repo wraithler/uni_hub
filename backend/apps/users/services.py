@@ -32,7 +32,7 @@ def user_create(
 
 @transaction.atomic
 def user_update(*, user: BaseUser, data) -> BaseUser:
-    non_side_effect_fields: List[str] = []
+    non_side_effect_fields: List[str] = ["first_name", "last_name"]
 
     user, has_updated = model_update(
         instance=user, fields=non_side_effect_fields, data=data
