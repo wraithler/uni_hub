@@ -25,21 +25,28 @@ class Community(BaseModel):
     emoji = models.CharField(max_length=255, blank=True, null=True)
     is_private = models.BooleanField(default=False)
 
-    members = models.ManyToManyField(
-        "users.BaseUser", through="CommunityMembership", related_name="communities"
-    )
-
     class Meta:
         verbose_name_plural = "Communities"
 
     def __str__(self):
         return self.name
 
+    def is_member(self, user):
+        return self.memberships.filter(id=user.id).exists()
+
+    def is_admin(self, user):
+        return self.memberships.filter(id=user.id, is_admin=True).exists()
+
+    def is_moderator(self, user):
+        return self.memberships.filter(id=user.id, is_moderator=True).exists()
+
 
 class CommunityMembership(BaseModel):
     id = models.AutoField(primary_key=True)
     user = models.ForeignKey("users.BaseUser", on_delete=models.CASCADE)
-    community = models.ForeignKey(Community, on_delete=models.CASCADE)
+    community = models.ForeignKey(
+        Community, on_delete=models.CASCADE, related_name="memberships"
+    )
     is_admin = models.BooleanField(default=False)
     is_moderator = models.BooleanField(default=False)
 

@@ -18,6 +18,6 @@ class Email(BaseModel):
     subject = models.CharField(max_length=255)
 
     html = models.TextField()
-    plain_text = models.TextField()
+    plain_text = models.TextField(blank=True, null=True)
 
     sent_at = models.DateTimeField(null=True, blank=True)

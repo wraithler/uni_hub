@@ -1,14 +1,21 @@
+from html import unescape
+
 from celery.utils.log import get_task_logger
-from django.core.mail import EmailMultiAlternatives
+from django.contrib.auth.tokens import default_token_generator
+from django.core.mail import EmailMultiAlternatives, send_mail
 from django.db import transaction
 from django.db.models import QuerySet
+from django.template.loader import render_to_string
 from django.utils import timezone
+from django.utils.encoding import force_bytes
+from django.utils.http import urlsafe_base64_encode
 
 from apps.common.services import model_update
 from apps.core.exceptions import ApplicationError
 from apps.emails.models import Email
 from apps.emails.tasks import email_send as email_send_task
-from config.env import env
+from apps.users.models import BaseUser
+from config.django.base import APP_DOMAIN
 
 logger = get_task_logger(__name__)
 
@@ -37,11 +44,13 @@ def email_send(email: Email) -> Email:
     from_email = "mail@unihub.com"
     to = email.to
 
-    html = email.html
+    html = unescape(email.html)
     plain_text = email.plain_text
 
-    msg = EmailMultiAlternatives(subject, plain_text, from_email, [to])
-    msg.attach(html, "text/html")
+    send_mail(subject, plain_text, from_email, [to], html_message=html)
+
+    msg = EmailMultiAlternatives(subject, plain_text, from_email, [to], headers={"List-Unsubscribe": "<mailto:unsub@unihub.com>"})
+    msg.attach_alternative(html, "text/html")
 
     msg.send()
 
@@ -61,3 +70,25 @@ def email_send_all(emails: QuerySet[Email]) -> None:
         transaction.on_commit(
             (lambda email_id: lambda: email_send_task.delay(email_id))(email.id)
         )
+
+
+def confirmation_email_create(user: BaseUser) -> Email:
+    token = default_token_generator.make_token(user)
+    uid = urlsafe_base64_encode(force_bytes(user.pk))
+
+    link = f"http://localhost:3000/api/auth/verify-email/{uid}/{token}"  # TODO: Change to environment variable
+
+    html = render_to_string("emails/verification-email.html", {"verification_link": link})
+
+    email = Email.objects.create(
+        to=user.email,
+        subject="Verify your email",
+        html=html,
+        plain_text="Verify your email at " + link,
+        status=Email.Status.SENDING,
+    )
+
+    transaction.on_commit(
+        (lambda email_id: lambda: email_send_task.delay(email_id))(email.id)
+    )
+    return email
