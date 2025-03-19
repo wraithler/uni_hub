@@ -19,7 +19,7 @@ def event_create(
     is_virtual_event: bool,
     virtual_link: str,
 ):
-    if not community.is_member(created_by) and not created_by.is_superuser:
+    if not community.is_member(created_by):
         raise ApplicationError("User is not a member of the community")
 
     if not community.is_moderator(created_by) and not community.is_admin(created_by):
