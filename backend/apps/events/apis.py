@@ -1,3 +1,5 @@
+from venv import create
+
 from django.http import Http404
 from rest_framework import serializers
 from rest_framework.response import Response
@@ -86,7 +88,7 @@ class EventCreateApi(APIView):
         serializer = self.InputSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        event = event_create(**serializer.validated_data)
+        event = event_create(**serializer.validated_data, created_by=request.user)
 
         data = EventDetailApi.OutputSerializer(event).data
 

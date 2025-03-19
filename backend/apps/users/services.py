@@ -3,6 +3,7 @@ from typing import Optional, List
 from django.db import transaction
 
 from apps.common.services import model_update
+from apps.emails.services import confirmation_email_create
 from apps.users.models import BaseUser
 
 
@@ -26,6 +27,8 @@ def user_create(
         is_admin=is_admin,
         password=password,
     )
+
+    confirmation_email_create(user=user)
 
     return user
 

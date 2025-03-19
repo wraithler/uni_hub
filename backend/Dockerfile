@@ -12,4 +12,4 @@ RUN pip install --upgrade pip \
 
 EXPOSE 3001
 
-CMD ["python3", "manage.py", "runserver", "0.0.0.0:${DJANGO_PORT}"]
+CMD ["python3", "manage.py", "runserver", "0.0.0.0:3001"]

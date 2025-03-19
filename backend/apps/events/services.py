@@ -1,3 +1,4 @@
+from django.core.exceptions import ValidationError
 from django.db import transaction
 
 from apps.common.services import model_update
@@ -18,6 +19,12 @@ def event_create(
     is_virtual_event: bool,
     virtual_link: str,
 ):
+    if not community.is_member(created_by) and not created_by.is_superuser:
+        raise ValidationError("User is not a member of the community")
+
+    if not community.is_moderator(created_by) and not community.is_admin(created_by):
+        raise ValidationError("User is not a moderator or admin of the community")
+
     event = Event.objects.create(
         title=title,
         description=description,

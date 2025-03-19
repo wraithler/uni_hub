@@ -1,3 +1,4 @@
+from django.core.exceptions import ValidationError
 from django.db import models
 
 from apps.common.models import BaseModel
@@ -20,6 +21,13 @@ class Event(BaseModel):
 
     def __str__(self):
         return self.title
+
+    def clean(self):
+        if self.starts_at > self.ends_at:
+            raise ValidationError("The event cannot end before it starts.")
+
+        if self.is_virtual_event and not self.virtual_link:
+            raise ValidationError("A virtual event must have a virtual link.")
 
 
 class EventAttendee(BaseModel):
