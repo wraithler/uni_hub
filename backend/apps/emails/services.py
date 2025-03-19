@@ -15,7 +15,6 @@ from apps.core.exceptions import ApplicationError
 from apps.emails.models import Email
 from apps.emails.tasks import email_send as email_send_task
 from apps.users.models import BaseUser
-from config.django.base import APP_DOMAIN
 
 logger = get_task_logger(__name__)
 
@@ -49,7 +48,13 @@ def email_send(email: Email) -> Email:
 
     send_mail(subject, plain_text, from_email, [to], html_message=html)
 
-    msg = EmailMultiAlternatives(subject, plain_text, from_email, [to], headers={"List-Unsubscribe": "<mailto:unsub@unihub.com>"})
+    msg = EmailMultiAlternatives(
+        subject,
+        plain_text,
+        from_email,
+        [to],
+        headers={"List-Unsubscribe": "<mailto:unsub@unihub.com>"},
+    )
     msg.attach_alternative(html, "text/html")
 
     msg.send()
@@ -78,7 +83,9 @@ def confirmation_email_create(user: BaseUser) -> Email:
 
     link = f"http://localhost:3000/api/auth/verify-email/{uid}/{token}"  # TODO: Change to environment variable
 
-    html = render_to_string("emails/verification-email.html", {"verification_link": link})
+    html = render_to_string(
+        "emails/verification-email.html", {"verification_link": link}
+    )
 
     email = Email.objects.create(
         to=user.email,
