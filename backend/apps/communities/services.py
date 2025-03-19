@@ -37,7 +37,11 @@ def community_create(
     emoji: str = None,
 ) -> Community:
     community = Community.objects.create(
-        name=name, description=description, category=category, created_by=created_by, emoji=emoji
+        name=name,
+        description=description,
+        category=category,
+        created_by=created_by,
+        emoji=emoji,
     )
 
     return community

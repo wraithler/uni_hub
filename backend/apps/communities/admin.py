@@ -1,5 +1,5 @@
 from django.contrib import admin, messages
-from jsonschema.exceptions import ValidationError
+from django.core.exceptions import ValidationError
 
 from apps.communities.models import CommunityCategory, Community
 from apps.communities.services import community_category_create, community_create
