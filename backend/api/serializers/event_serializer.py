@@ -1,10 +1,10 @@
 from rest_framework import serializers
-from api.models import Events, EventAttendance
+from api.models import Event, EventAttendance
 
 
 class EventSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Events
+        model = Event
         fields = "__all__"
 
     def validate(self, data):
