@@ -18,6 +18,7 @@ LOCAL_APPS = [
     "apps.communities.apps.CommunitiesConfig",
     "apps.emails.apps.EmailsConfig",
     "apps.core.apps.CoreConfig",
+    "apps.events.apps.EventsConfig",
 ]  # TODO: Add others
 
 THIRD_PARTY_APPS = [
@@ -133,6 +134,8 @@ REST_FRAMEWORK = {
 APP_DOMAIN = env("APP_DOMAIN", default="http://localhost:3001")
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+FIXTURE_DIRS = [os.path.join(APPS_DIR, "backend", "config", "fixtures")]
 
 # Import settings from other files
 
