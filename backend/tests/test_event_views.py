@@ -4,7 +4,7 @@ from django.test import TestCase
 from rest_framework.test import APIClient
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from api.models import User, Events, Community, CommunityCategory
+from api.models import User, Event, Community, CommunityCategory
 
 logger = logging.Logger(__name__)
 
@@ -33,7 +33,7 @@ class EventViewsTestCase(TestCase):
             created_by=self.user
         )
 
-        self.event = Events.objects.create(
+        self.event = Event.objects.create(
             title="Tech Talk",
             description="Discussion on AI and ML",
             event_date="2025-05-20T14:00:00Z",
