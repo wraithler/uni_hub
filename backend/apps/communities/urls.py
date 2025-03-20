@@ -5,6 +5,7 @@ from apps.communities.apis import (
     CommunityCreateApi,
     CommunityDetailApi,
     CommunityUpdateApi,
+    CommunityEventsListApi,
 )
 
 urlpatterns = [
@@ -12,4 +13,5 @@ urlpatterns = [
     path("create/", CommunityCreateApi.as_view(), name="create"),
     path("<int:community_id>/", CommunityDetailApi.as_view(), name="detail"),
     path("<int:community_id>/update/", CommunityUpdateApi.as_view(), name="update"),
+    path("<int:community_id>/events/", CommunityEventsListApi.as_view(), name="events"),
 ]

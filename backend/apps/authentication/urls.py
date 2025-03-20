@@ -1,7 +1,7 @@
 from django.urls import include, path
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
-from .apis import (
+from apps.authentication.apis import (
     UserMeApi,
     UserSessionLoginApi,
     UserSessionLogoutApi,
