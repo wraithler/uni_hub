@@ -5,10 +5,9 @@ from django.utils import timezone
 
 from api.user_manager import EmailUserManager
 
-
 class User(AbstractUser):
     email = models.EmailField(unique=True)
-    name = models.CharField(max_length=255)
+    name = models.CharField(max_length=255, default="John Doe")
     bio = models.TextField(blank=True, null=True)
     profile_picture = models.ImageField(
         upload_to="profile_pictures/", blank=True, null=True
@@ -244,3 +243,28 @@ class PrivateMessage(models.Model):
     sender = models.ForeignKey(User, on_delete=models.CASCADE)
     content = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
+
+class Feedback(models.Model):
+    feedback_id = models.AutoField(primary_key=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)  
+    content = models.TextField()
+    rating = models.IntegerField(choices=[(i, i) for i in range(1, 6)], default=1)  
+    is_anonymous = models.BooleanField(default=True)  
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = 'api_feedback'
+    
+
+class UserNotificationPreference(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="notification_preferences")
+    subscribed_communities = models.ManyToManyField(Community, blank=True)  
+    event_updates = models.BooleanField(default=True)
+    post_notifications = models.BooleanField(default=True)
+    announcements = models.BooleanField(default=True)
+    email_notifications = models.BooleanField(default=True)
+    in_app_notifications = models.BooleanField(default=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = "api_user_notification_preferences"

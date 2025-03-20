@@ -1,6 +1,7 @@
 from django.urls import path
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 
+
 from api.views import (
     HomeView,
     RegisterView,
@@ -8,6 +9,9 @@ from api.views import (
     CommunityListView,
     CommunityDetailView,
     CommunityCreateView,
+    FeedbackListView, 
+    FeedbackCreateView, 
+    FeedbackDeleteView,
     CommunityCategoryListView,
     CommunityCategoryCreateView,
     CommunityCategoryDetailView,
@@ -19,18 +23,26 @@ from api.views import (
     VirtualEventAccessView,
     GlobalSearchView,
     VerifyEmailView,
+    ProfileInfoView,
+    UserNotificationPreferenceView,
+    
 )
 
 urlpatterns = [
-    path("schema/", SpectacularAPIView.as_view(), name="schema"),
-    path("docs/", SpectacularSwaggerView.as_view(url_name="schema"), name="swagger-ui"),
     path("", HomeView.as_view()),
     path("register/", RegisterView.as_view(), name="register"),
     path("login/", LoginView.as_view(), name="login"),
-    path("verify-email/", VerifyEmailView.as_view(), name="verify-email"),
     path("communities/", CommunityListView.as_view(), name="community-list"),
     path("communities/<int:pk>/", CommunityDetailView.as_view(), name="community-detail"),
     path("communities/create/", CommunityCreateView.as_view(), name="community-create"),
+    path("schema/", SpectacularAPIView.as_view(), name="schema"),
+    path("docs/", SpectacularSwaggerView.as_view(url_name="schema"), name="swagger-ui"),
+
+      
+    path("feedback/create/", FeedbackCreateView.as_view(), name="feedback-create"),  
+    path("feedback/", FeedbackListView.as_view(), name="feedback-list"),
+    path('feedback/<int:feedback_id>/', FeedbackDeleteView.as_view(), name='feedback-delete'),
+
     path(
         "community-categories/",
         CommunityCategoryListView.as_view(),
@@ -67,4 +79,7 @@ urlpatterns = [
     path("events/create/", EventCreateView.as_view(), name="event-create"),
     path("events/<int:pk>/attend/", EventAttendanceView.as_view(), name="event-attendance"),
     path("events/<int:pk>/virtual/", VirtualEventAccessView.as_view(), name="virtual-event-access"),
+
+    path('profile/<int:user_id>/', ProfileInfoView.as_view(), name='profile-info'),
+    path('notification-preferences/<int:user_id>/', UserNotificationPreferenceView.as_view(), name='notification-preferences-detail'),
 ]
