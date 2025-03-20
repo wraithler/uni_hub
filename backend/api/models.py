@@ -254,3 +254,17 @@ class Feedback(models.Model):
 
     class Meta:
         db_table = 'api_feedback'
+    
+
+class UserNotificationPreference(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="notification_preferences")
+    subscribed_communities = models.ManyToManyField(Community, blank=True)  
+    event_updates = models.BooleanField(default=True)
+    post_notifications = models.BooleanField(default=True)
+    announcements = models.BooleanField(default=True)
+    email_notifications = models.BooleanField(default=True)
+    in_app_notifications = models.BooleanField(default=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = "api_user_notification_preferences"
