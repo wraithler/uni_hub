@@ -16,7 +16,7 @@ def user_get_login_data(*, user: BaseUser):
         "is_superuser": user.is_superuser,
         "first_name": user.first_name,
         "last_name": user.last_name,
-        "profile_picture": user.profile_picture,
+        # "profile_picture": user.profile_picture,
     }
 
 
