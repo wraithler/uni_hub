@@ -11,4 +11,14 @@ from .user_views import UserDetailView as UserDetailView
 from .posts_views import PostListView as PostListView
 from .posts_views import PostDetailView as PostDetailView
 from .posts_views import PostCreateView as PostCreateView
-
+from .global_search_view import GlobalSearchView as GlobalSearchView
+from .auth_views import VerifyEmailView as VerifyEmailView
+from .auth_views import VerifyEmailView as VerifyEmailView
+from .event_views import EventListView as EventListView
+from .event_views import EventDetailView as EventDetailView
+from .event_views import EventCreateView as EventCreateView
+from .event_views import EventAttendanceView as EventAttendanceView
+from .event_views import VirtualEventAccessView as VirtualEventAccessView
+from .feedback_views import FeedbackListView, FeedbackCreateView, FeedbackDeleteView
+from .profile_Info_views import ProfileInfoView
+from .notif_pref_views import UserNotificationPreferenceView

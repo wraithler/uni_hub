@@ -1,7 +1,7 @@
 import {ReactNode} from "react";
 import {HeaderTabs} from "@/components/Header/HeaderTabs";
 import {Box} from "@mantine/core";
-import {SearchBar} from "@/components/SearchBar";
+import {SearchBar} from "@/components/CustomSearchBar";
 
 export function Layout({children}: { children: ReactNode }) {
     return (
@@ -9,13 +9,10 @@ export function Layout({children}: { children: ReactNode }) {
             <HeaderTabs/>
             <Box
                 mx={{xs: 4, sm: 8, md: "15%"}}
-                my={{xs: 4, sm: 8}}
+                my={{xs: 4, sm: 8, md: 10}}
                 display="grid" style={{gap: "16px"}}
             >
-                {/*<SearchBar*/}
-                {/*    props={{placeholder: "Search for communities or users"}}*/}
-                {/*    searchBarProps={{endpoint: "/api/communities/"}}*/}
-                {/*/>*/}
+                <SearchBar/>
                 {children}
             </Box>
         </div>

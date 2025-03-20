@@ -1,12 +1,13 @@
+import math
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django.utils import timezone
 
 from api.user_manager import EmailUserManager
 
-
 class User(AbstractUser):
     email = models.EmailField(unique=True)
-    name = models.CharField(max_length=255)
+    name = models.CharField(max_length=255, default="John Doe")
     bio = models.TextField(blank=True, null=True)
     profile_picture = models.ImageField(
         upload_to="profile_pictures/", blank=True, null=True
@@ -15,6 +16,7 @@ class User(AbstractUser):
     year_of_study = models.IntegerField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    is_email_verified = models.BooleanField(default=False)
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = []
@@ -23,6 +25,10 @@ class User(AbstractUser):
     # Remove unused fields
     first_name = None
     last_name = None
+
+    friends = models.ManyToManyField(
+        "User", through="Friend", related_name="friend_list", symmetrical=False,
+    )
 
 
 class CommunityCategory(models.Model):
@@ -40,6 +46,10 @@ class Community(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
     emoji = models.CharField(max_length=255, blank=True, null=True)
+
+    members = models.ManyToManyField(
+        User, through="CommunityMembership", related_name="communities"
+    )
 
     class Meta:
         ordering = ["-created_at"]
@@ -65,6 +75,29 @@ class Post(models.Model):
     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
     community = models.ForeignKey(Community, on_delete=models.CASCADE)
 
+    @property
+    def hours_since_posted(self):
+        return (timezone.now() - self.created_at).total_seconds() // 3600
+
+    def score(self, user):
+        w1, w2, w3, w4 = 0.3, 0.2, 0.2, 0.3
+
+        engagement_score = (self.likes.count() * 3) + (self.comments.count() * 5)
+
+        relevance_score = 100 if self.community in user.communities.all() else 0
+        connection_score = 150 if self.created_by in user.friend_list.all() else 0
+
+        scaling_factor = max(1, engagement_score / 100)
+
+        recency_score = math.exp(-self.hours_since_posted / 6)
+
+        return (
+            w1 * scaling_factor
+            + w2 * recency_score
+            + w3 * relevance_score
+            + w4 * connection_score
+        )
+
     class Meta:
         ordering = ["-created_at"]
 
@@ -75,13 +108,13 @@ class Comment(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
-    post = models.ForeignKey(Post, on_delete=models.CASCADE)
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="comments")
 
     class Meta:
         ordering = ["-created_at"]
 
 
-class Events(models.Model):
+class Event(models.Model):
     id = models.AutoField(primary_key=True)
     title = models.CharField(max_length=255)
     description = models.TextField()
@@ -97,11 +130,19 @@ class Events(models.Model):
     class Meta:
         ordering = ["-created_at"]
 
+    @property
+    def attendees(self):
+        return User.objects.filter(
+            id__in=EventAttendance.objects.filter(event=self).values_list(
+                "user", flat=True
+            )
+        )
+
 
 class EventAttendance(models.Model):
     id = models.AutoField(primary_key=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    event = models.ForeignKey(Events, on_delete=models.CASCADE)
+    event = models.ForeignKey(Event, on_delete=models.CASCADE)
 
     class Meta:
         unique_together = ["user", "event"]
@@ -146,3 +187,84 @@ class UserSocialLinks(models.Model):
 
     class Meta:
         unique_together = ["user", "platform"]
+
+
+class PostLike(models.Model):
+    id = models.AutoField(primary_key=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="likes")
+
+    class Meta:
+        unique_together = ["user", "post"]
+
+
+class FriendRequest(models.Model):
+    id = models.AutoField(primary_key=True)
+    from_user = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="from_user"
+    )
+    to_user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="to_user")
+    created_at = models.DateTimeField(auto_now_add=True)
+    accepted = models.BooleanField(default=False)
+
+    class Meta:
+        unique_together = ["from_user", "to_user"]
+
+
+class Friend(models.Model):
+    id = models.AutoField(primary_key=True)
+    user1 = models.ForeignKey(User, on_delete=models.CASCADE, related_name="user1")
+    user2 = models.ForeignKey(User, on_delete=models.CASCADE, related_name="user2")
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ["user1", "user2"]
+
+
+class PostView(models.Model):
+    id = models.AutoField(primary_key=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    post = models.ForeignKey(Post, on_delete=models.CASCADE)
+    viewed_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ["user", "post"]
+
+
+class PrivateChat(models.Model):
+    user1 = models.ForeignKey(User, on_delete=models.CASCADE, related_name="user1_chat")
+    user2 = models.ForeignKey(User, on_delete=models.CASCADE, related_name="user2_chat")
+
+    class Meta:
+        unique_together = ["user1", "user2"]
+
+class PrivateMessage(models.Model):
+    chat = models.ForeignKey(PrivateChat, on_delete=models.CASCADE)
+    sender = models.ForeignKey(User, on_delete=models.CASCADE)
+    content = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+class Feedback(models.Model):
+    feedback_id = models.AutoField(primary_key=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)  
+    content = models.TextField()
+    rating = models.IntegerField(choices=[(i, i) for i in range(1, 6)], default=1)  
+    is_anonymous = models.BooleanField(default=True)  
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = 'api_feedback'
+    
+
+class UserNotificationPreference(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="notification_preferences")
+    subscribed_communities = models.ManyToManyField(Community, blank=True)  
+    event_updates = models.BooleanField(default=True)
+    post_notifications = models.BooleanField(default=True)
+    announcements = models.BooleanField(default=True)
+    email_notifications = models.BooleanField(default=True)
+    in_app_notifications = models.BooleanField(default=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = "api_user_notification_preferences"
