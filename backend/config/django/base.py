@@ -19,6 +19,7 @@ LOCAL_APPS = [
     "apps.emails.apps.EmailsConfig",
     "apps.core.apps.CoreConfig",
     "apps.events.apps.EventsConfig",
+    "apps.files.apps.FilesConfig",
 ]  # TODO: Add others
 
 THIRD_PARTY_APPS = [
@@ -29,6 +30,7 @@ THIRD_PARTY_APPS = [
     "corsheaders",
     "django_extensions",
     "rest_framework_simplejwt",
+    "storages",
 ]
 
 INSTALLED_APPS = [

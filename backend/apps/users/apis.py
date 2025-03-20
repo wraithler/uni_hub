@@ -6,6 +6,8 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from apps.api.pagination import get_paginated_response
+from apps.communities.apis import CommunityListApi
+from apps.communities.selectors import community_list
 from apps.users.models import BaseUser
 from apps.users.selectors import user_get, user_list
 from apps.users.services import user_create, user_update
@@ -99,3 +101,21 @@ class UserUpdateApi(APIView):
         data = UserDetailApi.OutputSerializer(user).data
 
         return Response(data)
+
+
+class UserCommunitiesListApi(APIView):
+    class Pagination(LimitOffsetPagination):
+        default_limit = 1
+
+    def get(self, request):
+        user_id = request.user.id
+        filters = {"user_id": user_id}
+        communities = community_list(filters=filters)
+
+        return get_paginated_response(
+            pagination_class=self.Pagination,
+            serializer_class=CommunityListApi.OutputSerializer,
+            queryset=communities,
+            request=request,
+            view=self,
+        )
