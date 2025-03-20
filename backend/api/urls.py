@@ -23,6 +23,7 @@ from api.views import (
     VirtualEventAccessView,
     GlobalSearchView,
     VerifyEmailView,
+    ProfileInfoView,
     
 )
 
@@ -77,4 +78,6 @@ urlpatterns = [
     path("events/create/", EventCreateView.as_view(), name="event-create"),
     path("events/<int:pk>/attend/", EventAttendanceView.as_view(), name="event-attendance"),
     path("events/<int:pk>/virtual/", VirtualEventAccessView.as_view(), name="virtual-event-access"),
+
+    path('profile/<int:user_id>/', ProfileInfoView.as_view(), name='profile-info'),
 ]

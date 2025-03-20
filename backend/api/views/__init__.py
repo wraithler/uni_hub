@@ -17,3 +17,4 @@ from .event_views import EventCreateView as EventCreateView
 from .event_views import EventAttendanceView as EventAttendanceView
 from .event_views import VirtualEventAccessView as VirtualEventAccessView
 from .feedback_views import FeedbackListView, FeedbackCreateView, FeedbackDeleteView
+from .profile_Info_views import ProfileInfoView
