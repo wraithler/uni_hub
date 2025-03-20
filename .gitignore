@@ -6,6 +6,7 @@
 
 # Ignore all files in the migrations directory
 backend/api/migrations/*.py
+
 # But do not ignore __init__.py
 !backend/api/migrations/__init__.py
 
