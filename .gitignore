@@ -1,6 +1,9 @@
 # Ignore the environment file
 .env
 
+# Ignore __pycache__
+**/__pycache__/
+
 # Ignore all files in the migrations directory
 backend/api/migrations/*.py
 # But do not ignore __init__.py
