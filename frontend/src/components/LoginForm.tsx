@@ -32,11 +32,11 @@ export function AuthenticationForm(props: PaperProps) {
             terms: true,
         },
 
-        validate: {
-            email: (val) => (/^\S+@\S+$/.test(val) ? null : 'Invalid email'),
-            username: (val) => (val.length < 6 && type === 'register' ? 'Username must be longer than 6 characters' : null),
-            password: (val) => (val.length < 8 ? 'Password must be longer than 8 characters' : null),
-        },
+        // validate: {
+        //     email: (val) => (/^\S+@\S+$/.test(val) ? null : 'Invalid email'),
+        //     username: (val) => (val.length < 6 && type === 'register' ? 'Username must be longer than 6 characters' : null),
+        //     password: (val) => (val.length < 8 ? 'Password must be longer than 8 characters' : null),
+        // },
     });
 
     const handleSubmit = async (values: typeof form.values) => {
