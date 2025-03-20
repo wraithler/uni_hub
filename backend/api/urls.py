@@ -14,6 +14,9 @@ from api.views import (
     FeedbackDeleteView,
     CommunityCategoryListView,
     CommunityCategoryCreateView,
+    PostListView,
+    PostDetailView,
+    PostCreateView,
     CommunityCategoryDetailView,
     UserDetailView,
     EventListView,
@@ -25,7 +28,6 @@ from api.views import (
     VerifyEmailView,
     ProfileInfoView,
     UserNotificationPreferenceView,
-    
 )
 
 urlpatterns = [
@@ -63,6 +65,24 @@ urlpatterns = [
         UserDetailView.as_view(),
         name="user-detail",
     ),
+    path(
+        "posts/", 
+        PostListView.as_view(), 
+        name="post-list"
+    ),
+
+    path(
+        "posts/<int:pk>/", 
+        PostDetailView.as_view(), 
+        name="post-detail"
+    ),
+
+    path(
+        "posts/create/", 
+        PostCreateView.as_view(), 
+        name="post-create"
+    ),
+
     path(
         "search/",
         GlobalSearchView.as_view(),
