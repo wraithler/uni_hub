@@ -9,5 +9,8 @@ backend/api/migrations/*.py
 # Ignore the virtual environment directory
 .venv
 
+# Ignore .DS_Store file 
+.DS_Store
+
 # Ignore pyc files
 *.pyc
