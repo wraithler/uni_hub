@@ -14,7 +14,6 @@ from api.views import (
     PostListView,
     PostDetailView,
     PostCreateView,
-    CommentCreateView,
 )
 
 urlpatterns = [
@@ -67,9 +66,4 @@ urlpatterns = [
         name="post-create"
     ),
 
-    path(
-        "posts/<int:post_id>/comments/create/", 
-        CommentCreateView.as_view(), 
-        name="comment-create"
-    ),
 ]
