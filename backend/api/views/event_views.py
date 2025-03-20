@@ -3,13 +3,13 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
 from api.mixins import SearchMixin
-from api.models import Events, EventAttendance
+from api.models import Event, EventAttendance
 from api.pagination import EventPagination
 from api.serializers import EventSerializer, EventAttendanceSerializer
 
 
 class EventListView(SearchMixin, ListAPIView):
-    queryset = Events.objects.all()
+    queryset = Event.objects.all()
     serializer_class = EventSerializer
     pagination_class = EventPagination
 
@@ -20,7 +20,7 @@ class EventListView(SearchMixin, ListAPIView):
 
 
 class EventDetailView(RetrieveAPIView):
-    queryset = Events.objects.all()
+    queryset = Event.objects.all()
     serializer_class = EventSerializer
 
     authentication_classes = [JWTAuthentication]
@@ -28,7 +28,7 @@ class EventDetailView(RetrieveAPIView):
 
 
 class EventCreateView(CreateAPIView):
-    queryset = Events.objects.all()
+    queryset = Event.objects.all()
     serializer_class = EventSerializer
 
     authentication_classes = [JWTAuthentication]
@@ -44,7 +44,7 @@ class EventAttendanceView(CreateAPIView):
 
 
 class VirtualEventAccessView(RetrieveAPIView):
-    queryset = Events.objects.filter(virtual_event=True)
+    queryset = Event.objects.filter(virtual_event=True)
     serializer_class = EventSerializer
 
     authentication_classes = [JWTAuthentication]
