@@ -16,38 +16,50 @@ def post_create(
     created_by: BaseUser,
 ) -> Post:
     community = Community.objects.get(id=community_id)
-    
+
     if not community.is_member(created_by):
-        raise ApplicationError("User must be a member of the community to create a post")
-    
+        raise ApplicationError(
+            "User must be a member of the community to create a post"
+        )
+
     post = Post.objects.create(
         title=title,
         content=content,
         community=community,
         created_by=created_by,
     )
-    
+
     return post
 
 
 @transaction.atomic
 def post_update(*, post: Post, data) -> Post:
-    if not post.created_by == data.get('user', None) and not post.community.is_moderator(data.get('user', None)):
-        raise ApplicationError("Only the author or a community moderator can update this post")
-    
+    if not post.created_by == data.get(
+        "user", None
+    ) and not post.community.is_moderator(data.get("user", None)):
+        raise ApplicationError(
+            "Only the author or a community moderator can update this post"
+        )
+
     non_side_effect_fields: List[str] = ["title", "content"]
     post, has_updated = model_update(
         instance=post, fields=non_side_effect_fields, data=data
     )
-    
+
     return post
 
 
 @transaction.atomic
 def post_delete(*, post: Post, user: BaseUser) -> None:
-    if not post.created_by == user and not post.community.is_moderator(user) and not post.community.is_admin(user):
-        raise ApplicationError("Only the author, a community moderator, or admin can delete this post")
-    
+    if (
+        not post.created_by == user
+        and not post.community.is_moderator(user)
+        and not post.community.is_admin(user)
+    ):
+        raise ApplicationError(
+            "Only the author, a community moderator, or admin can delete this post"
+        )
+
     post.delete()
 
 
@@ -55,13 +67,13 @@ def post_delete(*, post: Post, user: BaseUser) -> None:
 def post_like(*, post: Post, user: BaseUser) -> None:
     if not post.community.is_member(user):
         raise ApplicationError("User must be a member of the community to like a post")
-    
+
     post.likes.get_or_create(user=user)
 
 
 @transaction.atomic
 def post_unlike(*, post: Post, user: BaseUser) -> None:
     like = post.likes.filter(user=user).first()
-    
+
     if like:
         like.delete()
