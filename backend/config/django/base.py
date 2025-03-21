@@ -20,6 +20,7 @@ LOCAL_APPS = [
     "apps.core.apps.CoreConfig",
     "apps.events.apps.EventsConfig",
     "apps.files.apps.FilesConfig",
+    "apps.feedback.apps.FeedbackConfig",
 ]  # TODO: Add others
 
 THIRD_PARTY_APPS = [
