@@ -20,6 +20,7 @@ LOCAL_APPS = [
     "apps.core.apps.CoreConfig",
     "apps.events.apps.EventsConfig",
     "apps.files.apps.FilesConfig",
+    "apps.posts.apps.PostsConfig",
     "apps.feedback.apps.FeedbackConfig",
 ]  # TODO: Add others
 
