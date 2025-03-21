@@ -9,5 +9,13 @@ class Feedback(BaseModel):
         "users.BaseUser", on_delete=models.CASCADE, null=True, blank=True
     )
     content = models.TextField()
-    rating = models.IntegerField(choices=[1, 2, 3, 4, 5])
     is_anonymous = models.BooleanField(default=False)
+
+    class Rating(models.IntegerChoices):
+        ONE = 1, "1 - Poor"
+        TWO = 2, "2 - Fair"
+        THREE = 3, "3 - Good"
+        FOUR = 4, "4 - Very Good"
+        FIVE = 5, "5 - Excellent"
+
+    rating = models.IntegerField(choices=Rating.choices, db_index=True)
