@@ -8,6 +8,6 @@ class PostListByCommunityTests(TestCase):
     def test_post_list_by_community(self):
         community = CommunityFactory.create()
         PostFactory.create_batch(10, community=community)
-        PostFactory.create_batch(5)  
+        PostFactory.create_batch(5)
         posts = post_list_by_community(community_id=community.id)
         self.assertEqual(posts.count(), 10)
