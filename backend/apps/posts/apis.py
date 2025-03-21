@@ -3,7 +3,6 @@ from rest_framework import serializers
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from apps.api.pagination import LimitOffsetPagination, get_paginated_response
-from apps.posts.models import Post
 from apps.posts.selectors import (
     post_get,
     post_list,
