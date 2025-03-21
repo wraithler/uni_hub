@@ -3,7 +3,11 @@ from typing import Optional
 from django.db.models import QuerySet
 
 from apps.common.utils import get_object
-from apps.communities.filters import CommunityFilter, CommunityCategoryFilter, CommunityInvitationFilter
+from apps.communities.filters import (
+    CommunityFilter,
+    CommunityCategoryFilter,
+    CommunityInvitationFilter,
+)
 from apps.communities.models import Community, CommunityCategory, CommunityInvitation
 
 

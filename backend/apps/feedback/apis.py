@@ -44,7 +44,7 @@ class FeedbackListApi(APIView):
         created_by = serializers.IntegerField(required=False)
         is_anonymous = serializers.BooleanField(required=False)
 
-    class OutputSerializer(serializers.Serializer):
+    class OutputSerializer(serializers.ModelSerializer):
         class Meta:
             model = Feedback
             fields = ("id", "created_by", "rating", "is_anonymous")
