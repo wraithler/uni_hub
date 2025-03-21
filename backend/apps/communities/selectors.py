@@ -3,8 +3,8 @@ from typing import Optional
 from django.db.models import QuerySet
 
 from apps.common.utils import get_object
-from apps.communities.filters import CommunityFilter, CommunityCategoryFilter
-from apps.communities.models import Community, CommunityCategory
+from apps.communities.filters import CommunityFilter, CommunityCategoryFilter, CommunityInvitationFilter
+from apps.communities.models import Community, CommunityCategory, CommunityInvitation
 
 
 def community_get(community_id) -> Optional[Community]:
@@ -33,3 +33,17 @@ def community_category_list(*, filters=None) -> QuerySet[CommunityCategory]:
     qs = CommunityCategory.objects.all()
 
     return CommunityCategoryFilter(filters, qs).qs
+
+
+def community_invitation_get(community_invitation_id) -> Optional[CommunityInvitation]:
+    community_invitation = get_object(CommunityInvitation, id=community_invitation_id)
+
+    return community_invitation
+
+
+def community_invitation_list(*, filters=None) -> QuerySet[CommunityInvitation]:
+    filters = filters or {}
+
+    qs = CommunityInvitation.objects.all()
+
+    return CommunityInvitationFilter(filters, qs).qs

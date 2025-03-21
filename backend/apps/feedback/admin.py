@@ -13,9 +13,7 @@ class FeedbackAdmin(admin.ModelAdmin):
 
     list_filter = ("rating",)
 
-    fieldsets = (
-        (None, {"fields": ("content", "rating", "is_anonymous")}),
-    )
+    fieldsets = ((None, {"fields": ("content", "rating", "is_anonymous")}),)
 
     readonly_fields = ("created_at", "updated_at", "created_by")
 
