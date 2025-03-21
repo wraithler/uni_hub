@@ -1,47 +1,55 @@
-import {Layout} from "@/components/Layout";
-import {Button, Combobox, Container, Divider, Grid, Group, Stack, Text} from "@mantine/core";
+import { Layout } from "@/components/Layout";
+import { Container, Divider, Flex, Grid, Pagination, Text } from "@mantine/core";
 import classes from './Communities.module.css';
 import cx from "clsx";
-import {Community} from "@/types";
-import {useEffect, useState} from "react";
-import api from "@/api";
+import useCommunities from "@/hooks/useCommunities";
+import CommunityListAccordion from "@/components/CommunityList";
+import { useEffect, useState } from "react";
 
-function CommunityStackItem({name, emoji, description}: Community) {
-    return (
-        <Container className={cx(classes.item)}>
-            <Group>
-                <Text fz={20}>{emoji}</Text>
-                <div>
-                    <Text fz="sm" fw={500}>
-                        {name}
-                    </Text>
-                    <Text fz="xs" opacity={0.6}>
-                        {description}
-                    </Text>
-                </div>
-                {/*<Button size="xs" color="blue">Join</Button>*/}
-            </Group>
-        </Container>
-    )
-}
-
-async function fetchData() {
-    try {
-        const response = await api.get(`/api/communities/`);
-        return response.data.results;
-    } catch (error) {
-        return [];
-    }
-}
+const PAGE_LIMIT = 10;
 
 export function CommunitiesPage() {
-    const [communities, setCommunities] = useState<Community[]>([]);
+    const [filters, setFilters] = useState<{
+        name: string;
+        category: string;
+        limit: number;
+        offset: number;
+    }>({
+        name: "",
+        category: "",
+        limit: PAGE_LIMIT,
+        offset: 0
+    });
+
+    const { communities, loading, error, fetchCommunities, paginationResponse } = useCommunities(filters);
 
     useEffect(() => {
-        fetchData().then((data) => {
-            setCommunities(data);
-        });
-    }, []);
+        fetchCommunities();
+    }, [filters, fetchCommunities]);
+
+    const handleFilterChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target;
+        setFilters((prevFilters) => ({
+            ...prevFilters,
+            [name]: value,
+        }));
+    };
+
+    const handlePageChange = (page: number) => {
+        const newOffset = (page - 1) * PAGE_LIMIT;
+
+        if (newOffset === paginationResponse?.offset) {
+            return;
+        }
+
+        setFilters((prevFilters) => ({
+            ...prevFilters,
+            offset: newOffset,
+        }));
+    };
+
+    // Calculate the current page from the offset if paginationResponse is available
+    const currentPage = paginationResponse ? (paginationResponse.offset / PAGE_LIMIT) + 1 : 1;
 
     return (
         <Layout>
@@ -52,13 +60,22 @@ export function CommunitiesPage() {
 
             <Grid>
                 <Grid.Col span="auto">
-                    <Stack>
-                        {communities.map((community) => (
-                            <CommunityStackItem key={community.id} {...community}/>
-                        ))}
-                    </Stack>
+                    {loading ? (
+                        <p>Loading</p>
+                    ) : (
+                        <Flex direction="column" gap="sm">
+                            <CommunityListAccordion communities={communities} />
+                            {paginationResponse && (
+                                <Pagination
+                                    total={Math.ceil(paginationResponse.count / PAGE_LIMIT)}
+                                    onChange={handlePageChange}
+                                    value={currentPage}
+                                />
+                            )}
+                        </Flex>
+                    )}
                 </Grid.Col>
-                <Divider orientation="vertical"/>
+                <Divider orientation="vertical" />
                 <Grid.Col span={4}>
                     <Container className={cx(classes.item)}>
                         <Text size="lg">Filters</Text>
@@ -66,5 +83,5 @@ export function CommunitiesPage() {
                 </Grid.Col>
             </Grid>
         </Layout>
-    )
+    );
 }

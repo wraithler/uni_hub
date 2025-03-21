@@ -1,6 +1,7 @@
 export interface User {
     id: number;
-    name: string;
+    first_name: string;
+    last_name: string;
     profile_picture?: string;
 }
 
@@ -19,6 +20,7 @@ export interface Community {
     updated_at: Date;
     created_by: User;
     emoji: string;
+    is_private: boolean;
 }
 
 export interface Message {
@@ -33,4 +35,13 @@ export interface WebSocketMessage {
     content?: string;
     message_id?: string;
     sender?: string;
+}
+
+export interface PaginationResponse {
+    limit: number;
+    offset: number;
+    count: number;
+    next: string;
+    previous: string;
+    results: Community[] | User[] | CommunityCategory[];
 }
