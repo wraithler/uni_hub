@@ -87,9 +87,9 @@ export function HeaderTabs() {
                                 className={cx(classes.user, {[classes.userActive]: userMenuOpened})}
                             >
                                 <Group gap={7}>
-                                    <Avatar src={user?.profile_picture} alt={user?.name} radius="xl" size={20}/>
+                                    <Avatar src={user?.profile_picture} alt={user?.first_name} radius="xl" size={20}/>
                                     <Text fw={500} size="sm" lh={1} mr={3}>
-                                        {user?.name}
+                                        {user?.first_name} {user?.last_name}
                                     </Text>
                                     <IconChevronDown size={12} stroke={1.5}/>
                                 </Group>
