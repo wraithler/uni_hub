@@ -10,7 +10,7 @@ from apps.feedback.services import feedback_create, feedback_update
 from apps.users.apis import UserDetailApi
 
 
-# TODO: Lock down to only admins
+# TODO: Lock down to only admins and the user who created the feedback
 
 
 class FeedbackDetailApi(APIView):
