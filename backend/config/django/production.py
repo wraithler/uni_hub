@@ -1,4 +1,5 @@
-from .base import *
+from config.env import env  # noqa
+from .base import *  # noqa
 
 DEBUG = env.bool("DJANGO_DEBUG", default=False)
 SECRET_KEY = env("SECRET_KEY")

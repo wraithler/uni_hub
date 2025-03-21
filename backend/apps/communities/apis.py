@@ -40,7 +40,7 @@ class CommunityListApi(APIView):
     class OutputSerializer(serializers.ModelSerializer):
         class Meta:
             model = Community
-            fields = ("id", "name", "description")
+            fields = ("id", "name", "description", "emoji", "is_private")
 
     def get(self, request):
         filters_serializer = self.FilterSerializer(data=request.query_params)
