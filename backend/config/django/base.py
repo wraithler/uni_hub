@@ -21,6 +21,7 @@ LOCAL_APPS = [
     "apps.events.apps.EventsConfig",
     "apps.files.apps.FilesConfig",
     "apps.posts.apps.PostsConfig",
+    "apps.feedback.apps.FeedbackConfig",
 ]  # TODO: Add others
 
 THIRD_PARTY_APPS = [
