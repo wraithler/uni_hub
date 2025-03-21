@@ -32,13 +32,13 @@ class Community(BaseModel):
         return self.name
 
     def is_member(self, user):
-        return self.memberships.filter(id=user.id).exists()
+        return self.memberships.filter(user=user).exists()
 
     def is_admin(self, user):
-        return self.memberships.filter(id=user.id, is_admin=True).exists()
+        return self.memberships.filter(user=user, is_admin=True).exists()
 
     def is_moderator(self, user):
-        return self.memberships.filter(id=user.id, is_moderator=True).exists()
+        return self.memberships.filter(user=user, is_moderator=True).exists()
 
 
 class CommunityMembership(BaseModel):
@@ -52,3 +52,17 @@ class CommunityMembership(BaseModel):
 
     class Meta:
         unique_together = ["user", "community"]
+
+
+class CommunityInvitation(BaseModel):
+    id = models.AutoField(primary_key=True)
+    community = models.ForeignKey(
+        Community, on_delete=models.CASCADE, related_name="invitations"
+    )
+    user = models.ForeignKey(
+        "users.BaseUser", on_delete=models.CASCADE, related_name="invitations"
+    )
+    is_accepted = models.BooleanField(default=False)
+
+    class Meta:
+        unique_together = ["community", "user"]

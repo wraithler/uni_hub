@@ -1,5 +1,3 @@
-from venv import create
-
 from django.http import Http404
 from rest_framework import serializers
 from rest_framework.response import Response
@@ -43,7 +41,7 @@ class EventListApi(APIView):
         name = serializers.CharField(required=False)
         description = serializers.CharField(required=False)
 
-    class OutputSerializer(serializers.Serializer):
+    class OutputSerializer(serializers.ModelSerializer):
         class Meta:
             model = Event
             fields = (
