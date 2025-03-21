@@ -1,7 +1,7 @@
 import {Layout} from "@/components/Layout";
 import {Carousel} from "@mantine/carousel";
 import {Badge, Card, Flex, Group, Text, Image, Avatar, AspectRatio} from "@mantine/core";
-import {IconHeart, IconMessageCircle} from "@tabler/icons-react";
+import {IconDots, IconHeart, IconMessageCircle} from "@tabler/icons-react";
 
 const mockdata = {
     "posts": [
@@ -176,10 +176,13 @@ export function HomePage() {
                     <Card withBorder radius="md" p="md">
                         <Card.Section p="sm">
                             <Group justify="space-between">
-                                <Text size="xl">{post.title}</Text>
-                                <Badge size="md" variant="outline">
-                                    {post.community_name}
-                                </Badge>
+                                <Flex direction="column">
+                                    <Text size="xs" opacity={0.6}>
+                                        {post.community_name.toUpperCase()}
+                                    </Text>
+                                    <Text size="lg">{post.title}</Text>
+                                </Flex>
+                                <IconDots/>
                             </Group>
                         </Card.Section>
 
@@ -208,7 +211,8 @@ export function HomePage() {
                         <Card.Section p="sm">
                             <Group justify="apart">
                                 <Group gap="sm">
-                                    <Avatar src={post.created_by_profile_picture} alt={post.created_by_name} radius="xl"
+                                    <Avatar src={post.created_by_profile_picture} alt={post.created_by_name}
+                                            radius="xl"
                                             size={20}/>
                                     <Text size="sm" opacity={0.6}>{post.created_by_name}</Text>
                                 </Group>
