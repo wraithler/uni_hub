@@ -6,7 +6,7 @@ from apps.communities.models import Community, CommunityCategory, CommunityInvit
 class CommunityFilter(django_filters.FilterSet):
     class Meta:
         model = Community
-        fields = ("id", "name", "description")
+        fields = ("id", "name", "description", "is_private", "category__name")
 
 
 class CommunityCategoryFilter(django_filters.FilterSet):
@@ -18,4 +18,4 @@ class CommunityCategoryFilter(django_filters.FilterSet):
 class CommunityInvitationFilter(django_filters.FilterSet):
     class Meta:
         model = CommunityInvitation
-        fields = ("id", "community__name")
+        fields = ("id", "user", "community")
