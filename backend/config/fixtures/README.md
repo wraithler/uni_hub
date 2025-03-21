@@ -12,6 +12,7 @@ Then copy the data from the `data.json` you want to the appropriate fixture file
 
 ## Loading Fixtures
 
-The fixtures will be automatically loaded when the application is started for the first time.
-
+```bash
+docker exec -it backend python manage.py loaddata users.json groups.json
+```
 
