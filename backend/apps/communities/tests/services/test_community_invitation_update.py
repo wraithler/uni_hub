@@ -1,7 +1,10 @@
 from django.test import TestCase
 
 from apps.communities.factories import CommunityFactory
-from apps.communities.services import community_invitation_create, community_invitation_update
+from apps.communities.services import (
+    community_invitation_create,
+    community_invitation_update,
+)
 from apps.users.factories import BaseUserFactory
 
 

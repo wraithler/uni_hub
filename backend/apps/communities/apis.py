@@ -37,7 +37,7 @@ class CommunityListApi(APIView):
         name = serializers.CharField(required=False)
         description = serializers.CharField(required=False)
 
-    class OutputSerializer(serializers.Serializer):
+    class OutputSerializer(serializers.ModelSerializer):
         class Meta:
             model = Community
             fields = ("id", "name", "description")

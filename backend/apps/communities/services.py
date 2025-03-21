@@ -82,7 +82,9 @@ def community_join(*, community: Community, user: BaseUser) -> Community:
 
 
 @transaction.atomic
-def community_invitation_create(*, community: Community, user: BaseUser) -> CommunityInvitation:
+def community_invitation_create(
+    *, community: Community, user: BaseUser
+) -> CommunityInvitation:
     invitation = CommunityInvitation.objects.create(community=community, user=user)
 
     return invitation

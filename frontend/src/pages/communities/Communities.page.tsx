@@ -1,5 +1,5 @@
 import {Layout} from "@/components/Layout";
-import {Button, Combobox, Container, Divider, Grid, Group, Stack, Text} from "@mantine/core";
+import {Container, Divider, Grid, Group, Stack, Text} from "@mantine/core";
 import classes from './Communities.module.css';
 import cx from "clsx";
 import {Community} from "@/types";
@@ -19,7 +19,6 @@ function CommunityStackItem({name, emoji, description}: Community) {
                         {description}
                     </Text>
                 </div>
-                {/*<Button size="xs" color="blue">Join</Button>*/}
             </Group>
         </Container>
     )
