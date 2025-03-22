@@ -42,7 +42,7 @@ export function AuthenticationForm(props: PaperProps) {
 
   const handleSubmit = async (values: typeof form.values) => {
     try {
-      const endPoint = type === 'login' ? '/api/auth/token/' : '/api/users/create/';
+      const endPoint = type === 'login' ? '/auth/token/' : '/users/create/';
       const response = await api.post(endPoint, values);
       if (type === 'login') {
         localStorage.setItem(ACCESS_TOKEN, response.data.access);
