@@ -17,12 +17,12 @@ def community_get(community_id) -> Optional[Community]:
     return community
 
 
-def community_list(*, filters=None) -> QuerySet[Community]:
+def community_list(*, filters=None, request=None) -> QuerySet[Community]:
     filters = filters or {}
 
     qs = Community.objects.all()
 
-    return CommunityFilter(filters, qs).qs
+    return CommunityFilter(filters, qs, request=request).qs
 
 
 def community_category_get(community_category_id) -> Optional[CommunityCategory]:
