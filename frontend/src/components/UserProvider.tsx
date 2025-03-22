@@ -1,8 +1,8 @@
 import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import api from '@/api';
 import { USER } from '@/constants';
 import { User } from '@/types';
+import api from '@/api';
 
 interface UserContextType {
   user: User | null;
@@ -26,7 +26,7 @@ export const UserProvider = ({ children }: UserProviderProps) => {
   useEffect(() => {
     async function fetchUser() {
       if (!user) {
-        const response = await api.get('/api/auth/me/');
+        const response = await api.get('/auth/me/');
 
         if (response.status === 200) {
           setUser(response.data);

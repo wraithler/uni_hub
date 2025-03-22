@@ -30,6 +30,8 @@ class GetPaginatedResponseTests(TestCase):
                             "id": self.communities[0].id,
                             "name": self.communities[0].name,
                             "description": self.communities[0].description,
+                            "emoji": self.communities[0].emoji,
+                            "is_private": self.communities[0].is_private,
                         }
                     ],
                 ),
@@ -55,6 +57,8 @@ class GetPaginatedResponseTests(TestCase):
                             "id": community.id,
                             "name": community.name,
                             "description": community.description,
+                            "emoji": community.emoji,
+                            "is_private": community.is_private,
                         }
                         for community in self.communities
                     ],

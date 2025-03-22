@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import { jwtDecode } from 'jwt-decode';
 import { Navigate } from 'react-router-dom';
-import api from '@/api';
 import { ACCESS_TOKEN, REFRESH_TOKEN } from '@/constants';
+import api from '@/api';
 import { UserProvider } from './UserProvider';
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
@@ -16,7 +16,7 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
     const refreshToken = localStorage.getItem(REFRESH_TOKEN);
 
     try {
-      const response = await api.post('api/auth/token/refresh/', {
+      const response = await api.post('/auth/token/refresh/', {
         refresh: refreshToken,
       });
 

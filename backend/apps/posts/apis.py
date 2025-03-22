@@ -3,9 +3,14 @@ from rest_framework import serializers
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from apps.api.pagination import LimitOffsetPagination, get_paginated_response
-from apps.posts.models import Post
-from apps.posts.selectors import post_get, post_list, post_list_by_community, post_list_by_user
+from apps.posts.selectors import (
+    post_get,
+    post_list,
+    post_list_by_community,
+    post_list_by_user,
+)
 from apps.posts.services import post_create, post_update, post_delete
+
 
 class PostDetailApi(APIView):
     class OutputSerializer(serializers.Serializer):
@@ -13,9 +18,9 @@ class PostDetailApi(APIView):
         title = serializers.CharField()
         content = serializers.CharField()
         created_at = serializers.DateTimeField()
-        created_by = serializers.IntegerField(source='created_by.id')
-        community = serializers.IntegerField(source='community.id')
-        community_name = serializers.CharField(source='community.name')
+        created_by = serializers.IntegerField(source="created_by.id")
+        community = serializers.IntegerField(source="community.id")
+        community_name = serializers.CharField(source="community.name")
 
     def get(self, request, post_id):
         post = post_get(post_id)
@@ -66,10 +71,7 @@ class PostCreateApi(APIView):
     def post(self, request):
         serializer = self.InputSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        post = post_create(
-            created_by=request.user,
-            **serializer.validated_data
-        )
+        post = post_create(created_by=request.user, **serializer.validated_data)
         data = PostDetailApi.OutputSerializer(post).data
         return Response(data)
 

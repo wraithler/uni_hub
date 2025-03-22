@@ -6,16 +6,18 @@ from rest_framework.views import APIView
 from apps.api.pagination import LimitOffsetPagination, get_paginated_response
 from apps.communities.models import Community
 from apps.communities.selectors import community_get, community_list
-from apps.communities.services import community_create, community_update
+from apps.communities.services import community_create, community_update, community_join
 from apps.events.apis import EventListApi
 from apps.events.selectors import event_list
 
 
 class CommunityDetailApi(APIView):
     class OutputSerializer(serializers.Serializer):
+        id = serializers.IntegerField()
         name = serializers.CharField()
         description = serializers.CharField()
         emoji = serializers.CharField()
+        is_private = serializers.BooleanField()
 
     def get(self, request, community_id):
         community = community_get(community_id)
@@ -36,6 +38,8 @@ class CommunityListApi(APIView):
         id = serializers.IntegerField(required=False)
         name = serializers.CharField(required=False)
         description = serializers.CharField(required=False)
+        is_private = serializers.BooleanField(required=False)
+        is_member = serializers.BooleanField(required=False)
 
     class OutputSerializer(serializers.ModelSerializer):
         class Meta:
@@ -46,7 +50,7 @@ class CommunityListApi(APIView):
         filters_serializer = self.FilterSerializer(data=request.query_params)
         filters_serializer.is_valid(raise_exception=True)
 
-        communities = community_list(filters=filters_serializer.validated_data)
+        communities = community_list(filters=filters_serializer.validated_data, request=request)
 
         return get_paginated_response(
             pagination_class=self.Pagination,
@@ -112,3 +116,17 @@ class CommunityEventsListApi(APIView):
             request=request,
             view=self,
         )
+
+
+class CommunityJoinApi(APIView):
+    def post(self, request, community_id):
+        community = community_get(community_id)
+
+        if community is None:
+            raise Http404
+
+        user = request.user
+
+        community_join(community=community, user=user)
+
+        return Response()

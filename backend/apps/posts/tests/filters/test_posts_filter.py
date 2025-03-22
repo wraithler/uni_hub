@@ -25,7 +25,7 @@ class PostFilterTests(TestCase):
     def test_post_filter_by_created_by(self):
         user = BaseUserFactory.create()
         PostFactory.create_batch(5, created_by=user)
-        PostFactory.create_batch(5)  
+        PostFactory.create_batch(5)
 
         posts = post_list(filters={"created_by": user})
 
@@ -34,7 +34,7 @@ class PostFilterTests(TestCase):
     def test_post_filter_by_community(self):
         community = CommunityFactory.create()
         PostFactory.create_batch(10, community=community)
-        PostFactory.create_batch(5)  
+        PostFactory.create_batch(5)
 
         posts = post_list(filters={"community__name": community.name})
 
@@ -44,8 +44,10 @@ class PostFilterTests(TestCase):
         community = CommunityFactory.create()
         user = BaseUserFactory.create()
         PostFactory.create_batch(5, community=community, created_by=user)
-        PostFactory.create_batch(10)  
+        PostFactory.create_batch(10)
 
-        posts = post_list(filters={"community__name": community.name, "created_by": user})
+        posts = post_list(
+            filters={"community__name": community.name, "created_by": user}
+        )
 
         self.assertEqual(len(posts), 5)
