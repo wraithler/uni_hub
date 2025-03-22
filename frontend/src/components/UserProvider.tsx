@@ -26,7 +26,7 @@ export const UserProvider = ({ children }: UserProviderProps) => {
   useEffect(() => {
     async function fetchUser() {
       if (!user) {
-        const response = await api.get('/api/auth/me/');
+        const response = await api.get('/auth/me/');
 
         if (response.status === 200) {
           setUser(response.data);
