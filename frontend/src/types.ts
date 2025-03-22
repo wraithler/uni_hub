@@ -1,47 +1,58 @@
 export interface User {
-    id: number;
-    first_name: string;
-    last_name: string;
-    profile_picture?: string;
+  id: number;
+  first_name: string;
+  last_name: string;
+  profile_picture?: string;
 }
 
 export interface CommunityCategory {
-    id: number;
-    name: string;
-    description: string;
+  id: number;
+  name: string;
+  description: string;
 }
 
 export interface Community {
-    id: number;
-    name: string;
-    description: string;
-    category: CommunityCategory;
-    created_at: Date;
-    updated_at: Date;
-    created_by: User;
-    emoji: string;
-    is_private: boolean;
+  id: number;
+  name: string;
+  description: string;
+  category: CommunityCategory;
+  created_at: Date;
+  updated_at: Date;
+  created_by: User;
+  emoji: string;
+  is_private: boolean;
 }
 
+export type PaginationFilters = {
+  limit?: number;
+  offset?: number;
+};
+
+export type CommunityFilters = PaginationFilters & {
+  name?: string;
+  category?: string;
+  is_private?: boolean;
+};
+
 export interface Message {
-    id: string;
-    sender: User;
-    content: string;
-    created_at: Date;
+  id: string;
+  sender: User;
+  content: string;
+  created_at: Date;
 }
 
 export interface WebSocketMessage {
-    type: "message" | "typing" | "seen";
-    content?: string;
-    message_id?: string;
-    sender?: string;
+  type: 'message' | 'typing' | 'seen';
+  content?: string;
+  message_id?: string;
+  sender?: string;
 }
 
 export interface PaginationResponse {
-    limit: number;
-    offset: number;
-    count: number;
-    next: string;
-    previous: string;
-    results: Community[] | User[] | CommunityCategory[];
+  limit: number;
+  offset: number;
+  count: number;
+  next: string;
+  previous: string;
+  results: Community[] | User[] | CommunityCategory[];
 }
