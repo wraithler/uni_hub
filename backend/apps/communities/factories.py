@@ -21,6 +21,7 @@ class CommunityFactory(factory.django.DjangoModelFactory):
     category = factory.SubFactory(CommunityCategoryFactory)
     created_by = factory.SubFactory(BaseUserFactory)
     emoji = factory.Faker("emoji")
+    is_private = factory.Faker("boolean")
 
     @factory.post_generation
     def add_membership(self, create, extracted, **kwargs):
