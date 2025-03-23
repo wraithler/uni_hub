@@ -43,7 +43,9 @@ class Community(BaseModel):
 
 class CommunityMembership(BaseModel):
     id = models.AutoField(primary_key=True)
-    user = models.ForeignKey("users.BaseUser", on_delete=models.CASCADE)
+    user = models.ForeignKey(
+        "users.BaseUser", on_delete=models.CASCADE, related_name="memberships"
+    )
     community = models.ForeignKey(
         Community, on_delete=models.CASCADE, related_name="memberships"
     )

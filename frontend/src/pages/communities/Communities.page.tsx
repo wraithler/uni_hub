@@ -1,6 +1,6 @@
+import { Text } from '@mantine/core';
+import CommunityList from '@/components/CommunityList';
 import { Layout } from '@/components/Layout';
-import CommunityList from "@/components/CommunityList";
-import { Text } from "@mantine/core";
 
 export function CommunitiesPage() {
   return (
@@ -14,7 +14,7 @@ export function CommunitiesPage() {
         </Text>
       </div>
 
-      <CommunityList/>
+      <CommunityList />
     </Layout>
   );
 }

@@ -1,8 +1,8 @@
 import { useCallback, useState } from 'react';
 import { IconArrowRight, IconSearch } from '@tabler/icons-react';
 import { ActionIcon, Autocomplete, AutocompleteProps, useMantineTheme } from '@mantine/core';
-import { debounce } from '@/utils';
 import api from '@/api';
+import { debounce } from '@/utils';
 
 interface SearchBarProps {
   endpoint: string;
