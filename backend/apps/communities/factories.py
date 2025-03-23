@@ -6,6 +6,7 @@ from apps.users.factories import BaseUserFactory
 
 fake = Faker()
 
+
 class CommunityCategoryFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = CommunityCategory
