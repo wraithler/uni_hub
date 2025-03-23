@@ -9,8 +9,8 @@ class CommunityFilterTests(TestCase):
         CommunityFactory.create_batch(10, is_private=False)
         CommunityFactory.create_batch(10, is_private=True)
 
-        private_communities = community_list(filters={"is_private": True})
-        public_communities = community_list(filters={"is_private": False})
+        private_communities = community_list(filters={"visibility": "private"})
+        public_communities = community_list(filters={"visibility": "public"})
 
         self.assertEqual(len(private_communities), 10)
         self.assertEqual(len(public_communities), 10)
@@ -37,10 +37,10 @@ class CommunityFilterTests(TestCase):
         CommunityFactory.create_batch(10, category=category, is_private=True)
 
         private_communities = community_list(
-            filters={"category": category, "is_private": True}
+            filters={"category": category, "visibility": "private"}
         )
         public_communities = community_list(
-            filters={"category": category, "is_private": False}
+            filters={"category": category, "visibility": "public"}
         )
 
         self.assertEqual(len(private_communities), 10)

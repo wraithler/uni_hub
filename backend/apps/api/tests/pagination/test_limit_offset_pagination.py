@@ -32,6 +32,7 @@ class GetPaginatedResponseTests(TestCase):
                             "description": self.communities[0].description,
                             "emoji": self.communities[0].emoji,
                             "is_private": self.communities[0].is_private,
+                            "member_count": self.communities[0].memberships.count(),
                         }
                     ],
                 ),
@@ -59,6 +60,7 @@ class GetPaginatedResponseTests(TestCase):
                             "description": community.description,
                             "emoji": community.emoji,
                             "is_private": community.is_private,
+                            "member_count": community.memberships.count(),
                         }
                         for community in self.communities
                     ],
