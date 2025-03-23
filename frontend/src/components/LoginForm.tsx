@@ -15,10 +15,10 @@ import {
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { upperFirst, useToggle } from '@mantine/hooks';
+import api from '@/api';
 import { GoogleButton } from '@/components/Buttons/GoogleButton';
 import { MicrosoftButton } from '@/components/Buttons/MicrosoftButton';
 import { ACCESS_TOKEN, REFRESH_TOKEN } from '@/constants';
-import api from '@/api';
 
 export function AuthenticationForm(props: PaperProps) {
   const [type, toggle] = useToggle(['login', 'register']);
@@ -33,6 +33,7 @@ export function AuthenticationForm(props: PaperProps) {
       terms: true,
     },
 
+    // TODO: SETUP VALIDATION & PASSWORD STRENGTH INDICATOR
     // validate: {
     //     email: (val) => (/^\S+@\S+$/.test(val) ? null : 'Invalid email'),
     //     username: (val) => (val.length < 6 && type === 'register' ? 'Username must be longer than 6 characters' : null),

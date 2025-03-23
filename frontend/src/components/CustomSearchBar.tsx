@@ -2,9 +2,9 @@ import { useCallback, useEffect, useState } from 'react';
 import { IconSearch } from '@tabler/icons-react';
 import { useNavigate } from 'react-router-dom';
 import { Combobox, Divider, Group, InputBase, Loader, Text, useCombobox } from '@mantine/core';
+import api from '@/api';
 import { Community, User } from '@/types';
 import { debounce } from '@/utils';
-import api from '@/api';
 
 interface SelectOptionProps {
   id: number;

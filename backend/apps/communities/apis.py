@@ -38,19 +38,38 @@ class CommunityListApi(APIView):
         id = serializers.IntegerField(required=False)
         name = serializers.CharField(required=False)
         description = serializers.CharField(required=False)
-        is_private = serializers.BooleanField(required=False)
-        is_member = serializers.BooleanField(required=False)
+        visibility = serializers.ChoiceField(
+            choices=["public", "private", "all"], required=False
+        )
+        sort_by = serializers.CharField(required=False)
+        membership_status = serializers.ChoiceField(
+            choices=["member", "not_member", "all"], required=False
+        )
 
     class OutputSerializer(serializers.ModelSerializer):
+        member_count = serializers.SerializerMethodField(method_name="get_member_count")
+
         class Meta:
             model = Community
-            fields = ("id", "name", "description", "emoji", "is_private")
+            fields = (
+                "id",
+                "name",
+                "description",
+                "emoji",
+                "is_private",
+                "member_count",
+            )
+
+        def get_member_count(self, obj):
+            return obj.memberships.count()  # todo: refactor this to elsewhere
 
     def get(self, request):
         filters_serializer = self.FilterSerializer(data=request.query_params)
         filters_serializer.is_valid(raise_exception=True)
 
-        communities = community_list(filters=filters_serializer.validated_data, request=request)
+        communities = community_list(
+            filters=filters_serializer.validated_data, request=request
+        )
 
         return get_paginated_response(
             pagination_class=self.Pagination,
