@@ -1,5 +1,5 @@
 import { Text } from '@mantine/core';
-import CommunityList from '@/components/CommunityList';
+import CommunityList from '@/components/Communities/CommunityList';
 import { Layout } from '@/components/Layout';
 
 export function CommunitiesPage() {
