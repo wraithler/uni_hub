@@ -102,8 +102,7 @@ class PostCommentsListApi(APIView):
         default_limit = 1
 
     def get(self, request, post_id):
-        filters = {}
-        comments = comment_list_by_post(post_id=post_id, filters=filters)
+        comments = comment_list_by_post(post_id=post_id)
         return get_paginated_response(
             pagination_class=self.Pagination,
             serializer_class=CommentListApi.OutputSerializer,
@@ -118,8 +117,7 @@ class UserCommentsListApi(APIView):
         default_limit = 1
 
     def get(self, request, user_id):
-        filters = {}
-        comments = comment_list_by_user(user_id=user_id, filters=filters)
+        comments = comment_list_by_user(user_id=user_id)
         return get_paginated_response(
             pagination_class=self.Pagination,
             serializer_class=CommentListApi.OutputSerializer,

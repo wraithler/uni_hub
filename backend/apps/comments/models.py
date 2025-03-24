@@ -14,7 +14,7 @@ class Comment(BaseModel):
     post = models.ForeignKey(
         Post, 
         on_delete=models.CASCADE, 
-        related_name="comments_on_post" 
+        related_name="comments" 
     )
     
     class Meta:
@@ -27,27 +27,8 @@ class Comment(BaseModel):
     @property
     def hours_since_commented(self):
         return (timezone.now() - self.created_at).total_seconds() // 3600
-    
-    def score(self, user):
-        w1, w2, w3, w4 = 0.3, 0.2, 0.2, 0.3
-        
-        engagement_score = (self.likes.count() * 3)
-        relevance_score = 100 if self.post.community.is_member(user) else 0
-        connection_score = (
-            150 if user.friends.filter(id=self.created_by.id).exists() else 0
-        )
-        
-        scaling_factor = max(1, engagement_score / 100)
-        recency_score = math.exp(-self.hours_since_commented / 6)
-        
-        return (
-            w1 * scaling_factor
-            + w2 * recency_score
-            + w3 * relevance_score
-            + w4 * connection_score
-        )
 
-class CommentLike(models.Model):
+class Like(models.Model):
     user = models.ForeignKey(
         "users.BaseUser", 
         on_delete=models.CASCADE,
@@ -62,3 +43,12 @@ class CommentLike(models.Model):
     class Meta:
         unique_together = ["user", "comment"]
         verbose_name_plural = "Comment Likes"
+
+
+class PostLike(models.Model):
+    id = models.AutoField(primary_key=True)
+    user = models.ForeignKey("users.BaseUser", on_delete=models.CASCADE)
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="likes")
+
+    class Meta:
+        unique_together = ["user", "post"]
