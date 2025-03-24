@@ -43,33 +43,3 @@ class Post(BaseModel):
             + w3 * relevance_score
             + w4 * connection_score
         )
-
-
-class PostLike(models.Model):
-    id = models.AutoField(primary_key=True)
-    user = models.ForeignKey("users.BaseUser", on_delete=models.CASCADE)
-    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="likes")
-
-    class Meta:
-        unique_together = ["user", "post"]
-
-
-# class PostUnlike(models.Model):
-#     id = models.AutoField(primary_key=True)
-#     user = models.ForeignKey("users.BaseUser", on_delete=models.CASCADE)
-#     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="unlikes")
-
-#     class Meta:
-#         unique_together = ["user", "post"]
-
-
-class PostComment(models.Model):
-    id = models.AutoField(primary_key=True)
-    content = models.TextField()
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-    created_by = models.ForeignKey("users.BaseUser", on_delete=models.CASCADE)
-    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="comments")
-
-    class Meta:
-        ordering = ["-created_at"]
