@@ -1,6 +1,5 @@
 import { ReactNode } from 'react';
 import { Box } from '@mantine/core';
-import { SearchBar } from '@/components/CustomSearchBar';
 import { HeaderTabs } from '@/components/Header/HeaderTabs';
 
 export function Layout({ children }: { children: ReactNode }) {
@@ -13,7 +12,7 @@ export function Layout({ children }: { children: ReactNode }) {
         display="grid"
         style={{ gap: '16px' }}
       >
-        <SearchBar />
+        {/*<SearchBar />*/}
         {children}
       </Box>
     </div>

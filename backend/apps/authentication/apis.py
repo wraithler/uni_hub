@@ -46,7 +46,16 @@ class UserSessionLogoutApi(APIView):
 
 
 class UserMeApi(ApiAuthMixin, APIView):
+    class OutputSerializer(serializers.Serializer):
+        username = serializers.CharField()
+        email = serializers.EmailField()
+        first_name = serializers.CharField()
+        last_name = serializers.CharField()
+        is_admin = serializers.BooleanField()
+        is_superuser = serializers.BooleanField()
+        is_staff = serializers.BooleanField()
+
     def get(self, request):
-        data = user_get_login_data(user=request.user)
+        data = self.OutputSerializer(request.user).data
 
         return Response(data)

@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import Chat from '@/components/Chat';
 import { Layout } from '@/components/Layout';
-import { useUser } from '@/components/UserProvider';
+import { useUser } from '@/components/Authentication/UserProvider';
 
 export function ChatPage() {
   const { user } = useUser();

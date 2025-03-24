@@ -41,6 +41,7 @@ export function usePaginationAndFilters<T extends PaginationResponse>({
     setFilters({
       ...filters,
       [name]: value,
+      offset: 0,
     });
   };
 

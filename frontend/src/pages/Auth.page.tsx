@@ -1,5 +1,5 @@
 import { Box } from '@mantine/core';
-import { AuthenticationForm } from '@/components/LoginForm';
+import { AuthenticationForm } from '@/components/Authentication/AuthenticationForm';
 
 export function AuthPage() {
   return (

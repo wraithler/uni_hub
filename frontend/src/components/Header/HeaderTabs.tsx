@@ -9,6 +9,7 @@ import {
   IconStar,
 } from '@tabler/icons-react';
 import cx from 'clsx';
+import { useIntl } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
 import {
   Avatar,
@@ -26,8 +27,9 @@ import {
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import logo from '@/assets/images/logo.png';
-import { useUser } from '@/components/UserProvider';
+import { useUser } from '@/components/Authentication/UserProvider';
 import classes from './HeaderTabs.module.css';
+import LanguageSelect from "@/components/Locale/LanguageSelect";
 
 const tabs: Record<string, string> = {
   Home: '/',
@@ -44,6 +46,7 @@ export function HeaderTabs() {
   const { user, logout } = useUser();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<string | undefined>(undefined);
+  const intl = useIntl();
 
   useEffect(() => {
     const currentTab = Object.keys(tabs).find((key: string) => tabs[key] === location.pathname);
@@ -57,7 +60,7 @@ export function HeaderTabs() {
 
   const items = Object.entries(tabs).map(([name, to]) => (
     <Tabs.Tab key={name} value={name} onClick={() => navigate(to)}>
-      {name}
+      {intl.formatMessage({ id: name.toLowerCase() })}
     </Tabs.Tab>
   ));
 
@@ -73,6 +76,7 @@ export function HeaderTabs() {
           </Group>
 
           <Burger opened={opened} onClick={toggle} hiddenFrom="xs" size="sm" />
+          <LanguageSelect/>
 
           <Menu
             width={260}
@@ -81,6 +85,7 @@ export function HeaderTabs() {
             onClose={() => setUserMenuOpened(false)}
             onOpen={() => setUserMenuOpened(true)}
             withinPortal
+            trigger="hover"
           >
             <Menu.Target>
               <UnstyledButton
@@ -94,7 +99,7 @@ export function HeaderTabs() {
                     size={20}
                   />
                   <Text fw={500} size="sm" lh={1} mr={3}>
-                    {user?.first_name} {user?.last_name}
+                    Archie Jarvis
                   </Text>
                   <IconChevronDown size={12} stroke={1.5} />
                 </Group>

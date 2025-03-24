@@ -1,5 +1,5 @@
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
-import ProtectedRoute from '@/components/ProtectedRoute';
+import ProtectedRoute from '@/components/Authentication/ProtectedRoute';
 import { ChatPage } from '@/pages/Chat.page';
 import { CommunitiesPage } from '@/pages/communities/Communities.page';
 import { NotFoundPage } from '@/pages/not_found/NotFound.page';
