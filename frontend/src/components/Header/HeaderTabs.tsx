@@ -29,7 +29,7 @@ import { useDisclosure } from '@mantine/hooks';
 import logo from '@/assets/images/logo.png';
 import { useUser } from '@/components/Authentication/UserProvider';
 import classes from './HeaderTabs.module.css';
-import LanguageSelect from "@/components/Locale/LanguageSelect";
+import LanguageSelect from "@/components/Localisation/LanguageSelect";
 
 const tabs: Record<string, string> = {
   Home: '/',

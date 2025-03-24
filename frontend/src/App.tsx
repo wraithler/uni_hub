@@ -2,7 +2,7 @@ import '@mantine/core/styles.css';
 import '@mantine/carousel/styles.css';
 
 import { MantineProvider } from '@mantine/core';
-import { LocaleProvider } from '@/components/Locale/LocaleContext';
+import { LocaleProvider } from '@/components/Localisation/LocaleContext';
 import { Router } from './Router';
 import { theme } from './theme';
 
