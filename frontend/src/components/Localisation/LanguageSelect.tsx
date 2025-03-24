@@ -1,6 +1,6 @@
 import { useContext } from 'react';
 import { Select } from '@mantine/core';
-import { LocaleContext, SupportedLocales } from '@/components/Locale/LocaleContext';
+import { LocaleContext, SupportedLocales } from '@/components/Localisation/LocaleContext';
 
 const LanguageSelector = () => {
   const { locale, setLocale, localeOptions } = useContext(LocaleContext);
