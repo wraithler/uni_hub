@@ -11,6 +11,9 @@ from apps.comments.selectors import (
     comment_list_by_user,
 )
 from apps.comments.services import comment_create, comment_update, comment_delete
+from apps.posts.models import Post
+from apps.posts.selectors import post_get
+from apps.comments.services import post_like_create, comment_like_create
 
 
 class CommentDetailApi(APIView):
@@ -125,3 +128,51 @@ class UserCommentsListApi(APIView):
             request=request,
             view=self,
         )
+
+
+class PostLikeCreateApi(APIView):
+    class InputSerializer(serializers.Serializer):
+        post_id = serializers.IntegerField()
+
+    def post(self, request):
+        serializer = self.InputSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        post = post_get(serializer.validated_data['post_id'])
+        if post is None:
+            raise Http404
+
+        like = post_like_create(
+            post=post, 
+            created_by=request.user
+        )
+        
+        return Response({
+            'id': like.id,
+            'post_id': like.post.id,
+            'created_by_id': like.created_by.id
+        }, status=201)
+
+
+class CommentLikeCreateApi(APIView):
+    class InputSerializer(serializers.Serializer):
+        comment_id = serializers.IntegerField()
+
+    def post(self, request):
+        serializer = self.InputSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        comment = comment_get(serializer.validated_data['comment_id'])
+        if comment is None:
+            raise Http404
+
+        like = comment_like_create(
+            comment=comment, 
+            created_by=request.user
+        )
+        
+        return Response({
+            'id': like.id,
+            'comment_id': like.comment.id,
+            'created_by_id': like.created_by.id
+        }, status=201)
