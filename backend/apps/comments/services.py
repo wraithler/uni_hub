@@ -1,7 +1,7 @@
 from typing import List
 from django.db import transaction
 from apps.common.services import model_update
-from apps.comments.models import Comment
+from apps.comments.models import Comment, Like, PostLike
 from apps.posts.models import Post
 from apps.core.exceptions import ApplicationError
 from apps.users.models import BaseUser
@@ -42,6 +42,7 @@ def comment_update(*, comment: Comment, data) -> Comment:
     )
     return comment
 
+
 @transaction.atomic
 def comment_delete(*, comment: Comment, user: BaseUser) -> None:
     if (
@@ -54,16 +55,48 @@ def comment_delete(*, comment: Comment, user: BaseUser) -> None:
         )
     comment.delete()
 
-@transaction.atomic
-def comment_like(*, comment: Comment, user: BaseUser) -> None:
-    if not comment.post.community.is_member(user):
-        raise ApplicationError("User must be a member of the community to like a comment")
-    
-    comment.likes.get_or_create(user=user)
 
 @transaction.atomic
-def comment_unlike(*, comment: Comment, user: BaseUser) -> None:
-    like = comment.likes.filter(user=user).first()
+def comment_like_create(*, comment: Comment, user: BaseUser) -> Like:
+    if not comment.post.community.is_member(user):
+        raise ApplicationError(
+            "User must be a member of the community to like a comment"
+        )
     
-    if like:
-        like.delete()
+    existing_like, created = Like.objects.get_or_create(
+        comment=comment, 
+        user=user
+    )
+    
+    return existing_like
+
+
+@transaction.atomic
+def comment_like_delete(*, comment: Comment, user: BaseUser) -> None:
+    Like.objects.filter(
+        comment=comment, 
+        user=user
+    ).delete()
+
+
+@transaction.atomic
+def post_like_create(*, post: Post, user: BaseUser) -> PostLike:
+    if not post.community.is_member(user):
+        raise ApplicationError(
+            "User must be a member of the community to like a post"
+        )
+
+    existing_like, created = PostLike.objects.get_or_create(
+        post=post, 
+        user=user
+    )
+    
+    return existing_like
+
+
+@transaction.atomic
+def post_like_delete(*, post: Post, user: BaseUser) -> None:
+    PostLike.objects.filter(
+        post=post, 
+        user=user
+    ).delete()
