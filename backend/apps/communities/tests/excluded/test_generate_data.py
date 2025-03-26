@@ -1,11 +1,44 @@
 from unittest import skip, TestCase  # noqa
 
-from apps.communities.factories import CommunityFactory, CommunityTagFactory
-from apps.posts.factories import PostFactory
+from apps.communities.services import community_create, community_tag_create, community_category_create
+from apps.users.models import BaseUser
 
 
-# @skip("Only for development purposes")
+@skip("Only for development purposes")
 class GenerateDataTests(TestCase):
     def test_generate_data(self):
-        community = CommunityFactory.create(add_tags=CommunityTagFactory.create_batch(3))
-        PostFactory.create_batch(10, community=community)
+        community_create(
+            name="Computer Science Society",
+            description="A community for computer science enthusiasts",
+            tags=[
+                community_tag_create(name="Programming"),
+                community_tag_create(name="Technology"),
+                community_tag_create(name="Research"),
+            ],
+            created_by=BaseUser.objects.first(),
+            category=community_category_create(name="Academic"),
+        )
+
+        community_create(
+            name="Environmental Action",
+            description="Working together to promote sustainability on campus",
+            tags=[
+                community_tag_create(name="Sustainability"),
+                community_tag_create(name="Activism"),
+                community_tag_create(name="Environment"),
+            ],
+            created_by=BaseUser.objects.first(),
+            category=community_category_create(name="Cultural")
+        )
+
+        community_create(
+            name="Campus Music Collective",
+            description="A community for musicians and music lovers",
+            tags=[
+                community_tag_create(name="Music"),
+                community_tag_create(name="Performance"),
+                community_tag_create(name="Collaboration"),
+            ],
+            created_by=BaseUser.objects.first(),
+            category=community_category_create(name="Interest")
+        )

@@ -1,6 +1,6 @@
 import django_filters
 
-from apps.communities.models import Community, CommunityTags, CommunityInvitation
+from apps.communities.models import Community, CommunityTag, CommunityInvitation
 
 
 class CommunityFilter(django_filters.FilterSet):
@@ -11,7 +11,7 @@ class CommunityFilter(django_filters.FilterSet):
 
 class CommunityCategoryFilter(django_filters.FilterSet):
     class Meta:
-        model = CommunityTags
+        model = CommunityTag
         fields = ("id", "name",)
 
 

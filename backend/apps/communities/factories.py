@@ -1,7 +1,7 @@
 import factory
 from faker import Faker
 
-from apps.communities.models import CommunityTags, Community, CommunityInvitation, CommunityCategory
+from apps.communities.models import CommunityTag, Community, CommunityInvitation, CommunityCategory
 from apps.users.factories import BaseUserFactory
 
 fake = Faker()
@@ -16,7 +16,7 @@ class CommunityCategoryFactory(factory.django.DjangoModelFactory):
 
 class CommunityTagFactory(factory.django.DjangoModelFactory):
     class Meta:
-        model = CommunityTags
+        model = CommunityTag
 
     name = factory.Sequence(lambda n: f"{fake.sentence(nb_words=3)[:20]} {n}")
 

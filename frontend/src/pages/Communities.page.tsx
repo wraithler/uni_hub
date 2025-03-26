@@ -122,7 +122,7 @@ export default function CommunitiesPage() {
                 />
               ))
             ) : (
-              <div className="flex flex-col items-center justify-center py-12 text-center">
+              <div className="flex flex-col items-center justify-center py-12 text-center col-span-3">
                 <Users className="w-12 h-12 text-muted-foreground mb-4" />
                 <h3 className="text-lg font-medium mb-2">
                   No featured communities

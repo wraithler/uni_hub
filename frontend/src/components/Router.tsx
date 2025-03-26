@@ -5,6 +5,7 @@ import CommunitiesPage from "@/pages/Communities.page.tsx";
 import CommunityPage from "@/pages/Community.page.tsx";
 import { UserProvider } from "@/components/UserProvider.tsx";
 import NotFoundPage from "@/pages/NotFound.page.tsx";
+import CommunityCreatePage from "@/pages/CommunityCreate.Page.tsx";
 
 const router = createBrowserRouter([
   {
@@ -47,6 +48,14 @@ const router = createBrowserRouter([
       </UserProvider>
     ),
   },
+  {
+    path: "/communities/create",
+    element: (
+        <UserProvider>
+          <CommunityCreatePage/>
+        </UserProvider>
+    )
+  }
 ]);
 
 export function Router() {
