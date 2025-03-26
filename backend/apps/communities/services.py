@@ -3,22 +3,22 @@ from typing import List
 from django.db import transaction
 
 from apps.common.services import model_update
-from apps.communities.models import CommunityCategory, Community, CommunityInvitation
+from apps.communities.models import CommunityTags, Community, CommunityInvitation
 from apps.core.exceptions import ApplicationError
 from apps.users.models import BaseUser
 
 
 @transaction.atomic
-def community_category_create(*, name: str, description: str) -> CommunityCategory:
-    category = CommunityCategory.objects.create(name=name, description=description)
+def community_category_create(*, name: str, description: str) -> CommunityTags:
+    category = CommunityTags.objects.create(name=name, description=description)
 
     return category
 
 
 @transaction.atomic
 def community_category_update(
-    *, community_category: CommunityCategory, data
-) -> CommunityCategory:
+    *, community_category: CommunityTags, data
+) -> CommunityTags:
     non_side_effect_fields: List[str] = ["name", "description"]
 
     community_category, has_updated = model_update(
@@ -33,18 +33,17 @@ def community_create(
     *,
     name: str,
     description: str,
-    category: CommunityCategory,
+    categories: List[CommunityTags],
     created_by: BaseUser,
     emoji: str = None,
 ) -> Community:
     community = Community.objects.create(
         name=name,
         description=description,
-        category=category,
         created_by=created_by,
         emoji=emoji,
     )
-
+    community.categories.add(*categories)
     community.memberships.create(user=created_by)
 
     return community

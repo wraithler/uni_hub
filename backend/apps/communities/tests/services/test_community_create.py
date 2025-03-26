@@ -8,21 +8,20 @@ from apps.users.factories import BaseUserFactory
 
 class CommunityCreateTests(TestCase):
     def test_community_create(self):
-        category = CommunityCategoryFactory.create()
         user = BaseUserFactory.create()
         community = community_create(
             name="Community",
             description="Description",
-            category=category,
             created_by=user,
             emoji="👍",
+            categories=[CommunityCategoryFactory.create()],
         )
 
         self.assertIsNotNone(community)
         self.assertEqual(community.name, "Community")
         self.assertEqual(community.description, "Description")
-        self.assertEqual(community.category, category)
         self.assertEqual(community.created_by, user)
+        self.assertEqual(community.categories.count(), 1)
         self.assertEqual(community.emoji, "👍")
         self.assertEqual(community.memberships.count(), 1)
         self.assertEqual(community.memberships.first().user, user)
@@ -31,31 +30,31 @@ class CommunityCreateTests(TestCase):
         with self.assertRaises(TypeError):
             community_create(
                 description="Description",
-                category=CommunityCategoryFactory.create(),
                 created_by=BaseUserFactory.create(),
+                categories=[CommunityCategoryFactory.create()],
             )
 
         with self.assertRaises(IntegrityError):
             community_create(
                 name=None,
                 description="Description",
-                category=CommunityCategoryFactory.create(),
                 created_by=BaseUserFactory.create(),
+                categories=[CommunityCategoryFactory.create()],
             )
 
     def test_community_create_with_no_description(self):
         with self.assertRaises(TypeError):
             community_create(
                 name="Community",
-                category=CommunityCategoryFactory.create(),
                 created_by=BaseUserFactory.create(),
+                categories=[CommunityCategoryFactory.create()],
             )
 
         with self.assertRaises(IntegrityError):
             community_create(
                 name="Community",
                 description=None,
-                category=CommunityCategoryFactory.create(),
+                categories=[CommunityCategoryFactory.create()],
                 created_by=BaseUserFactory.create(),
             )
 
@@ -67,11 +66,11 @@ class CommunityCreateTests(TestCase):
                 created_by=BaseUserFactory.create(),
             )
 
-        with self.assertRaises(IntegrityError):
+        with self.assertRaises(TypeError):
             community_create(
                 name="Community",
                 description="Description",
-                category=None,
+                categories=None,
                 created_by=BaseUserFactory.create(),
             )
 
@@ -81,7 +80,7 @@ class CommunityCreateTests(TestCase):
         community_create(
             name="Community",
             description="Description",
-            category=category,
+            categories=[category],
             created_by=user,
         )
 
@@ -89,6 +88,21 @@ class CommunityCreateTests(TestCase):
             community_create(
                 name="Community",
                 description="Description",
-                category=category,
+                categories=[category],
                 created_by=user,
             )
+
+    def test_community_create_multiple_categories(self):
+        categories = CommunityCategoryFactory.create_batch(3)
+
+        category = community_create(
+            name="Community",
+            description="Description",
+            categories=categories,
+            created_by=BaseUserFactory.create(),
+        )
+
+        self.assertEqual(category.categories.count(), 3)
+        self.assertEqual(category.categories.all()[0], categories[0])
+        self.assertEqual(category.categories.all()[1], categories[1])
+        self.assertEqual(category.categories.all()[2], categories[2])

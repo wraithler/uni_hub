@@ -17,7 +17,7 @@ class CommunityGetTests(TestCase):
             name="Community",
             description="Description",
             created_by=BaseUserFactory.create(),
-            category=CommunityCategoryFactory.create(),
+            categories=[CommunityCategoryFactory.create()],
         )
 
         community_get_result = community_get(community.id)

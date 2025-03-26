@@ -3,11 +3,20 @@ from django.db import models
 from apps.common.models import BaseModel
 
 
+class CommunityTags(BaseModel):
+    id = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=255, unique=True)
+
+    class Meta:
+        verbose_name_plural = "Community Tags"
+
+    def __str__(self):
+        return self.name
+
+
 class CommunityCategory(BaseModel):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=255, unique=True)
-    description = models.TextField()
-    is_private = models.BooleanField(default=False)
 
     class Meta:
         verbose_name_plural = "Community Categories"
@@ -20,10 +29,12 @@ class Community(BaseModel):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=255, unique=True)
     description = models.TextField()
-    category = models.ForeignKey(CommunityCategory, on_delete=models.CASCADE)
+    tags = models.ManyToManyField(CommunityTags, related_name="communities")
+    category = models.ForeignKey(
+        CommunityCategory, on_delete=models.CASCADE, related_name="communities"
+    )
     created_by = models.ForeignKey("users.BaseUser", on_delete=models.CASCADE)
-    emoji = models.CharField(max_length=255, blank=True, null=True)
-    is_private = models.BooleanField(default=False)
+    is_featured = models.BooleanField(default=False)
 
     class Meta:
         verbose_name_plural = "Communities"

@@ -19,3 +19,6 @@ class Feedback(BaseModel):
         FIVE = 5, "5 - Excellent"
 
     rating = models.IntegerField(choices=Rating.choices, db_index=True)
+
+    class Meta:
+        verbose_name_plural = "Feedback"
