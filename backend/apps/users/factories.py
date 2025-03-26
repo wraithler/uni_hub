@@ -10,7 +10,6 @@ class BaseUserFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = BaseUser
 
-    username = factory.LazyAttribute(lambda _: fake.unique.user_name())
     email = factory.LazyAttribute(lambda _: fake.unique.email())
     first_name = factory.Faker("first_name")
     last_name = factory.Faker("last_name")

@@ -3,23 +3,9 @@ from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 from apps.authentication.apis import (
     UserMeApi,
-    UserSessionLoginApi,
-    UserSessionLogoutApi,
 )
 
 urlpatterns = [
-    path(
-        "session/",
-        include(
-            (
-                [
-                    path("login/", UserSessionLoginApi.as_view(), name="login"),
-                    path("logout/", UserSessionLogoutApi.as_view(), name="logout"),
-                ],
-                "session",
-            )
-        ),
-    ),
     path(
         "token/",
         include(
