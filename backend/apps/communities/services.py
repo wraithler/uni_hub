@@ -3,9 +3,40 @@ from typing import List
 from django.db import transaction
 
 from apps.common.services import model_update
-from apps.communities.models import CommunityTag, Community, CommunityInvitation, CommunityCategory
+from apps.communities.models import CommunityTag, Community, CommunityInvitation, CommunityCategory, CommunityGuidelines
 from apps.core.exceptions import ApplicationError
+from apps.files.models import File
 from apps.users.models import BaseUser
+
+@transaction.atomic
+def community_create_new(
+    *,
+    name: str,
+    description: str,
+    tags: List[CommunityTag],
+    category: CommunityCategory,
+    created_by: BaseUser,
+    about: str,
+    guidelines: List[CommunityGuidelines],
+    avatar: File,
+    banner: File,
+    contact_email: str,
+) -> Community:
+    community = Community.objects.create(
+        name=name,
+        description=description,
+        created_by=created_by,
+        category=category,
+        about=about,
+        avatar=avatar,
+        banner=banner,
+        contact_email=contact_email
+    )
+    community.tags.add(*tags)
+    community.guidelines.add(*guidelines)
+    community.memberships.create(user=created_by)
+
+    return community
 
 
 @transaction.atomic

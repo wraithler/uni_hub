@@ -35,6 +35,13 @@ class Community(BaseModel):
     )
     created_by = models.ForeignKey("users.BaseUser", on_delete=models.CASCADE)
     is_featured = models.BooleanField(default=False)
+    about = models.TextField(blank=True, null=True)
+    avatar = models.ForeignKey(
+        "files.File", on_delete=models.SET_NULL, related_name="community_avatar", null=True
+    )
+    banner = models.ForeignKey(
+        "files.File", on_delete=models.SET_NULL, related_name="community_banner", null=True
+    )
 
     class Meta:
         verbose_name_plural = "Communities"
@@ -79,3 +86,12 @@ class CommunityInvitation(BaseModel):
 
     class Meta:
         unique_together = ["community", "user"]
+
+
+class CommunityGuidelines(BaseModel):
+    id = models.AutoField(primary_key=True)
+    community = models.ForeignKey(Community, on_delete=models.CASCADE, related_name="guidelines")
+    content = models.TextField()
+
+    class Meta:
+        verbose_name_plural = "Community Guidelines"
