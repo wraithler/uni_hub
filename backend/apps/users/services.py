@@ -11,7 +11,6 @@ from apps.users.models import BaseUser
 def user_create(
     *,
     email: str,
-    username: str,
     first_name: str,
     last_name: str,
     is_active: bool = True,
@@ -20,7 +19,6 @@ def user_create(
 ) -> BaseUser:
     user = BaseUser.objects.create_user(
         email=email,
-        username=username,
         first_name=first_name,
         last_name=last_name,
         is_active=is_active,

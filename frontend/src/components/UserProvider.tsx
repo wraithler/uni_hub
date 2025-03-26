@@ -1,13 +1,20 @@
-import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { USER } from '@/constants';
-import { User } from '@/types';
-import api from '@/api';
+import {
+  createContext,
+  ReactNode,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
+import { useNavigate } from "react-router-dom";
+import { ACCESS_TOKEN, REFRESH_TOKEN, USER } from "@/constants";
+import { fetchLogin, fetchUserMe } from "@/api/services/users.ts";
+import { UserMe } from "@/api/types/users.ts";
 
 interface UserContextType {
-  user: User | null;
-  setUser: (user: User | null) => void;
+  user: UserMe | null;
+  setUser: (user: UserMe | null) => void;
   logout: () => void;
+  login: (email: string, password: string) => void;
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
@@ -16,8 +23,10 @@ interface UserProviderProps {
   children: ReactNode;
 }
 
+// TODO: Rework authentication
+
 export const UserProvider = ({ children }: UserProviderProps) => {
-  const [user, setUser] = useState<User | null>(() => {
+  const [user, setUser] = useState<UserMe | null>(() => {
     const storedUser = localStorage.getItem(USER);
     return storedUser ? JSON.parse(storedUser) : null;
   });
@@ -25,8 +34,8 @@ export const UserProvider = ({ children }: UserProviderProps) => {
 
   useEffect(() => {
     async function fetchUser() {
-      if (!user) {
-        const response = await api.get('/auth/me/');
+      if (!user && localStorage.getItem(ACCESS_TOKEN)) {
+        const response = await fetchUserMe();
 
         if (response.status === 200) {
           setUser(response.data);
@@ -44,16 +53,31 @@ export const UserProvider = ({ children }: UserProviderProps) => {
   const logout = () => {
     setUser(null);
     localStorage.clear();
-    navigate('/login');
+    navigate("/login");
   };
 
-  return <UserContext.Provider value={{ user, setUser, logout }}>{children}</UserContext.Provider>;
+  const login = async (email: string, password: string) => {
+    const response = await fetchLogin(email, password);
+
+    if (response.status === 200) {
+      localStorage.setItem(ACCESS_TOKEN, response.data.access);
+      localStorage.setItem(REFRESH_TOKEN, response.data.refresh);
+      setUser(response.data.user);
+      navigate("/communities");
+    }
+  };
+
+  return (
+    <UserContext.Provider value={{ user, setUser, logout, login }}>
+      {children}
+    </UserContext.Provider>
+  );
 };
 
 export const useUser = (): UserContextType => {
   const context = useContext(UserContext);
   if (!context) {
-    throw new Error('useUser must be used within a UserProvider');
+    throw new Error("useUser must be used within a UserProvider");
   }
   return context;
 };
