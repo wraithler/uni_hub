@@ -1,6 +1,6 @@
-import { useCallback, useEffect, useState } from 'react';
-import Filters from '@/types/filters';
-import { PaginationResponse } from '@/types/pagination';
+import { useCallback, useEffect, useState } from "react";
+import Filters from "@/api/types/filters";
+import { PaginationResponse } from "@/api/types/pagination";
 
 interface UsePaginationAndFiltersProps<T extends PaginationResponse> {
   initialFilters: Filters;

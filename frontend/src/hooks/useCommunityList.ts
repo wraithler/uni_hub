@@ -1,14 +1,17 @@
-import { usePaginationAndFilters } from '@/hooks/usePagination';
-import { CommunityFilters, CommunityList, fetchCommunityList } from '@/types/communities';
+import { usePaginationAndFilters } from "@/hooks/usePagination";
+import { CommunityFilters, CommunityList } from "@/api/types/communities.tsx";
+import { fetchCommunitiesList } from "@/api/services/communities.ts";
 
-export function useCommunityList() {
-  const initialFilters: CommunityFilters = {
+export function useCommunityList({
+  initialFilters,
+}: { initialFilters?: CommunityFilters } = {}) {
+  const defaultFilters: CommunityFilters = {
     limit: 10,
     offset: 0,
-    sort_by: 'name',
-    visibility: 'all',
-    membership_status: 'all',
   };
+
+  const allFilters = { ...defaultFilters, ...initialFilters };
+
   const {
     data,
     loading,
@@ -19,7 +22,10 @@ export function useCommunityList() {
     fetchAndSetData,
     handlePageChange,
     handleFilterChange,
-  } = usePaginationAndFilters<CommunityList>({ initialFilters, fetchData: fetchCommunityList });
+  } = usePaginationAndFilters<CommunityList>({
+    initialFilters: allFilters,
+    fetchData: fetchCommunitiesList,
+  });
 
   return {
     data,
