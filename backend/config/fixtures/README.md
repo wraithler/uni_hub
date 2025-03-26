@@ -13,6 +13,6 @@ Then copy the data from the `data.json` you want to the appropriate fixture file
 ## Loading Fixtures
 
 ```bash
-docker exec -it backend python manage.py loaddata users.json groups.json
+docker exec -it backend python manage.py loaddata communities.json
 ```
 

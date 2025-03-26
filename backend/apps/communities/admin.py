@@ -1,11 +1,11 @@
 from django.contrib import admin, messages
 from django.core.exceptions import ValidationError
 
-from apps.communities.models import CommunityTags, Community
+from apps.communities.models import CommunityTag, Community
 from apps.communities.services import community_category_create, community_create
 
 
-@admin.register(CommunityTags)
+@admin.register(CommunityTag)
 class CommunityCategoryAdmin(admin.ModelAdmin):
     list_display = ("name",)
 

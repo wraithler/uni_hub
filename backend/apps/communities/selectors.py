@@ -8,7 +8,7 @@ from apps.communities.filters import (
     CommunityCategoryFilter,
     CommunityInvitationFilter,
 )
-from apps.communities.models import Community, CommunityTags, CommunityInvitation
+from apps.communities.models import Community, CommunityTag, CommunityInvitation
 
 
 def community_get(community_id) -> Optional[Community]:
@@ -25,16 +25,16 @@ def community_list(*, filters=None, request=None) -> QuerySet[Community]:
     return CommunityFilter(filters, qs, request=request).qs
 
 
-def community_category_get(community_category_id) -> Optional[CommunityTags]:
-    community_category = get_object(CommunityTags, id=community_category_id)
+def community_category_get(community_category_id) -> Optional[CommunityTag]:
+    community_category = get_object(CommunityTag, id=community_category_id)
 
     return community_category
 
 
-def community_category_list(*, filters=None) -> QuerySet[CommunityTags]:
+def community_category_list(*, filters=None) -> QuerySet[CommunityTag]:
     filters = filters or {}
 
-    qs = CommunityTags.objects.all()
+    qs = CommunityTag.objects.all()
 
     return CommunityCategoryFilter(filters, qs).qs
 
