@@ -3,7 +3,7 @@ from django.db import models
 from apps.common.models import BaseModel
 
 
-class CommunityTags(BaseModel):
+class CommunityTag(BaseModel):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=255, unique=True)
 
@@ -29,7 +29,7 @@ class Community(BaseModel):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=255, unique=True)
     description = models.TextField()
-    tags = models.ManyToManyField(CommunityTags, related_name="communities")
+    tags = models.ManyToManyField(CommunityTag, related_name="communities")
     category = models.ForeignKey(
         CommunityCategory, on_delete=models.CASCADE, related_name="communities"
     )

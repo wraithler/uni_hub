@@ -1,0 +1,164 @@
+[
+  {
+    "model": "communities.communitytag",
+    "pk": 1,
+    "fields": {
+      "created_at": "2025-03-26T18:27:58.835Z",
+      "updated_at": "2025-03-26T18:27:58.836Z",
+      "name": "Programming"
+    }
+  },
+  {
+    "model": "communities.communitytag",
+    "pk": 2,
+    "fields": {
+      "created_at": "2025-03-26T18:27:58.842Z",
+      "updated_at": "2025-03-26T18:27:58.842Z",
+      "name": "Technology"
+    }
+  },
+  {
+    "model": "communities.communitytag",
+    "pk": 3,
+    "fields": {
+      "created_at": "2025-03-26T18:27:58.843Z",
+      "updated_at": "2025-03-26T18:27:58.843Z",
+      "name": "Research"
+    }
+  },
+  {
+    "model": "communities.communitytag",
+    "pk": 5,
+    "fields": {
+      "created_at": "2025-03-26T18:31:53.359Z",
+      "updated_at": "2025-03-26T18:31:53.360Z",
+      "name": "Sustainability"
+    }
+  },
+  {
+    "model": "communities.communitytag",
+    "pk": 6,
+    "fields": {
+      "created_at": "2025-03-26T18:31:53.373Z",
+      "updated_at": "2025-03-26T18:31:53.373Z",
+      "name": "Activism"
+    }
+  },
+  {
+    "model": "communities.communitytag",
+    "pk": 7,
+    "fields": {
+      "created_at": "2025-03-26T18:31:53.375Z",
+      "updated_at": "2025-03-26T18:31:53.375Z",
+      "name": "Environment"
+    }
+  },
+  {
+    "model": "communities.communitytag",
+    "pk": 8,
+    "fields": {
+      "created_at": "2025-03-26T18:32:35.809Z",
+      "updated_at": "2025-03-26T18:32:35.810Z",
+      "name": "Music"
+    }
+  },
+  {
+    "model": "communities.communitytag",
+    "pk": 9,
+    "fields": {
+      "created_at": "2025-03-26T18:32:35.815Z",
+      "updated_at": "2025-03-26T18:32:35.815Z",
+      "name": "Performance"
+    }
+  },
+  {
+    "model": "communities.communitytag",
+    "pk": 10,
+    "fields": {
+      "created_at": "2025-03-26T18:32:35.816Z",
+      "updated_at": "2025-03-26T18:32:35.816Z",
+      "name": "Collaboration"
+    }
+  },
+  {
+    "model": "communities.communitycategory",
+    "pk": 1,
+    "fields": {
+      "created_at": "2025-03-26T18:27:58.846Z",
+      "updated_at": "2025-03-26T18:27:58.847Z",
+      "name": "Academic"
+    }
+  },
+  {
+    "model": "communities.communitycategory",
+    "pk": 3,
+    "fields": {
+      "created_at": "2025-03-26T18:31:53.380Z",
+      "updated_at": "2025-03-26T18:31:53.380Z",
+      "name": "Cultural"
+    }
+  },
+  {
+    "model": "communities.communitycategory",
+    "pk": 4,
+    "fields": {
+      "created_at": "2025-03-26T18:32:35.819Z",
+      "updated_at": "2025-03-26T18:32:35.819Z",
+      "name": "Interest"
+    }
+  },
+  {
+    "model": "communities.community",
+    "pk": 1,
+    "fields": {
+      "created_at": "2025-03-26T18:29:23.098Z",
+      "updated_at": "2025-03-26T18:29:23.098Z",
+      "name": "Computer Science Society",
+      "description": "A community for computer science enthusiasts",
+      "category": 1,
+      "created_by": 1,
+      "is_featured": true,
+      "tags": [
+        1,
+        2,
+        3
+      ]
+    }
+  },
+  {
+    "model": "communities.community",
+    "pk": 2,
+    "fields": {
+      "created_at": "2025-03-26T18:31:53.382Z",
+      "updated_at": "2025-03-26T18:31:53.382Z",
+      "name": "Environmental Action",
+      "description": "Working together to promote sustainability on campus",
+      "category": 3,
+      "created_by": 1,
+      "is_featured": false,
+      "tags": [
+        5,
+        6,
+        7
+      ]
+    }
+  },
+  {
+    "model": "communities.community",
+    "pk": 3,
+    "fields": {
+      "created_at": "2025-03-26T18:32:35.821Z",
+      "updated_at": "2025-03-26T18:32:35.821Z",
+      "name": "Campus Music Collective",
+      "description": "A community for musicians and music lovers",
+      "category": 4,
+      "created_by": 1,
+      "is_featured": false,
+      "tags": [
+        8,
+        9,
+        10
+      ]
+    }
+  }
+]
