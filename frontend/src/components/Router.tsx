@@ -41,6 +41,14 @@ const router = createBrowserRouter([
     ),
   },
   {
+    path: "/communities/create",
+    element: (
+      <UserProvider>
+        <CommunityCreatePage />
+      </UserProvider>
+    ),
+  },
+  {
     path: "*",
     element: (
       <UserProvider>
@@ -48,14 +56,6 @@ const router = createBrowserRouter([
       </UserProvider>
     ),
   },
-  {
-    path: "/communities/create",
-    element: (
-        <UserProvider>
-          <CommunityCreatePage/>
-        </UserProvider>
-    )
-  }
 ]);
 
 export function Router() {
