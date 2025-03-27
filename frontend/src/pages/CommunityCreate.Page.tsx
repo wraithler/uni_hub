@@ -1,6 +1,4 @@
-import {
-  Users,
-} from "lucide-react";
+import { Users } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -19,19 +17,16 @@ export default function CommunityCreatePage() {
   return (
     <Layout>
       {/* Main Content */}
-      <main className="container px-4 mx-auto py-8">
-        <div className="max-w-4xl mx-auto">
-          {/* Page Header */}
-          <div className="mb-8">
-            <h1 className="text-3xl font-bold mb-2">Create a New Community</h1>
-            <p className="text-muted-foreground">
-              Create a space for students with similar interests to connect,
-              share, and collaborate.
-            </p>
-          </div>
 
-          <CommunityCreateForm/>
+      <main className="container px-4 py-6 mx-auto">
+        {/* Page Header */}
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold mb-2">Create a community</h1>
+          <p className="text-muted-foreground">
+            Start a new community and bring people together around a shared interest
+          </p>
         </div>
+        <CommunityCreateForm />
       </main>
 
       {/* Community Examples Section */}
