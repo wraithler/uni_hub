@@ -1,14 +1,7 @@
-import '@mantine/core/styles.css';
-import '@mantine/carousel/styles.css';
+import { Router } from "@/components/Router.tsx";
 
-import { MantineProvider } from '@mantine/core';
-import { Router } from './Router';
-import { theme } from './theme';
-
-export default function App() {
-  return (
-    <MantineProvider theme={theme}>
-      <Router />
-    </MantineProvider>
-  );
+function App() {
+  return <Router />;
 }
+
+export default App;

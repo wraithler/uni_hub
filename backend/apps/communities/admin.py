@@ -1,19 +1,19 @@
 from django.contrib import admin, messages
 from django.core.exceptions import ValidationError
 
-from apps.communities.models import CommunityCategory, Community
+from apps.communities.models import CommunityTag, Community
 from apps.communities.services import community_category_create, community_create
 
 
-@admin.register(CommunityCategory)
+@admin.register(CommunityTag)
 class CommunityCategoryAdmin(admin.ModelAdmin):
-    list_display = ("name", "description")
+    list_display = ("name",)
 
     search_fields = ("name",)
 
     list_filter = ()
 
-    fieldsets = ((None, {"fields": ("name", "description")}),)
+    fieldsets = ((None, {"fields": ("name", )}),)
 
     readonly_fields = ("created_at", "updated_at")
 
@@ -29,13 +29,11 @@ class CommunityCategoryAdmin(admin.ModelAdmin):
 
 @admin.register(Community)
 class CommunityAdmin(admin.ModelAdmin):
-    list_display = ("name", "description", "category")
+    list_display = ("name", "description")
 
     search_fields = ("name", "description")
 
-    list_filter = ("category",)
-
-    fieldsets = ((None, {"fields": ("name", "description", "category")}),)
+    fieldsets = ((None, {"fields": ("name", "description")}),)
 
     readonly_fields = ("created_at", "updated_at", "created_by")
 
