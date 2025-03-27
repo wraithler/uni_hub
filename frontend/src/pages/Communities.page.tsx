@@ -15,6 +15,7 @@ import FeaturedCommunityCard from "@/components/FeaturedCommunityCard.tsx";
 import { CommunityCard } from "@/components/CommunityCard.tsx";
 import Layout from "@/components/Layout.tsx";
 import { useCommunityList } from "@/hooks/useCommunityList.ts";
+import PageHeader from "@/components/PageHeader.tsx";
 
 export default function CommunitiesPage() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -40,13 +41,10 @@ export default function CommunitiesPage() {
     <Layout>
       {/* Main Content */}
       <main className="container px-4 py-6 mx-auto">
-        {/* Page Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2">Communities</h1>
-          <p className="text-muted-foreground">
-            Discover and join communities that match your interests
-          </p>
-        </div>
+        <PageHeader
+          title="Communities"
+          description="Discover and join communities that match your interests"
+        />
 
         {/* Search and Filters */}
         <div className="mb-8 space-y-4">
