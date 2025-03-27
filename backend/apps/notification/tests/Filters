@@ -1,0 +1,68 @@
+from django.test import TestCase
+
+from apps.notifications.factories import NotificationFactory  
+from apps.notifications.selectors import notification_list  
+
+
+class NotificationFilterTests(TestCase):
+    def test_notification_filter_by_is_read(self):
+        
+        NotificationFactory.create_batch(5, is_read=True) 
+        NotificationFactory.create(message="Unread Notification", is_read=False)  
+
+        
+        notifications = notification_list(filters={"is_read": False})
+
+        
+        self.assertEqual(len(notifications), 1)
+        self.assertEqual(notifications[0].message, "Unread Notification")
+
+    def test_notification_filter_by_message(self):
+
+        NotificationFactory.create(message="New Comment on Your Post", is_read=True)
+        NotificationFactory.create(message="New Like on Your Post", is_read=False)
+
+        
+        notifications = notification_list(filters={"message": "New Comment on Your Post"})
+
+        
+        self.assertEqual(len(notifications), 1)
+        self.assertEqual(notifications[0].message, "New Comment on Your Post")
+
+    def test_notification_filter_by_user(self):
+        
+        user_1 = self.user
+        user_2 = NotificationFactory.create(user=self.other_user).user 
+        NotificationFactory.create(user=user_1, message="Message for User 1", is_read=False)
+        NotificationFactory.create(user=user_2, message="Message for User 2", is_read=True)
+
+        
+        notifications = notification_list(filters={"user": user_1.id})
+
+        
+        self.assertEqual(len(notifications), 1)
+        self.assertEqual(notifications[0].user, user_1)
+
+    def test_notification_filter_multiple_params(self):
+        
+        NotificationFactory.create(user=self.user, message="Message 1", is_read=True)
+        NotificationFactory.create(user=self.user, message="Message 2", is_read=False)
+
+        
+        notifications = notification_list(filters={"is_read": False, "user": self.user.id})
+
+
+        self.assertEqual(len(notifications), 1)
+        self.assertEqual(notifications[0].message, "Message 2")
+
+    def test_notification_ordering(self):
+        
+        NotificationFactory.create(user=self.user, message="Message 1")
+        NotificationFactory.create(user=self.user, message="Message 2")
+
+        
+        notifications = notification_list(filters={})
+
+        
+        self.assertEqual(notifications[0].message, "Message 2")
+        self.assertEqual(notifications[1].message, "Message 1")

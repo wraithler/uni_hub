@@ -1,16 +1,25 @@
 # Ignore the environment file
 .env
 
+# Ignore __pycache__
+**/__pycache__/
+__pycache__/
+*.py[cod]
+*$py.class
+
 # Ignore all files in the migrations directory
-backend/api/migrations/*.py
+**/migrations/*
 # But do not ignore __init__.py
-!backend/api/migrations/__init__.py
+!**/migrations/__init__.py
 
 # Ignore the virtual environment directory
 .venv
 
-# Ignore .DS_Store file 
+# Ignore .DS_Store file
 .DS_Store
 
 # Ignore pyc files
 *.pyc
+
+# Ignore oauth_settings.yml
+oauth_settings.yml

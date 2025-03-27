@@ -4,6 +4,7 @@ import {
   Button,
   Checkbox,
   Divider,
+  Flex,
   Group,
   Paper,
   PaperProps,
@@ -14,10 +15,10 @@ import {
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { upperFirst, useToggle } from '@mantine/hooks';
-import api from '@/api';
 import { GoogleButton } from '@/components/Buttons/GoogleButton';
 import { MicrosoftButton } from '@/components/Buttons/MicrosoftButton';
 import { ACCESS_TOKEN, REFRESH_TOKEN } from '@/constants';
+import api from '@/api';
 
 export function AuthenticationForm(props: PaperProps) {
   const [type, toggle] = useToggle(['login', 'register']);
@@ -25,21 +26,24 @@ export function AuthenticationForm(props: PaperProps) {
   const form = useForm({
     initialValues: {
       email: '',
-      name: '',
+      first_name: '',
+      last_name: '',
+      username: '',
       password: '',
       terms: true,
     },
 
-    validate: {
-      email: (val) => (/^\S+@\S+$/.test(val) ? null : 'Invalid email'),
-      name: (val) => (val.length < 6 && type === 'register' ? 'Name must be longer than 6 characters' : null),
-      password: (val) => (val.length < 8 ? 'Password must be longer than 8 characters' : null),
-    },
+    // validate: {
+    //     email: (val) => (/^\S+@\S+$/.test(val) ? null : 'Invalid email'),
+    //     username: (val) => (val.length < 6 && type === 'register' ? 'Username must be longer than 6 characters' : null),
+    //     password: (val) => (val.length < 8 ? 'Password must be longer than 8 characters' : null),
+    // },
   });
 
   const handleSubmit = async (values: typeof form.values) => {
     try {
-      const response = await api.post(`/api/${type}/`, values);
+      const endPoint = type === 'login' ? '/auth/token/' : '/users/create/';
+      const response = await api.post(endPoint, values);
       if (type === 'login') {
         localStorage.setItem(ACCESS_TOKEN, response.data.access);
         localStorage.setItem(REFRESH_TOKEN, response.data.refresh);
@@ -48,7 +52,7 @@ export function AuthenticationForm(props: PaperProps) {
         toggle();
       }
     } catch (error: any) {
-        form.setErrors({ password: error.response?.data?.message || "Something went wrong" });
+      form.setErrors({ password: error.response?.data?.message || 'Something went wrong' });
     }
   };
 
@@ -68,25 +72,49 @@ export function AuthenticationForm(props: PaperProps) {
       <form onSubmit={form.onSubmit(handleSubmit)}>
         <Stack>
           {type === 'register' && (
-            <TextInput
-              required
-              label="Name"
-              placeholder="Your name"
-              value={form.values.name}
-              onChange={(event) => form.setFieldValue('name', event.currentTarget.value)}
-              radius="md"
-              error={form.errors.name && form.errors.name}
-            />
+            <>
+              <Flex gap="sm">
+                <TextInput
+                  required
+                  label="First Name"
+                  placeholder="Your first name"
+                  value={form.values.first_name}
+                  onChange={(event) => form.setFieldValue('first_name', event.currentTarget.value)}
+                  radius="md"
+                  error={form.errors.first_name && form.errors.first_name}
+                />
+
+                <TextInput
+                  required
+                  label="Last Name"
+                  placeholder="Your last name"
+                  value={form.values.last_name}
+                  onChange={(event) => form.setFieldValue('last_name', event.currentTarget.value)}
+                  radius="md"
+                  error={form.errors.last_name && form.errors.last_name}
+                />
+              </Flex>
+
+              <TextInput
+                required
+                label="Email"
+                placeholder="Your email"
+                value={form.values.email}
+                onChange={(event) => form.setFieldValue('email', event.currentTarget.value)}
+                error={form.errors.email && form.errors.email}
+                radius="md"
+              />
+            </>
           )}
 
           <TextInput
             required
-            label="Email"
-            placeholder="Your email"
-            value={form.values.email}
-            onChange={(event) => form.setFieldValue('email', event.currentTarget.value)}
-            error={form.errors.email && form.errors.email}
+            label="Username"
+            placeholder="Your username"
+            value={form.values.username}
+            onChange={(event) => form.setFieldValue('username', event.currentTarget.value)}
             radius="md"
+            error={form.errors.username && form.errors.username}
           />
 
           <PasswordInput
