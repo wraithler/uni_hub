@@ -1,9 +1,9 @@
-import { useEffect, useState } from 'react';
-import { jwtDecode } from 'jwt-decode';
-import { Navigate } from 'react-router-dom';
-import { ACCESS_TOKEN, REFRESH_TOKEN } from '@/constants';
-import api from '@/api';
-import { UserProvider } from './UserProvider';
+import { useEffect, useState } from "react";
+import { jwtDecode } from "jwt-decode";
+import { Navigate } from "react-router-dom";
+import { ACCESS_TOKEN, REFRESH_TOKEN } from "@/constants";
+import { UserProvider } from "./UserProvider";
+import api from "@/api/api.ts";
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const [isAuthorised, setIsAuthorised] = useState<boolean | null>(null);
@@ -16,7 +16,7 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
     const refreshToken = localStorage.getItem(REFRESH_TOKEN);
 
     try {
-      const response = await api.post('/auth/token/refresh/', {
+      const response = await api.post("/auth/token/refresh/", {
         refresh: refreshToken,
       });
 
@@ -60,7 +60,11 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
     return <div>Loading...</div>;
   }
 
-  return isAuthorised ? <UserProvider>{children}</UserProvider> : <Navigate to="/login" />;
+  return isAuthorised ? (
+    <UserProvider>{children}</UserProvider>
+  ) : (
+    <Navigate to="/login" />
+  );
 }
 
 export default ProtectedRoute;
