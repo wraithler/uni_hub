@@ -10,7 +10,7 @@ class CommunityUpdateTests(TestCase):
         self.community = community_create(
             name="Community",
             description="Description",
-            category=CommunityCategoryFactory.create(),
+            categories=[CommunityCategoryFactory.create()],
             created_by=BaseUserFactory.create(),
         )
 
@@ -22,7 +22,6 @@ class CommunityUpdateTests(TestCase):
 
         self.assertEqual(community.name, "New Name")
         self.assertEqual(community.description, "New Description")
-        self.assertEqual(community.category, self.community.category)
         self.assertEqual(community.created_by, self.community.created_by)
         self.assertEqual(community.emoji, self.community.emoji)
         self.assertEqual(community.memberships.count(), 1)
@@ -33,7 +32,6 @@ class CommunityUpdateTests(TestCase):
 
         self.assertEqual(community.name, "Community")
         self.assertEqual(community.description, "Description")
-        self.assertEqual(community.category, self.community.category)
         self.assertEqual(community.created_by, self.community.created_by)
         self.assertEqual(community.emoji, self.community.emoji)
         self.assertEqual(community.memberships.count(), 1)

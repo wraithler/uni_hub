@@ -12,7 +12,6 @@ class BaseUserManager(_BaseUserManager):
     def create_user(
         self,
         email,
-        username,
         first_name,
         last_name,
         password=None,
@@ -23,8 +22,6 @@ class BaseUserManager(_BaseUserManager):
     ):
         if not email:
             raise ValueError("Users must have an email address")
-        if not username:
-            raise ValueError("Users must have a username")
         if not first_name:
             raise ValueError("Users must have a first name")
         if not last_name:
@@ -34,7 +31,6 @@ class BaseUserManager(_BaseUserManager):
 
         user = self.model(
             email=email,
-            username=username,
             first_name=first_name,
             last_name=last_name,
             is_active=is_active,
@@ -53,10 +49,9 @@ class BaseUserManager(_BaseUserManager):
 
         return user
 
-    def create_superuser(self, username, email, first_name, last_name, password=None):
+    def create_superuser(self, email, first_name, last_name, password=None):
         user = self.create_user(
             email=email,
-            username=username,
             first_name=first_name,
             last_name=last_name,
             password=password,
@@ -70,7 +65,6 @@ class BaseUserManager(_BaseUserManager):
 
 class BaseUser(BaseModel, AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(verbose_name="Email Address", max_length=255, unique=True)
-    username = models.CharField(max_length=255, unique=True)
     first_name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255)
     bio = models.TextField(blank=True, null=True)
@@ -88,9 +82,8 @@ class BaseUser(BaseModel, AbstractBaseUser, PermissionsMixin):
 
     jwt_key = models.UUIDField(default=uuid.uuid4)
 
-    USERNAME_FIELD = "username"
+    USERNAME_FIELD = "email"
     REQUIRED_FIELDS = [
-        "email",
         "first_name",
         "last_name",
     ]  # Required for createsuperuser

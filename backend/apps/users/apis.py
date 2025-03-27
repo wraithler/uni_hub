@@ -15,7 +15,7 @@ from apps.users.services import user_create, user_update
 
 class UserDetailApi(APIView):
     class OutputSerializer(serializers.Serializer):
-        username = serializers.CharField()
+        email = serializers.EmailField()
 
     def get(self, request, user_id):
         user = user_get(user_id)
@@ -34,7 +34,6 @@ class UserListApi(APIView):
 
     class FilterSerializer(serializers.Serializer):
         id = serializers.IntegerField(required=False)
-        username = serializers.CharField(required=False)
         is_admin = serializers.BooleanField(
             required=False, allow_null=True, default=None
         )
@@ -42,7 +41,7 @@ class UserListApi(APIView):
     class OutputSerializer(serializers.ModelSerializer):
         class Meta:
             model = BaseUser
-            fields = ("id", "username", "is_admin")
+            fields = ("id", "email", "is_admin")
 
     def get(self, request):
         filters_serializer = self.FilterSerializer(data=request.query_params)
@@ -65,7 +64,6 @@ class UserCreateApi(APIView):
 
     class InputSerializer(serializers.Serializer):
         email = serializers.EmailField()
-        username = serializers.CharField()
         first_name = serializers.CharField()
         last_name = serializers.CharField()
         password = serializers.CharField()
