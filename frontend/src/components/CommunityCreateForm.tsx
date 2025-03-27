@@ -263,7 +263,7 @@ export default function CommunityCreateForm() {
                 Let's start with the essential details about your community.
               </CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className="space-y-4">
               <FormField
                 control={form.control}
                 name="basicInfo.name"
@@ -371,7 +371,7 @@ export default function CommunityCreateForm() {
                 your community.
               </CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className="space-y-4">
               <FormField
                 control={form.control}
                 name="additionalInfo.tags"
@@ -508,7 +508,7 @@ export default function CommunityCreateForm() {
                 out.
               </CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className="space-y-4">
               <div className="grid md:grid-cols-2 gap-6">
                 <div className="space-y-2">
                   <Label htmlFor="avatar">Community Avatar</Label>
@@ -601,7 +601,7 @@ export default function CommunityCreateForm() {
                   Review how your community will appear to others.
                 </CardDescription>
               </CardHeader>
-              <CardContent>
+              <CardContent className="space-y-4">
                 {/* Community Preview */}
                 <div className="border rounded-lg overflow-hidden">
                   {/* Banner */}
