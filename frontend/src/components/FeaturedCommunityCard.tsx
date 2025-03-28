@@ -14,11 +14,13 @@ import {
 } from "@/components/ui/avatar.tsx";
 import { Button } from "./ui/button";
 import {
-  avatarColours, bannerCategoryIcons,
+  avatarColours,
+  bannerCategoryIcons,
   bannerColours,
   Community,
 } from "@/api/types/communities.tsx";
-import {nameToAvatarFallback} from "@/lib/utils.ts";
+import { nameToAvatarFallback } from "@/lib/utils.ts";
+import {Badge} from "@/components/ui/badge.tsx";
 
 interface FeaturedCommunityCardProps {
   community: Community;
@@ -33,6 +35,7 @@ export default function FeaturedCommunityCard({
     member_count,
     post_count,
     is_member,
+    tags,
   },
 }: FeaturedCommunityCardProps) {
   return (
@@ -46,7 +49,9 @@ export default function FeaturedCommunityCard({
         <div className="absolute -bottom-8 left-4">
           <Avatar className="w-16 h-16 border-4 border-white">
             <AvatarImage src={avatar} alt="Community" />
-            <AvatarFallback className={`${avatarColours[category_name]} text-white`}>
+            <AvatarFallback
+              className={`${avatarColours[category_name]} text-white`}
+            >
               {nameToAvatarFallback(name)}
             </AvatarFallback>
           </Avatar>
@@ -57,11 +62,18 @@ export default function FeaturedCommunityCard({
         <CardDescription>{description}</CardDescription>
       </CardHeader>
       <CardContent>
+        <div className="flex flex-wrap gap-1 mb-3">
+          {tags.map((tag, index) => (
+              <Badge key={index} variant="secondary" className="text-xs">
+                {tag}
+              </Badge>
+          ))}
+        </div>
         <div className="flex items-center text-sm text-muted-foreground">
-          <User className="w-4 h-4 mr-1" />
+          <User className="w-4 h-4 mr-1"/>
           <span>{member_count} members</span>
           <span className="mx-2">•</span>
-          <MessageSquare className="w-4 h-4 mr-1" />
+          <MessageSquare className="w-4 h-4 mr-1"/>
           <span>{post_count} posts</span>
         </div>
       </CardContent>

@@ -15,11 +15,18 @@ import {
   TabsTrigger,
 } from "../components/ui/tabs.tsx";
 import { Button } from "../components/ui/button.tsx";
-import { LoginForm } from "@/components/LoginForm.tsx";
-import { RegisterForm } from "@/components/RegisterForm.tsx";
+import { LoginForm } from "@/components/auth/LoginForm.tsx";
+import { RegisterForm } from "@/components/auth/RegisterForm.tsx";
+import { Navigate } from "react-router-dom";
+import { useAuth } from "@/components/auth/AuthProvider.tsx";
 
 export default function LoginPage() {
+  const { user } = useAuth();
   const [activeTab, setActiveTab] = useState("login");
+
+  if (user) {
+    return <Navigate to="/communities" replace />;
+  }
 
   return (
     <div className="min-h-screen flex flex-col md:flex-row">

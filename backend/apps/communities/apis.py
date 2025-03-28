@@ -5,6 +5,7 @@ from rest_framework import serializers
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from apps.api.mixins import ApiAuthMixin
 from apps.api.pagination import LimitOffsetPagination, get_paginated_response
 from apps.communities.models import Community
 from apps.communities.selectors import community_get, community_list
@@ -23,7 +24,6 @@ class CommunityDetailApi(APIView):
         id = serializers.IntegerField()
         name = serializers.CharField()
         description = serializers.CharField()
-        categories = CategorySerializer(many=True)
 
     def get(self, request, community_id):
         community = community_get(community_id)
@@ -91,16 +91,18 @@ class CommunityListApi(APIView):
         )
 
 
-class CommunityCreateApi(APIView):
+class CommunityCreateApi(ApiAuthMixin, APIView):
     class InputSerializer(serializers.Serializer):
         name = serializers.CharField()
         description = serializers.CharField()
-        # TODO: Add category field
+        tags = serializers.ListField(child=serializers.CharField(), required=False)
+        category = serializers.CharField()
 
     def post(self, request):
         serializer = self.InputSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
+        serializer.validated_data["created_by"] = request.user
         community = community_create(**serializer.validated_data)
 
         data = CommunityDetailApi.OutputSerializer(community).data
