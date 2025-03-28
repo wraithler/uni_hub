@@ -28,17 +28,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select.tsx";
-import {
-  BookOpen,
-  ChevronRight,
-  Globe,
-  Loader2,
-  Lock,
-  Plus,
-  Upload,
-  Users,
-  X,
-} from "lucide-react";
+import { ChevronRight, Loader2, Plus, Upload, X } from "lucide-react";
 import { Button } from "@/components/ui/button.tsx";
 import { Badge } from "@/components/ui/badge.tsx";
 import { Label } from "@/components/ui/label.tsx";
@@ -47,7 +37,11 @@ import {
   AvatarFallback,
   AvatarImage,
 } from "@/components/ui/avatar.tsx";
-import {avatarColours} from "@/api/types/communities.tsx";
+import { Category } from "@/api/types/communities.tsx";
+import api from "@/api/api.ts";
+import { useNavigate } from "react-router-dom";
+import FeaturedCommunityCard from "@/components/FeaturedCommunityCard.tsx";
+import { CommunityCard } from "@/components/CommunityCard.tsx";
 
 const BasicInfoSchema = z.object({
   name: z.string().min(3, { message: "Name must be at least 3 characters" }),
@@ -133,6 +127,8 @@ export default function CommunityCreateForm() {
   const [guidelineInputValue, setGuidelineInputValue] = useState("");
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
   const [bannerPreview, setBannerPreview] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
 
   const addTag = () => {
     form.setValue("additionalInfo.tags", [
@@ -206,6 +202,28 @@ export default function CommunityCreateForm() {
     setStep((step) => step - 1);
   };
 
+  const onSubmit = async (data: z.infer<typeof multiStepSchema>) => {
+    setIsLoading(true);
+    try {
+      await api.post("/communities/create/", {
+        name: data.basicInfo.name,
+        description: data.basicInfo.description,
+        category: data.basicInfo.category,
+        contact_email: data.basicInfo.contact_email,
+        tags: data.additionalInfo.tags,
+        about: data.additionalInfo.about,
+        guidelines: data.additionalInfo.guidelines,
+        avatar: data.personalisation.avatar,
+        banner: data.personalisation.banner,
+      }); // todo: move to service
+      navigate("/communities");
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <>
       <div className="mb-8">
@@ -255,432 +273,337 @@ export default function CommunityCreateForm() {
       </div>
 
       <Form {...form}>
-        {step === 1 && (
-          <Card>
-            <CardHeader>
-              <CardTitle>Basic Information</CardTitle>
-              <CardDescription>
-                Let's start with the essential details about your community.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <FormField
-                control={form.control}
-                name="basicInfo.name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Name</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Community Name" {...field} />
-                    </FormControl>
-                    <FormDescription>
-                      Choose a clear, descriptive name that reflects the purpose
-                      of your community
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="basicInfo.description"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Description</FormLabel>
-                    <FormControl>
-                      <Textarea
-                        placeholder="Community Description"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormDescription>
-                      Provide a clear description of your community's purpose,
-                      goals, and activities.
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="basicInfo.category"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Category</FormLabel>
-                    <FormControl>
-                      <Select
-                        {...field}
-                        value={field.value}
-                        onValueChange={field.onChange}
-                      >
-                        <SelectTrigger id="category">
-                          <SelectValue placeholder="Select a category" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="Academic">Academic</SelectItem>
-                          <SelectItem value="interest">
-                            Interest-based
-                          </SelectItem>
-                          <SelectItem value="cultural">Cultural</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </FormControl>
-                    <FormDescription>
-                      Categorizing your community helps students find it more
-                      easily.
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="basicInfo.contact_email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Contact Email</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                    <FormDescription>
-                      Provide an email address for students to contact you
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </CardContent>
-            <CardFooter className="flex justify-end">
-              <Button type="button" onClick={nextStep}>
-                Continue
-                <ChevronRight className="ml-2 h-4 w-4" />
-              </Button>
-            </CardFooter>
-          </Card>
-        )}
-
-        {step === 2 && (
-          <Card>
-            <CardHeader>
-              <CardTitle>Additional Details</CardTitle>
-              <CardDescription>
-                Add more information to help students discover and thrive in
-                your community.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <FormField
-                control={form.control}
-                name="additionalInfo.tags"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Tags & Interests</FormLabel>
-                    <FormControl>
-                      <div className="flex gap-2">
-                        <Input
-                          {...field}
-                          onKeyDown={handleTagKeyDown}
-                          onChange={onTagInputChange}
-                          value={tagInputValue}
-                        />
-                        <Button type="button" onClick={addTag} size="sm">
-                          <Plus className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </FormControl>
-                    <div className="flex flex-wrap gap-2 mt-2">
-                      {form
-                        .getValues("additionalInfo.tags")
-                        .map((tag, index) => (
-                          <Badge
-                            key={index}
-                            variant="secondary"
-                            className="flex items-center gap-1 py-1"
-                          >
-                            {tag}
-                            <button
-                              type="button"
-                              onClick={() => removeTag(tag)}
-                              className="ml-1 rounded-full hover:bg-slate-300 p-0.5"
-                            >
-                              <X className="h-3 w-3" />
-                              <span className="sr-only">Remove {tag}</span>
-                            </button>
-                          </Badge>
-                        ))}
-                    </div>
-                    <FormDescription>
-                      Add relevant tags to help students find your community
-                      based on their interests
-                    </FormDescription>
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="additionalInfo.about"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>About</FormLabel>
-                    <FormControl>
-                      <Textarea {...field} />
-                    </FormControl>
-                    <FormDescription>
-                      Share more about your community's history, achievements,
-                      and future plans
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="additionalInfo.guidelines"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Guidelines</FormLabel>
-                    <FormControl>
-                      <div className="flex gap-2">
-                        <Input
-                          {...field}
-                          onKeyDown={handleGuidelineKeyDown}
-                          onChange={onGuidelineInputChange}
-                          value={guidelineInputValue}
-                        />
-                        <Button type="button" onClick={addGuideline} size="sm">
-                          <Plus className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </FormControl>
-                    <div className="flex flex-col flex-wrap gap-2 mt-2">
-                      {form
-                        .getValues("additionalInfo.guidelines")
-                        .map((guideline, index) => (
-                          <Badge
-                            key={index}
-                            variant="secondary"
-                            className="flex justify-between gap-1 py-1 w-auto"
-                          >
-                            {guideline}
-                            <button
-                              type="button"
-                              onClick={() => removeGuideline(guideline)}
-                              className="ml-1 rounded-full hover:bg-slate-300 p-0.5"
-                            >
-                              <X className="h-3 w-3" />
-                              <span className="sr-only">
-                                Remove {guideline}
-                              </span>
-                            </button>
-                          </Badge>
-                        ))}
-                    </div>
-                    <FormDescription>
-                      Add guidelines to ensure a safe and respectful community
-                    </FormDescription>
-                  </FormItem>
-                )}
-              />
-            </CardContent>
-            <CardFooter className="flex justify-between">
-              <Button type="button" variant="outline" onClick={prevStep}>
-                Back
-              </Button>
-              <Button type="button" onClick={nextStep}>
-                Continue
-                <ChevronRight className="ml-2 h-4 w-4" />
-              </Button>
-            </CardFooter>
-          </Card>
-        )}
-
-        {step === 3 && (
-          <Card>
-            <CardHeader>
-              <CardTitle>Personalisation</CardTitle>
-              <CardDescription>
-                Add a profile picture and banner to make your community stand
-                out.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid md:grid-cols-2 gap-6">
-                <div className="space-y-2">
-                  <Label htmlFor="avatar">Community Avatar</Label>
-                  <div className="flex items-center gap-4">
-                    <Avatar className="w-16 h-16">
-                      {avatarPreview ? (
-                        <AvatarImage src={avatarPreview} alt="Avatar preview" />
-                      ) : (
-                        <AvatarFallback className="text-lg">
-                          {/*{formData.name*/}
-                          {/*  ? formData.name.substring(0, 2).toUpperCase()*/}
-                          {/*  : "C"}*/}
-                        </AvatarFallback>
-                      )}
-                    </Avatar>
-                    <div className="flex-grow mt-6">
-                      <Input
-                        id="avatar"
-                        type="file"
-                        accept="image/*"
-                        className="hidden"
-                        onChange={(e) => handleFileChange(e, "avatar")}
-                      />
-                      <Label htmlFor="avatar" className="cursor-pointer">
-                        <div className="flex items-center gap-2 border rounded-md px-3 py-2 hover:bg-slate-50">
-                          <Upload className="h-4 w-4" />
-                          <span>Upload Avatar</span>
-                        </div>
-                      </Label>
-                      <p className="text-xs text-muted-foreground mt-1">
-                        Recommended: 400x400px
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="banner">Community Banner</Label>
-                  <div className="flex flex-col gap-2">
-                    <div className="relative h-24 rounded-md overflow-hidden bg-slate-100 flex items-center justify-center">
-                      {bannerPreview ? (
-                        <img
-                          src={bannerPreview || "/placeholder.svg"}
-                          alt="Banner preview"
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        <span className="text-muted-foreground text-sm">
-                          Banner Preview
-                        </span>
-                      )}
-                    </div>
-                    <Input
-                      id="banner"
-                      type="file"
-                      accept="image/*"
-                      className="hidden"
-                      onChange={(e) => handleFileChange(e, "banner")}
-                    />
-                    <Label htmlFor="banner" className="cursor-pointer">
-                      <div className="flex items-center gap-2 border rounded-md px-3 py-2 hover:bg-slate-50">
-                        <Upload className="h-4 w-4" />
-                        <span>Upload Banner</span>
-                      </div>
-                    </Label>
-                    <p className="text-xs text-muted-foreground">
-                      Recommended: 1200x300px
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-            <CardFooter className="flex justify-between">
-              <Button type="button" variant="outline" onClick={prevStep}>
-                Back
-              </Button>
-              <Button type="button" variant="outline" onClick={nextStep}>
-                Next
-              </Button>
-            </CardFooter>
-          </Card>
-        )}
-
-        {step === 4 && (
-          <div className="space-y-8">
+        <form onSubmit={form.handleSubmit(onSubmit)}>
+          {step === 1 && (
             <Card>
               <CardHeader>
-                <CardTitle>Preview Your Community</CardTitle>
+                <CardTitle>Basic Information</CardTitle>
                 <CardDescription>
-                  Review how your community will appear to others.
+                  Let's start with the essential details about your community.
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                {/* Community Preview */}
-                <div className="border rounded-lg overflow-hidden">
-                  {/* Banner */}
-                  <div
-                    className={`relative h-48 ${bannerPreview ? "" : "bg-gradient-to-r from-blue-600 to-indigo-700"}`}
-                  >
-                    {bannerPreview ? (
-                      <img
-                        src={bannerPreview || "/placeholder.svg"}
-                        alt="Community banner"
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <div className="absolute inset-0 flex items-center justify-center opacity-20">
-                        <BookOpen className="w-32 h-32 text-white" />
-                      </div>
-                    )}
-                    <div className="absolute bottom-0 left-0 w-full">
-                      <div className="px-6">
-                        <div className="relative -bottom-12 flex flex-col md:flex-row gap-4 items-start">
-                          <Avatar className="w-24 h-24 border-4 border-white shadow-lg">
-                            {avatarPreview ? (
-                              <AvatarImage
-                                src={avatarPreview}
-                                alt="Community avatar"
-                              />
-                            ) : (
-                              <AvatarFallback
-                                className={`${avatarColours[form.getValues("basicInfo.category")]} text-white text-xl`}
-                              >
-                                {form.getValues("basicInfo.name")
-                                  ? form.getValues("basicInfo.name").substring(0, 2).toUpperCase()
-                                  : "C"}
-                              </AvatarFallback>
-                            )}
-                          </Avatar>
+                <FormField
+                  control={form.control}
+                  name="basicInfo.name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Name</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Community Name" {...field} />
+                      </FormControl>
+                      <FormDescription>
+                        Choose a clear, descriptive name that reflects the
+                        purpose of your community
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="basicInfo.description"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Description</FormLabel>
+                      <FormControl>
+                        <Textarea
+                          placeholder="Community Description"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormDescription>
+                        Provide a clear description of your community's purpose,
+                        goals, and activities.
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="basicInfo.category"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Category</FormLabel>
+                      <FormControl>
+                        <Select
+                          {...field}
+                          value={field.value}
+                          onValueChange={field.onChange}
+                        >
+                          <SelectTrigger id="category">
+                            <SelectValue placeholder="Select a category" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="Academic">Academic</SelectItem>
+                            <SelectItem value="Interest">
+                              Interest-based
+                            </SelectItem>
+                            <SelectItem value="Cultural">Cultural</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </FormControl>
+                      <FormDescription>
+                        Categorizing your community helps students find it more
+                        easily.
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="basicInfo.contact_email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Contact Email</FormLabel>
+                      <FormControl>
+                        <Input {...field} />
+                      </FormControl>
+                      <FormDescription>
+                        Provide an email address for students to contact you
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </CardContent>
+              <CardFooter className="flex justify-end">
+                <Button type="button" onClick={nextStep}>
+                  Continue
+                  <ChevronRight className="ml-2 h-4 w-4" />
+                </Button>
+              </CardFooter>
+            </Card>
+          )}
+
+          {step === 2 && (
+            <Card>
+              <CardHeader>
+                <CardTitle>Additional Details</CardTitle>
+                <CardDescription>
+                  Add more information to help students discover and thrive in
+                  your community.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <FormField
+                  control={form.control}
+                  name="additionalInfo.tags"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Tags & Interests</FormLabel>
+                      <FormControl>
+                        <div className="flex gap-2">
+                          <Input
+                            {...field}
+                            onKeyDown={handleTagKeyDown}
+                            onChange={onTagInputChange}
+                            value={tagInputValue}
+                          />
+                          <Button type="button" onClick={addTag} size="sm">
+                            <Plus className="h-4 w-4" />
+                          </Button>
                         </div>
+                      </FormControl>
+                      <div className="flex flex-wrap gap-2 mt-2">
+                        {form
+                          .getValues("additionalInfo.tags")
+                          .map((tag, index) => (
+                            <Badge
+                              key={index}
+                              variant="secondary"
+                              className="flex items-center gap-1 py-1"
+                            >
+                              {tag}
+                              <button
+                                type="button"
+                                onClick={() => removeTag(tag)}
+                                className="ml-1 rounded-full hover:bg-slate-300 p-0.5"
+                              >
+                                <X className="h-3 w-3" />
+                                <span className="sr-only">Remove {tag}</span>
+                              </button>
+                            </Badge>
+                          ))}
+                      </div>
+                      <FormDescription>
+                        Add relevant tags to help students find your community
+                        based on their interests
+                      </FormDescription>
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="additionalInfo.about"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>About</FormLabel>
+                      <FormControl>
+                        <Textarea {...field} />
+                      </FormControl>
+                      <FormDescription>
+                        Share more about your community's history, achievements,
+                        and future plans
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="additionalInfo.guidelines"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Guidelines</FormLabel>
+                      <FormControl>
+                        <div className="flex gap-2">
+                          <Input
+                            {...field}
+                            onKeyDown={handleGuidelineKeyDown}
+                            onChange={onGuidelineInputChange}
+                            value={guidelineInputValue}
+                          />
+                          <Button
+                            type="button"
+                            onClick={addGuideline}
+                            size="sm"
+                          >
+                            <Plus className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </FormControl>
+                      <div className="flex flex-col flex-wrap gap-2 mt-2">
+                        {form
+                          .getValues("additionalInfo.guidelines")
+                          .map((guideline, index) => (
+                            <Badge
+                              key={index}
+                              variant="secondary"
+                              className="flex justify-between gap-1 py-1 w-auto"
+                            >
+                              {guideline}
+                              <button
+                                type="button"
+                                onClick={() => removeGuideline(guideline)}
+                                className="ml-1 rounded-full hover:bg-slate-300 p-0.5"
+                              >
+                                <X className="h-3 w-3" />
+                                <span className="sr-only">
+                                  Remove {guideline}
+                                </span>
+                              </button>
+                            </Badge>
+                          ))}
+                      </div>
+                      <FormDescription>
+                        Add guidelines to ensure a safe and respectful community
+                      </FormDescription>
+                    </FormItem>
+                  )}
+                />
+              </CardContent>
+              <CardFooter className="flex justify-between">
+                <Button type="button" variant="outline" onClick={prevStep}>
+                  Back
+                </Button>
+                <Button type="button" onClick={nextStep}>
+                  Continue
+                  <ChevronRight className="ml-2 h-4 w-4" />
+                </Button>
+              </CardFooter>
+            </Card>
+          )}
+
+          {step === 3 && (
+            <Card>
+              <CardHeader>
+                <CardTitle>Personalisation</CardTitle>
+                <CardDescription>
+                  Add a profile picture and banner to make your community stand
+                  out.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <Label htmlFor="avatar">Community Avatar</Label>
+                    <div className="flex items-center gap-4">
+                      <Avatar className="w-16 h-16">
+                        {avatarPreview ? (
+                          <AvatarImage
+                            src={avatarPreview}
+                            alt="Avatar preview"
+                          />
+                        ) : (
+                          <AvatarFallback className="text-lg">
+                            {/*{formData.name*/}
+                            {/*  ? formData.name.substring(0, 2).toUpperCase()*/}
+                            {/*  : "C"}*/}
+                          </AvatarFallback>
+                        )}
+                      </Avatar>
+                      <div className="flex-grow mt-6">
+                        <Input
+                          id="avatar"
+                          type="file"
+                          accept="image/*"
+                          className="hidden"
+                          onChange={(e) => handleFileChange(e, "avatar")}
+                        />
+                        <Label htmlFor="avatar" className="cursor-pointer">
+                          <div className="flex items-center gap-2 border rounded-md px-3 py-2 hover:bg-slate-50">
+                            <Upload className="h-4 w-4" />
+                            <span>Upload Avatar</span>
+                          </div>
+                        </Label>
+                        <p className="text-xs text-muted-foreground mt-1">
+                          Recommended: 400x400px
+                        </p>
                       </div>
                     </div>
                   </div>
 
-                  {/* Community Info */}
-                  <div className="pt-16 px-6 pb-6">
-                    <div className="mb-4">
-                      {form.getValues("basicInfo.category") && (
-                        <Badge className="mb-2">
-                          {form.getValues("basicInfo.category").charAt(0).toUpperCase() +
-                            form.getValues("basicInfo.category").slice(1)}
-                        </Badge>
-                      )}
-                      <h2 className="text-2xl font-bold">
-                        {form.getValues("basicInfo.name") || "Community Name"}
-                      </h2>
-                      <div className="flex items-center gap-2 text-sm text-muted-foreground mt-1">
-                        <Users className="h-4 w-4" />
-                        <span>0 members</span>
+                  <div className="space-y-2">
+                    <Label htmlFor="banner">Community Banner</Label>
+                    <div className="flex flex-col gap-2">
+                      <div className="relative h-24 rounded-md overflow-hidden bg-slate-100 flex items-center justify-center">
+                        {bannerPreview ? (
+                          <img
+                            src={bannerPreview || "/placeholder.svg"}
+                            alt="Banner preview"
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <span className="text-muted-foreground text-sm">
+                            Banner Preview
+                          </span>
+                        )}
                       </div>
+                      <Input
+                        id="banner"
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={(e) => handleFileChange(e, "banner")}
+                      />
+                      <Label htmlFor="banner" className="cursor-pointer">
+                        <div className="flex items-center gap-2 border rounded-md px-3 py-2 hover:bg-slate-50">
+                          <Upload className="h-4 w-4" />
+                          <span>Upload Banner</span>
+                        </div>
+                      </Label>
+                      <p className="text-xs text-muted-foreground">
+                        Recommended: 1200x300px
+                      </p>
                     </div>
-
-                    <p className="text-muted-foreground mb-4">
-                      {form.getValues("basicInfo.description") ||
-                        "Community description will appear here."}
-                    </p>
-
-                    <div className="flex flex-wrap gap-2 mb-6">
-                      {form.getValues("additionalInfo.tags").length > 0 ? (
-                        form.getValues("additionalInfo.tags").map((tag, index) => (
-                          <Badge key={index} variant="secondary">
-                            {tag}
-                          </Badge>
-                        ))
-                      ) : (
-                        <span className="text-sm text-muted-foreground">
-                          No tags added yet
-                        </span>
-                      )}
-                    </div>
-
-                    <Button className="w-full sm:w-auto">Join Community</Button>
                   </div>
                 </div>
               </CardContent>
@@ -688,20 +611,73 @@ export default function CommunityCreateForm() {
                 <Button type="button" variant="outline" onClick={prevStep}>
                   Back
                 </Button>
-                {/*<Button type="submit" disabled={isLoading}>*/}
-                {/*  {isLoading ? (*/}
-                {/*    <>*/}
-                {/*      <Loader2 className="mr-2 h-4 w-4 animate-spin" />*/}
-                {/*      Creating Community...*/}
-                {/*    </>*/}
-                {/*  ) : (*/}
-                {/*    "Create Community"*/}
-                {/*  )}*/}
-                {/*</Button>*/}
+                <Button type="button" variant="outline" onClick={nextStep}>
+                  Next
+                </Button>
               </CardFooter>
             </Card>
-          </div>
-        )}
+          )}
+
+          {step === 4 && (
+            <div className="space-y-8">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Preview Your Community</CardTitle>
+                  <CardDescription>
+                    Review how your community will appear to others.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <FeaturedCommunityCard
+                    community={{
+                      id: 0,
+                      name: form.getValues("basicInfo.name"),
+                      description: form.getValues("basicInfo.description"),
+                      category_name: form.getValues(
+                        "basicInfo.category",
+                      ) as Category,
+                      tags: form.getValues("additionalInfo.tags"),
+                      member_count: 0,
+                      post_count: 0,
+                      is_member: false,
+                      avatar: avatarPreview || "",
+                    }}
+                  />
+                  <CommunityCard
+                    community={{
+                      id: 0,
+                      name: form.getValues("basicInfo.name"),
+                      description: form.getValues("basicInfo.description"),
+                      category_name: form.getValues(
+                        "basicInfo.category",
+                      ) as Category,
+                      tags: form.getValues("additionalInfo.tags"),
+                      member_count: 0,
+                      post_count: 0,
+                      is_member: false,
+                      avatar: avatarPreview || "",
+                    }}
+                  />
+                </CardContent>
+                <CardFooter className="flex justify-between">
+                  <Button type="button" variant="outline" onClick={prevStep}>
+                    Back
+                  </Button>
+                  <Button type="submit" disabled={isLoading}>
+                    {isLoading ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Creating Community...
+                      </>
+                    ) : (
+                      "Create Community"
+                    )}
+                  </Button>
+                </CardFooter>
+              </Card>
+            </div>
+          )}
+        </form>
       </Form>
     </>
   );

@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button.tsx";
-import { useUser } from "@/components/UserProvider.tsx";
 import { Calendar, Home, MessageSquare, Users } from "lucide-react";
+import {useAuth} from "@/components/auth/AuthProvider.tsx";
 
 interface HeaderProps {
   landing?: boolean;
@@ -55,7 +55,7 @@ const tabs = {
 
 export default function Header({ landing }: HeaderProps) {
   const headerTabs = landing ? tabs.landing : tabs.application;
-  const { user, logout } = useUser();
+  const { user, logout } = useAuth();
 
   return (
     <>

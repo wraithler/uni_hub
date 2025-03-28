@@ -3,58 +3,33 @@ import LoginPage from "@/pages/Login.page.tsx";
 import LandingPage from "@/pages/Landing.page.tsx";
 import CommunitiesPage from "@/pages/Communities.page.tsx";
 import CommunityPage from "@/pages/Community.page.tsx";
-import { UserProvider } from "@/components/UserProvider.tsx";
 import NotFoundPage from "@/pages/NotFound.page.tsx";
 import CommunityCreatePage from "@/pages/CommunityCreate.Page.tsx";
 
 const router = createBrowserRouter([
   {
     path: "/login",
-    element: (
-      <UserProvider>
-        <LoginPage />
-      </UserProvider>
-    ),
+    element: <LoginPage />,
   },
   {
     path: "/",
-    element: (
-      <UserProvider>
-        <LandingPage />
-      </UserProvider>
-    ),
+    element: <LandingPage />,
   },
   {
     path: "/communities",
-    element: (
-      <UserProvider>
-        <CommunitiesPage />
-      </UserProvider>
-    ),
+    element: <CommunitiesPage />,
   },
   {
     path: "/community",
-    element: (
-      <UserProvider>
-        <CommunityPage />
-      </UserProvider>
-    ),
+    element: <CommunityPage />,
   },
   {
     path: "/communities/create",
-    element: (
-      <UserProvider>
-        <CommunityCreatePage />
-      </UserProvider>
-    ),
+    element: <CommunityCreatePage />,
   },
   {
     path: "*",
-    element: (
-      <UserProvider>
-        <NotFoundPage />
-      </UserProvider>
-    ),
+    element: <NotFoundPage />,
   },
 ]);
 
