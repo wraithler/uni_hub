@@ -5,4 +5,6 @@ urlpatterns = [
     path("users/", include(("apps.users.urls", "users"))),
     path("communities/", include(("apps.communities.urls", "communities"))),
     path("events/", include(("apps.events.urls", "events"))),
+    path("friends/", include(("apps.friends.urls", "friends"))),
+
 ]
