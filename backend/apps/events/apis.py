@@ -2,11 +2,14 @@ from django.http import Http404
 from rest_framework import serializers
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from apps.events.models import EventTicket
+from rest_framework import status
 
 from apps.api.pagination import LimitOffsetPagination, get_paginated_response
 from apps.events.models import Event
 from apps.events.selectors import event_get, event_list
 from apps.events.services import event_create, event_update
+from apps.events.services import event_ticket_create
 
 
 class EventDetailApi(APIView):
@@ -117,3 +120,21 @@ class EventUpdateApi(APIView):
         data = EventDetailApi.OutputSerializer(event).data
 
         return Response(data)
+
+class EventTicketCreateApi(APIView):
+    class OutputSerializer(serializers.ModelSerializer):
+        class Meta:
+            model = EventTicket
+            fields = ['id', 'ticket_id', 'qr_code', 'event', 'user']
+
+    def post(self, request, event_id):
+        user = request.user
+        try:
+            event = Event.objects.get(id=event_id)
+        except Event.DoesNotExist:
+            raise Http404
+
+        ticket = event_ticket_create(event=event, user=user)
+
+        serializer = self.OutputSerializer(ticket)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
