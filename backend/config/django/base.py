@@ -23,8 +23,8 @@ LOCAL_APPS = [
     "apps.posts.apps.PostsConfig",
     "apps.feedback.apps.FeedbackConfig",
     "apps.friends.apps.FriendsConfig",
-    'apps.notificationpref.apps.NotificationprefConfig',
-    "apps.profile.apps.ProfileConfig",
+    "apps.reports.apps.ReportsConfig",
+    "apps.comments.apps.CommentsConfig",
 ]  # TODO: Add others
 
 THIRD_PARTY_APPS = [
