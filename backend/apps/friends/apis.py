@@ -9,7 +9,7 @@ from apps.friends.services import (
     friend_request_accept,
     friend_request_decline
 )
-from apps.friends.selectors import get_received_friend_requests
+from apps.friends.selectors import get_sent_friend_requests
 
 
 class FriendRequestSendApi(APIView):
@@ -35,7 +35,7 @@ class FriendRequestListApi(APIView):
             fields = ("id", "sender", "receiver", "is_accepted", "is_declined", "created_at")
 
     def get(self, request):
-        friend_requests = get_received_friend_requests(user_id=request.user.id)
+        friend_requests = get_sent_friend_requests(user_id=request.user.id)
 
         data = self.OutputSerializer(friend_requests, many=True).data
         return Response(data)
