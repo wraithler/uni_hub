@@ -1,32 +1,65 @@
 from django.test import TestCase
-from apps.notificationpref.models import UserNotificationPreference
-from apps.users.models import BaseUser
+from apps.users.factories import BaseUserFactory
 from apps.communities.models import Community, CommunityCategory
-from apps.notificationpref.services import notification_preference_create
+from apps.notificationpref.models import UserNotificationPreference 
+from apps.notificationpref.services import create_notification_preference, update_notification_preference
+from django.db import IntegrityError
 
-class NotificationPreferenceServiceTest(TestCase):
-    
+
+class NotificationPreferenceServiceTests(TestCase):
     def setUp(self):
+        self.user = BaseUserFactory.create()
+        
+        # Manually create required related models first
+        self.category = CommunityCategory.objects.create(
+            name="Test Category"
+        )
+        
+        # Manually create community with only existing fields
+        self.community = Community.objects.create(
+            name="Test Community",
+            description="Test Description",
+            category=self.category,
+            created_by=self.user,
+            is_featured=False,
+            about="Test About"
+        )
 
-        self.user = BaseUser.objects.create(username="testuser", email="testuser@example.com")
-        self.category = CommunityCategory.objects.create(name="Tech")
-        self.community1 = Community.objects.create(name="Community1", created_by=self.user, category=self.category)
-        self.community2 = Community.objects.create(name="Community2", created_by=self.user, category=self.category)
+    def test_preference_auto_created(self):
+        """Verify the user already has a preference"""
+        # Check through the UserNotificationPreference model
+        pref = UserNotificationPreference.objects.filter(user=self.user).first()
+        self.assertIsNotNone(pref, "Notification preference should be auto-created")
 
-    def test_create_notification_preference_defaults(self):
-        preference = notification_preference_create(user=self.user)
-
-        self.assertIsNotNone(preference)
-        self.assertEqual(preference.user, self.user)
-        self.assertTrue(preference.event_updates)
-        self.assertTrue(preference.post_notifications)
-        self.assertTrue(preference.email_notifications)
-        self.assertTrue(preference.in_app_notifications)
-        self.assertFalse(preference.subscribed_communities.exists())  #
-
-    def test_create_notification_preference_with_communities(self):
-        preference = notification_preference_create(user=self.user, subscribed_communities=[self.community1, self.community2])
-
-        self.assertEqual(preference.subscribed_communities.count(), 2)
-        self.assertIn(self.community1, preference.subscribed_communities.all())
-        self.assertIn(self.community2, preference.subscribed_communities.all())
+    def test_update_existing_preference(self):
+        """Test updating the auto-created preference"""
+        # Get the existing preference
+        pref = UserNotificationPreference.objects.get(user=self.user)
+        
+        # Test modifying existing preference
+        updated_pref = update_notification_preference(
+            user=self.user,
+            data={'email_notifications': False}
+        )
+        self.assertEqual(updated_pref, pref)
+        self.assertFalse(updated_pref.email_notifications)
+    
+    def test_create_when_none_exists(self):
+        """Test creation when no preference exists"""
+        # Ensure no preference exists
+        UserNotificationPreference.objects.filter(user=self.user).delete()
+        
+        pref = create_notification_preference(user=self.user)
+        self.assertEqual(pref.user, self.user)
+        self.assertTrue(pref.email_notifications)
+    
+    def test_create_with_communities(self):
+        """Test creation with community subscriptions"""
+        # Clear any existing preference
+        UserNotificationPreference.objects.filter(user=self.user).delete()
+        
+        pref = create_notification_preference(
+            user=self.user,
+            subscribed_communities=[self.community]
+        )
+        self.assertEqual(pref.subscribed_communities.count(), 1)

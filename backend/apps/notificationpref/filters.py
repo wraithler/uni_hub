@@ -5,7 +5,6 @@ class UserNotificationPreferenceFilter(django_filters.FilterSet):
     class Meta:
         model = UserNotificationPreference
         fields = (
-            "user__username",
             "event_updates",
             "post_notifications",
             "announcements",

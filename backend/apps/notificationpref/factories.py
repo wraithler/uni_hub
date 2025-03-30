@@ -8,8 +8,6 @@ class UserNotificationPreferenceFactory(factory.django.DjangoModelFactory):
 
     user = factory.SubFactory(BaseUserFactory)
 
-    id = factory.Sequence(lambda n: 1000 + n)
-
     event_updates = factory.Faker('boolean')
     post_notifications = factory.Faker('boolean')
     announcements = factory.Faker('boolean')

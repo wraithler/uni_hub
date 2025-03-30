@@ -1,8 +1,7 @@
 from django.urls import path
-from apps.notificationpref.apis import UserNotificationPreferenceView
-
-app_name = "notificationpref"  # Ensure this is defined
+from apps.notificationpref.apis import UserNotificationPreferenceRetrieveAPI, UserNotificationPreferenceUpdateAPI
 
 urlpatterns = [
-    path('notification-preferences/', UserNotificationPreferenceView.as_view(), name='notification-preferences'),
+    path('notification-preferences/', UserNotificationPreferenceRetrieveAPI.as_view(), name='notification-preferences-retrieve'),
+    path('notification-preferences/update/', UserNotificationPreferenceUpdateAPI.as_view(), name='notification-preferences-update'),
 ]

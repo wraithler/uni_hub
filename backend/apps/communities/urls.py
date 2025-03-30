@@ -5,7 +5,8 @@ from apps.communities.apis import (
     CommunityCreateApi,
     CommunityDetailApi,
     CommunityUpdateApi,
-    CommunityEventsListApi, CommunityJoinApi,
+    CommunityEventsListApi,
+    CommunityJoinApi,
 )
 
 urlpatterns = [
