@@ -24,7 +24,7 @@ LOCAL_APPS = [
     "apps.feedback.apps.FeedbackConfig",
     "apps.friends.apps.FriendsConfig",
     'apps.notificationpref.apps.NotificationprefConfig',
-    "apps.profile_info.apps.ProfileInfoConfig",
+    "apps.profile.apps.ProfileConfig",
 ]  # TODO: Add others
 
 THIRD_PARTY_APPS = [
@@ -86,11 +86,11 @@ ASGI_APPLICATION = "config.asgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": env("DB_NAME"),
-        "USER": env("DB_USER"),
-        "PASSWORD": env("DB_PASSWORD"),
-        "HOST": env("DB_HOST"),
-        "PORT": env("DB_PORT"),
+        "NAME": env("POSTGRES_NAME"),
+        "USER": env("POSTGRES_USER"),
+        "PASSWORD": env("POSTGRES_PASSWORD"),
+        "HOST": env("POSTGRES_HOST"),
+        "PORT": env("POSTGRES_PORT"),
     }
 }
 DATABASES["default"]["ATOMIC_REQUESTS"] = True

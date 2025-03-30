@@ -1,7 +1,7 @@
 from django.db import IntegrityError
 from django.test import TestCase
 
-from apps.communities.models import CommunityCategory
+from apps.communities.models import CommunityTag
 from apps.communities.services import community_category_create
 
 
@@ -14,8 +14,8 @@ class CommunityCategoryCreateTests(TestCase):
         self.assertIsNotNone(community_category)
         self.assertEqual(community_category.name, "Community Category")
         self.assertEqual(community_category.description, "Description")
-        self.assertEqual(CommunityCategory.objects.count(), 1)
-        self.assertEqual(CommunityCategory.objects.first(), community_category)
+        self.assertEqual(CommunityTag.objects.count(), 1)
+        self.assertEqual(CommunityTag.objects.first(), community_category)
 
     def test_community_category_create_with_no_name(self):
         with self.assertRaises(TypeError):

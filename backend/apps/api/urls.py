@@ -5,6 +5,6 @@ urlpatterns = [
     path("users/", include(("apps.users.urls", "users"))),
     path("communities/", include(("apps.communities.urls", "communities"))),
     path("events/", include(("apps.events.urls", "events"))),
-    path('notification/', include('apps.notificationpref.urls', namespace='notificationpref')),
-
+    path("notification/", include(("apps.notificationpref.urls", "notificationpref"))),
+    path("profile/", include(("apps.profile.urls", "profile"))),    
 ]

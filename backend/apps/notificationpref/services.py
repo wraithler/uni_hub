@@ -1,50 +1,57 @@
+from django.db import transaction
 from apps.notificationpref.models import UserNotificationPreference
 from apps.users.models import BaseUser
-from apps.communities.models import Community
 
-def notification_preference_create(
-    *, user: BaseUser, subscribed_communities: list = [], event_updates: bool = True,
-    post_notifications: bool = True, announcements: bool = True, email_notifications: bool = True,
-    in_app_notifications: bool = True
+@transaction.atomic
+def create_notification_preference(
+    *,
+    user: BaseUser,
+    event_updates: bool = True,
+    post_notifications: bool = True,
+    announcements: bool = True,
+    email_notifications: bool = True,
+    in_app_notifications: bool = True,
+    subscribed_communities: list = None
 ) -> UserNotificationPreference:
+
+    if subscribed_communities is None:
+        subscribed_communities = []
     
-    preference, created = UserNotificationPreference.objects.get_or_create(
+    pref = UserNotificationPreference.objects.create(
         user=user,
-        defaults={
-            "event_updates": event_updates,
-            "post_notifications": post_notifications,
-            "announcements": announcements,
-            "email_notifications": email_notifications,
-            "in_app_notifications": in_app_notifications,
-        }
+        event_updates=event_updates,
+        post_notifications=post_notifications,
+        announcements=announcements,
+        email_notifications=email_notifications,
+        in_app_notifications=in_app_notifications
     )
-
-    if created or subscribed_communities:
-        preference.subscribed_communities.set(subscribed_communities)
-        preference.save()
-
-    return preference
-
-def notification_preference_update(*, user: BaseUser, data: dict) -> UserNotificationPreference:
     
-    preference, created = UserNotificationPreference.objects.get_or_create(user=user)
+    if subscribed_communities:
+        pref.subscribed_communities.set(subscribed_communities)
     
+    return pref
 
-    allowed_fields = {
-        "event_updates",
-        "post_notifications",
-        "announcements",
-        "email_notifications",
-        "in_app_notifications",
-        "subscribed_communities",
-    }
+@transaction.atomic
+def update_notification_preference(
+    *,
+    user: BaseUser,
+    data: dict
+) -> UserNotificationPreference:
+
+    pref = UserNotificationPreference.objects.get(user=user)
+
+    for field in [
+        'event_updates',
+        'post_notifications',
+        'announcements',
+        'email_notifications',
+        'in_app_notifications'
+    ]:
+        if field in data:
+            setattr(pref, field, data[field])
+
+    if 'subscribed_communities' in data:
+        pref.subscribed_communities.set(data['subscribed_communities'])
     
-    for field, value in data.items():
-        if field in allowed_fields:
-            if field == "subscribed_communities" and isinstance(value, list):
-                preference.subscribed_communities.set(value)
-            else:
-                setattr(preference, field, value)
-    
-    preference.save()
-    return preference
+    pref.save()
+    return pref

@@ -3,14 +3,45 @@ from typing import List
 from django.db import transaction
 
 from apps.common.services import model_update
-from apps.communities.models import CommunityCategory, Community, CommunityInvitation
+from apps.communities.models import CommunityTag, Community, CommunityInvitation, CommunityCategory, CommunityGuidelines
 from apps.core.exceptions import ApplicationError
+from apps.files.models import File
 from apps.users.models import BaseUser
+
+@transaction.atomic
+def community_create_new(
+    *,
+    name: str,
+    description: str,
+    tags: List[CommunityTag],
+    category: CommunityCategory,
+    created_by: BaseUser,
+    about: str,
+    guidelines: List[CommunityGuidelines],
+    avatar: File,
+    banner: File,
+    contact_email: str,
+) -> Community:
+    community = Community.objects.create(
+        name=name,
+        description=description,
+        created_by=created_by,
+        category=category,
+        about=about,
+        avatar=avatar,
+        banner=banner,
+        contact_email=contact_email
+    )
+    community.tags.add(*tags)
+    community.guidelines.add(*guidelines)
+    community.memberships.create(user=created_by)
+
+    return community
 
 
 @transaction.atomic
-def community_category_create(*, name: str, description: str) -> CommunityCategory:
-    category = CommunityCategory.objects.create(name=name, description=description)
+def community_category_create(*, name: str) -> CommunityCategory:
+    category = CommunityCategory.objects.create(name=name)
 
     return category
 
@@ -19,7 +50,7 @@ def community_category_create(*, name: str, description: str) -> CommunityCatego
 def community_category_update(
     *, community_category: CommunityCategory, data
 ) -> CommunityCategory:
-    non_side_effect_fields: List[str] = ["name", "description"]
+    non_side_effect_fields: List[str] = ["name"]
 
     community_category, has_updated = model_update(
         instance=community_category, fields=non_side_effect_fields, data=data
@@ -33,18 +64,17 @@ def community_create(
     *,
     name: str,
     description: str,
-    category: CommunityCategory,
+    tags: List[CommunityTag],
     created_by: BaseUser,
-    emoji: str = None,
+    category: CommunityCategory
 ) -> Community:
     community = Community.objects.create(
         name=name,
         description=description,
-        category=category,
         created_by=created_by,
-        emoji=emoji,
+        category=category
     )
-
+    community.tags.add(*tags)
     community.memberships.create(user=created_by)
 
     return community
@@ -52,7 +82,7 @@ def community_create(
 
 @transaction.atomic
 def community_update(*, community: Community, data) -> Community:
-    non_side_effect_fields: List[str] = ["name", "description", "emoji"]
+    non_side_effect_fields: List[str] = ["name", "description", "is_featured"]
 
     community, has_updated = model_update(
         instance=community, fields=non_side_effect_fields, data=data
@@ -101,3 +131,9 @@ def community_invitation_update(
     )
 
     return invitation
+
+@transaction.atomic
+def community_tag_create(*, name: str) -> CommunityTag:
+    tag = CommunityTag.objects.create(name=name)
+
+    return tag

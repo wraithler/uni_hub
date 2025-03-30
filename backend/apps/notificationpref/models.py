@@ -16,4 +16,4 @@ class UserNotificationPreference(models.Model):
         db_table = 'notification_preference'
 
     def __str__(self):
-        return f"Notification Preferences for {self.user.username}"
+        return f"Notification Preferences for {self.user.email}"
