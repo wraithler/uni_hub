@@ -1,41 +1,58 @@
 import { useState } from "react";
 import { Filter, Search, Users } from "lucide-react";
 
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge.tsx";
+import { Button } from "@/components/ui/button.tsx";
+import { Input } from "@/components/ui/input.tsx";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from "@/components/ui/select.tsx";
 import FeaturedCommunityCard from "@/components/FeaturedCommunityCard.tsx";
 import { CommunityCard } from "@/components/CommunityCard.tsx";
 import Layout from "@/components/Layout.tsx";
-import { useCommunityList } from "@/hooks/useCommunityList.ts";
 import PageHeader from "@/components/PageHeader.tsx";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationPrevious,
+} from "@/components/ui/pagination.tsx";
+import { Link } from "react-router-dom";
+import {useCommunities} from "@/hooks/useCommunities.ts";
 
 export default function CommunitiesPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
-  const { data: communities } = useCommunityList();
+  const [offset, setOffset] = useState(0);
 
-  const { data: featuredCommunities } = useCommunityList({
-    initialFilters: { is_featured: true },
+  const { data: communities } = useCommunities({
+    limit: 12,
+    offset,
+    category_name: selectedCategory === "all" ? undefined : selectedCategory,
   });
 
-  // // Filter communities based on search query and selected category
-  // const filteredCommunities = communitiesData.filter((community) => {
-  //   const matchesSearch =
-  //     community.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-  //     community.description.toLowerCase().includes(searchQuery.toLowerCase());
-  //   const matchesCategory =
-  //     selectedCategory === "all" || community.category === selectedCategory;
-  //
-  //   return matchesSearch && matchesCategory;
-  // });
+  const { data: featuredCommunities } = useCommunities({
+    limit: 3,
+    offset: 0,
+    is_featured: true,
+  });
+
+  if (communities === undefined || featuredCommunities === undefined) {
+    return null;
+  }
+
+  const totalPages = Math.ceil(communities?.count / 12);
+  const currentPage = offset / 12 + 1;
+  const nextPages = [currentPage + 1, currentPage + 2].filter(
+    (p) => p <= totalPages,
+  );
+  const prevPages = [currentPage - 1, currentPage - 2].filter((p) => p > 0);
+  const pages = [...prevPages, currentPage, ...nextPages];
 
   return (
     <Layout>
@@ -69,9 +86,9 @@ export default function CommunitiesPage() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">All Categories</SelectItem>
-                  <SelectItem value="academic">Academic</SelectItem>
-                  <SelectItem value="interest">Interest-based</SelectItem>
-                  <SelectItem value="cultural">Cultural</SelectItem>
+                  <SelectItem value="Academic">Academic</SelectItem>
+                  <SelectItem value="Interest">Interest-based</SelectItem>
+                  <SelectItem value="Cultural">Cultural</SelectItem>
                 </SelectContent>
               </Select>
               <Button variant="outline" size="icon">
@@ -112,7 +129,8 @@ export default function CommunitiesPage() {
         <div className="mb-8">
           <h2 className="text-xl font-semibold mb-4">Featured Communities</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {featuredCommunities && featuredCommunities.results.length > 0 ? (
+            {featuredCommunities.results &&
+            featuredCommunities.results.length > 0 ? (
               featuredCommunities.results.map((community) => (
                 <FeaturedCommunityCard
                   key={community.id}
@@ -150,7 +168,7 @@ export default function CommunitiesPage() {
             </Select>
           </div>
 
-          {communities && communities.results.length > 0 ? (
+          {communities.results && communities.results.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {communities.results.map((community) => (
                 <CommunityCard key={community.id} community={community} />
@@ -175,33 +193,30 @@ export default function CommunitiesPage() {
           )}
 
           {/* Pagination */}
-          {communities && communities.results.length > 0 && (
+          {communities.results && communities.results.length > 0 && (
             <div className="flex justify-center mt-8">
-              <div className="flex items-center gap-1">
-                <Button variant="outline" size="sm" disabled>
-                  Previous
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="w-9 h-9 p-0 bg-primary text-primary-foreground"
-                >
-                  1
-                </Button>
-                <Button variant="outline" size="sm" className="w-9 h-9 p-0">
-                  2
-                </Button>
-                <Button variant="outline" size="sm" className="w-9 h-9 p-0">
-                  3
-                </Button>
-                <span className="mx-1">...</span>
-                <Button variant="outline" size="sm" className="w-9 h-9 p-0">
-                  8
-                </Button>
-                <Button variant="outline" size="sm">
-                  Next
-                </Button>
-              </div>
+              <Pagination>
+                <PaginationContent>
+                  <PaginationItem>
+                    <PaginationPrevious
+                      type="button"
+                      style={{ overflowAnchor: "none" }}
+                      onClick={() => setOffset(Math.max(0, offset - 12))}
+                    />
+                  </PaginationItem>
+                  {pages.map((page) => (
+                    <PaginationItem key={page}>
+                      <PaginationLink
+                        type="button"
+                        style={{ overflowAnchor: "none" }}
+                        onClick={() => setOffset((page - 1) * 12)}
+                      >
+                        {page}
+                      </PaginationLink>
+                    </PaginationItem>
+                  ))}
+                </PaginationContent>
+              </Pagination>
             </div>
           )}
         </div>
@@ -217,8 +232,8 @@ export default function CommunitiesPage() {
               like-minded students.
             </p>
           </div>
-          <Button size="lg" className="whitespace-nowrap">
-            Create Community
+          <Button size="lg" className="whitespace-nowrap" asChild>
+            <Link to="/communities/create">Create Community</Link>
           </Button>
         </div>
       </main>

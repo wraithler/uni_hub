@@ -5,6 +5,8 @@ type UserMe = {
     is_admin: boolean;
     is_superuser: boolean;
     is_staff: boolean;
+    role: string;
+    is_email_verified: boolean;
 };
 
 export type {

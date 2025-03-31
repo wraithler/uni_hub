@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button.tsx";
-import { useUser } from "@/components/UserProvider.tsx";
 import { Calendar, Home, MessageSquare, Users } from "lucide-react";
+import {useAuth} from "@/components/auth/AuthProvider.tsx";
+import {Link} from "react-router-dom";
 
 interface HeaderProps {
   landing?: boolean;
@@ -32,7 +33,7 @@ const tabs = {
   application: [
     {
       name: "Home",
-      href: "/",
+      href: "/feed",
       icon: <Home className="w-4 h-4" />,
     },
     {
@@ -55,12 +56,12 @@ const tabs = {
 
 export default function Header({ landing }: HeaderProps) {
   const headerTabs = landing ? tabs.landing : tabs.application;
-  const { user, logout } = useUser();
+  const { user, logout } = useAuth();
 
   return (
     <>
       {/* Desktop Header */}
-      <header className="border-b bg-white">
+      <header className="border-b bg-white sticky">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <div className="size-8 rounded-full bg-primary flex items-center justify-center text-primary-foreground font-bold">
@@ -72,12 +73,12 @@ export default function Header({ landing }: HeaderProps) {
           <nav className="hidden md:flex items-center space-x-6">
             {headerTabs.map((tab, index) => (
               <Button variant="ghost" asChild key={index}>
-                <a
-                  href={tab.href}
+                <Link
+                  to={tab.href}
                 >
                   {tab.icon}
                   <span>{tab.name}</span>
-                </a>
+                </Link>
               </Button>
             ))}
           </nav>
@@ -85,7 +86,7 @@ export default function Header({ landing }: HeaderProps) {
           {user ? (
             <div className="flex items-center gap-3">
               <Button variant="ghost" asChild>
-                <a href="/profile">Profile</a>
+                <Link to="/profile">Profile</Link>
               </Button>
               <Button asChild>
                 <a onClick={logout}>Log out</a>
@@ -94,10 +95,10 @@ export default function Header({ landing }: HeaderProps) {
           ) : (
             <div className="flex items-center gap-3">
               <Button variant="ghost" asChild>
-                <a href="/login">Log in</a>
+                <Link to="/login">Log in</Link>
               </Button>
               <Button asChild>
-                <a href="/login">Sign up</a>
+                <Link to="/login">Sign up</Link>
               </Button>
             </div>
           )}
@@ -114,10 +115,10 @@ export default function Header({ landing }: HeaderProps) {
             asChild
             key={index}
           >
-            <a href={tab.href}>
+            <Link to={tab.href}>
               {tab.icon}
               <span>{tab.name}</span>
-            </a>
+            </Link>
           </Button>
         ))}
       </div>

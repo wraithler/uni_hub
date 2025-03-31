@@ -52,10 +52,16 @@ const avatarColours = {
   Interest: "bg-purple-600",
 };
 
-const bannerCategoryIcons = {
+const featuredBannerCategoryIcons = {
   Academic: <BookOpen className="w-16 h-16 text-white opacity-20" />,
   Cultural: <Globe className="w-16 h-16 text-white opacity-20" />,
   Interest: <Music className="w-16 h-16 text-white opacity-20" />,
+};
+
+const bannerCategoryIcons = {
+  Academic: <BookOpen className="w-16 h-16 text-white" />,
+  Cultural: <Globe className="w-16 h-16 text-white" />,
+  Interest: <Music className="w-16 h-16 text-white" />,
 };
 
 const badgeCategoryIcons = {
@@ -70,6 +76,7 @@ export {
   avatarColours,
   bannerCategoryIcons,
   badgeCategoryIcons,
+  featuredBannerCategoryIcons,
 };
 
 export type { Community, Category, CommunityList };

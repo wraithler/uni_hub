@@ -23,6 +23,7 @@ LOCAL_APPS = [
     "apps.posts.apps.PostsConfig",
     "apps.feedback.apps.FeedbackConfig",
     "apps.friends.apps.FriendsConfig",
+    "apps.feed.apps.FeedConfig",
     "apps.reports.apps.ReportsConfig",
     "apps.comments.apps.CommentsConfig",
     "apps.notification_preferences.apps.NotificationPreferencesConfig",

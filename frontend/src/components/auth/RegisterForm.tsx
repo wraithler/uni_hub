@@ -15,7 +15,7 @@ import { Button } from "@/components/ui/button.tsx";
 import { useState } from "react";
 import { fetchRegister } from "@/api/services/users.ts";
 import { Checkbox } from "@/components/ui/checkbox.tsx";
-import { useUser } from "@/components/UserProvider.tsx";
+import {useAuth} from "@/components/auth/AuthProvider.tsx";
 
 const FormSchema = z
   .object({
@@ -47,7 +47,7 @@ export function RegisterForm() {
   });
 
   const [isLoading, setIsLoading] = useState(false);
-  const { login } = useUser();
+  const { login } = useAuth();
 
   async function onSubmit(data: z.infer<typeof FormSchema>) {
     setIsLoading(true);

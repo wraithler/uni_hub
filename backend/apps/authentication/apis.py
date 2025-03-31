@@ -13,6 +13,7 @@ class UserMeApi(ApiAuthMixin, APIView):
         is_admin = serializers.BooleanField()
         is_superuser = serializers.BooleanField()
         is_staff = serializers.BooleanField()
+        is_email_verified = serializers.BooleanField()
 
     def get(self, request):
         data = self.OutputSerializer(request.user).data

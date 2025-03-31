@@ -4,9 +4,11 @@ from apps.communities.models import Community, CommunityTag, CommunityInvitation
 
 
 class CommunityFilter(django_filters.FilterSet):
+    category_name = django_filters.CharFilter(field_name='category__name', lookup_expr='icontains')
+
     class Meta:
         model = Community
-        fields = ("is_featured",)
+        fields = ("is_featured", "category_name")
 
 
 class CommunityCategoryFilter(django_filters.FilterSet):

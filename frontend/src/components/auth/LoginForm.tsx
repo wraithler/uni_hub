@@ -14,7 +14,8 @@ import { Input } from "@/components/ui/input.tsx";
 import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button.tsx";
 import { useState } from "react";
-import { useUser } from "@/components/UserProvider.tsx";
+import { useAuth } from "@/components/auth/AuthProvider.tsx";
+import {useNavigate} from "react-router-dom";
 
 const FormSchema = z.object({
   email: z.string().email({ message: "Invalid email address" }),
@@ -24,6 +25,9 @@ const FormSchema = z.object({
 });
 
 export function LoginForm() {
+  const { login } = useAuth();
+  const navigate = useNavigate();
+
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -33,17 +37,17 @@ export function LoginForm() {
   });
 
   const [isLoading, setIsLoading] = useState(false);
-  const { login } = useUser();
 
   function onSubmit(data: z.infer<typeof FormSchema>) {
     setIsLoading(true);
     try {
       login(data.email, data.password);
+      navigate("/");
     } catch {
-        form.setError("password", {
-            type: "manual",
-            message: "Something went wrong, please try again later"
-        })
+      form.setError("password", {
+        type: "manual",
+        message: "Something went wrong, please try again later",
+      });
     } finally {
       setIsLoading(false);
     }
