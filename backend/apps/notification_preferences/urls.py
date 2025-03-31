@@ -1,5 +1,5 @@
 from django.urls import path
-from apps.notificationpref.apis import (
+from apps.notification_preferences.apis import (
     UserNotificationPreferenceDetailAPI,
     UserNotificationPreferenceUpdateAPI,
 )

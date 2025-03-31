@@ -1,8 +1,8 @@
 from django.test import TestCase
 from apps.users.factories import BaseUserFactory
 from apps.communities.models import Community, CommunityCategory
-from apps.notificationpref.services import notification_preference_create
-from apps.notificationpref.models import UserNotificationPreference
+from apps.notification_preferences.services import notification_preference_create
+from apps.notification_preferences.models import UserNotificationPreference
 
 
 class CommunityIntegrationTests(TestCase):

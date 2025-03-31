@@ -1,5 +1,5 @@
 import factory
-from apps.notificationpref.models import UserNotificationPreference
+from apps.notification_preferences.models import UserNotificationPreference
 from apps.users.factories import BaseUserFactory
 
 

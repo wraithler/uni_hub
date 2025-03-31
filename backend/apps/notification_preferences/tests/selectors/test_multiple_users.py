@@ -1,7 +1,7 @@
 from django.test import TransactionTestCase
-from apps.notificationpref.selectors import user_notification_preference_get
+from apps.notification_preferences.selectors import user_notification_preference_get
 from apps.users.factories import BaseUserFactory
-from apps.notificationpref.models import UserNotificationPreference
+from apps.notification_preferences.models import UserNotificationPreference
 
 
 class MultipleUsersTests(TransactionTestCase):

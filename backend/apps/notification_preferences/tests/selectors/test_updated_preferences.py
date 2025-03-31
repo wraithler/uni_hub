@@ -1,7 +1,7 @@
 from django.test import TestCase
 
-from apps.notificationpref.models import UserNotificationPreference
-from apps.notificationpref.selectors import user_notification_preference_get
+from apps.notification_preferences.models import UserNotificationPreference
+from apps.notification_preferences.selectors import user_notification_preference_get
 from apps.users.factories import BaseUserFactory
 
 
