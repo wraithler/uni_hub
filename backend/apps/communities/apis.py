@@ -24,6 +24,22 @@ class CommunityDetailApi(APIView):
         id = serializers.IntegerField()
         name = serializers.CharField()
         description = serializers.CharField()
+        tags = serializers.SerializerMethodField()
+        category_name = serializers.SerializerMethodField()
+        member_count = serializers.SerializerMethodField()
+        post_count = serializers.SerializerMethodField()
+
+        def get_member_count(self, obj):
+            return obj.memberships.count()
+
+        def get_post_count(self, obj):
+            return obj.posts.count()
+
+        def get_tags(self, obj):
+            return obj.tags.all().values_list("name", flat=True)
+
+        def get_category_name(self, obj):
+            return obj.category.name
 
     def get(self, request, community_id):
         community = community_get(community_id)
@@ -42,6 +58,7 @@ class CommunityListApi(APIView):
 
     class FilterSerializer(serializers.Serializer):
         is_featured = serializers.BooleanField(required=False, allow_null=True)
+        category_name = serializers.CharField(required=False, allow_null=True)
 
     class OutputSerializer(serializers.ModelSerializer):
         member_count = serializers.SerializerMethodField()
@@ -77,6 +94,9 @@ class CommunityListApi(APIView):
     def get(self, request):
         filters_serializer = self.FilterSerializer(data=request.query_params)
         filters_serializer.is_valid(raise_exception=True)
+
+        if filters_serializer.validated_data.get("category_name", "") == "all":
+            filters_serializer.validated_data.pop("category_name")
 
         communities = community_list(
             filters=filters_serializer.validated_data, request=request

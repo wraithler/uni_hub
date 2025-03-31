@@ -44,6 +44,14 @@ class Post(BaseModel):
             + w4 * connection_score
         )
 
+    def time_since_posted(self):
+        hours = self.hours_since_posted
+        if hours < 1:
+            return f"{int(hours * 60)}m"
+        if hours < 24:
+            return f"{int(hours)}h"
+        return f"{int(hours // 24)}d"
+
 
 class PostLike(models.Model):
     id = models.AutoField(primary_key=True)

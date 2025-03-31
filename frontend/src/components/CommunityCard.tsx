@@ -65,7 +65,7 @@ export function CommunityCard({
           </div>
         </div>
 
-        <div className="flex items-center text-xs text-muted-foreground">
+        <div className="flex items-center text-xs text-muted-foreground mt-auto">
           <User className="w-3 h-3 mr-1" />
           <span>{member_count}</span>
           <span className="mx-1">•</span>

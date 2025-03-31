@@ -43,6 +43,13 @@ class Community(BaseModel):
         "files.File", on_delete=models.SET_NULL, related_name="community_banner", null=True
     )
 
+    PRIVACY_OPTIONS = (
+        ("public", "Public"),
+        ("private", "Private"),
+    )
+
+    privacy = models.CharField(max_length=10, choices=PRIVACY_OPTIONS, default="public")
+
     class Meta:
         verbose_name_plural = "Communities"
 

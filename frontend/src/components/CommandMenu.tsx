@@ -7,6 +7,7 @@ import {
   CommandItem,
   CommandList,
 } from "@/components/ui/command.tsx";
+import {Link} from "react-router-dom";
 
 export function CommandMenu() {
   const [isOpen, setIsOpen] = useState(false);
@@ -30,7 +31,7 @@ export function CommandMenu() {
         <CommandEmpty>No results found.</CommandEmpty>
         <CommandGroup heading="Suggestions">
           <CommandItem asChild>
-            <a href="/communities/create">Create a community</a>
+            <Link to="/communities/create">Create a community</Link>
           </CommandItem>
           <CommandItem>Create a post</CommandItem>
         </CommandGroup>
