@@ -1,7 +1,7 @@
 from django.test import TestCase
 from apps.users.factories import BaseUserFactory
 from apps.communities.models import Community, CommunityCategory
-from apps.notificationpref.services import create_notification_preference
+from apps.notificationpref.services import notification_preference_create
 from apps.notificationpref.models import UserNotificationPreference
 
 class CommunityIntegrationTests(TestCase):
@@ -19,7 +19,7 @@ class CommunityIntegrationTests(TestCase):
         UserNotificationPreference.objects.filter(user=self.user).delete()
 
     def test_create_with_communities(self):
-        pref = create_notification_preference(
+        pref = notification_preference_create(
             user=self.user,
             subscribed_communities=[self.community]
         )

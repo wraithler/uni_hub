@@ -4,7 +4,8 @@ from rest_framework.response import Response
 from rest_framework import serializers
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from apps.notificationpref.models import UserNotificationPreference
-from apps.notificationpref.selectors import get_user_notification_preference
+from apps.notificationpref.selectors import user_notification_preference_get
+from apps.notificationpref.services import notification_preference_update 
 
 class ApiAuthMixin:
     authentication_classes = [JWTAuthentication]
@@ -19,7 +20,7 @@ class UserNotificationPreferenceRetrieveAPI(ApiAuthMixin, APIView):
             read_only_fields = ("user",)
 
     def get(self, request):
-        pref = get_user_notification_preference(user=request.user)
+        pref = user_notification_preference_get(user=request.user)
         serializer = self.OutputSerializer(pref)
         return Response(serializer.data)
 
@@ -30,13 +31,8 @@ class UserNotificationPreferenceUpdateAPI(ApiAuthMixin, APIView):
         push_notifications = serializers.BooleanField(required=False)
 
     def patch(self, request):
-        pref = get_user_notification_preference(user=request.user)
-        serializer = self.InputSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        
-        for attr, value in serializer.validated_data.items():
-            setattr(pref, attr, value)
-        pref.save()
-
-        output_serializer = UserNotificationPreferenceRetrieveAPI.OutputSerializer(pref)
-        return Response(output_serializer.data)
+        pref = user_notification_preference_get(user=request.user)
+        data = request.data
+        pref = notification_preference_update(user=request.user, data=data)
+        serializer = self.OutputSerializer(pref)
+        return Response(serializer.data)

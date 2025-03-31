@@ -1,9 +1,10 @@
 from django.db import transaction
 from apps.notificationpref.models import UserNotificationPreference
 from apps.users.models import BaseUser
+from apps.common.services import model_update
 
 @transaction.atomic
-def create_notification_preference(
+def notification_preference_create(
     *,
     user: BaseUser,
     event_updates: bool = True,
@@ -32,26 +33,28 @@ def create_notification_preference(
     return pref
 
 @transaction.atomic
-def update_notification_preference(
+def notification_preference_update(
     *,
     user: BaseUser,
     data: dict
 ) -> UserNotificationPreference:
-
     pref = UserNotificationPreference.objects.get(user=user)
-
-    for field in [
+    
+    updatable_fields = [
         'event_updates',
         'post_notifications',
         'announcements',
         'email_notifications',
         'in_app_notifications'
-    ]:
-        if field in data:
-            setattr(pref, field, data[field])
-
+    ]
+    
+    pref, has_updated = model_update(
+        instance=pref,
+        fields=updatable_fields,
+        data=data
+    )
+    
     if 'subscribed_communities' in data:
         pref.subscribed_communities.set(data['subscribed_communities'])
     
-    pref.save()
     return pref

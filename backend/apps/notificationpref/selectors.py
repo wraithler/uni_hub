@@ -1,17 +1,12 @@
 from django.db.models import QuerySet
 from apps.notificationpref.models import UserNotificationPreference
 from apps.users.models import BaseUser 
+from apps.common.utils import get_object
 
 
-def get_user_notification_preference(*, user: BaseUser) -> UserNotificationPreference:
+def user_notification_preference_get(*, user: BaseUser) -> UserNotificationPreference:
+    return get_object(UserNotificationPreference, user=user)
 
-    try:
-        return UserNotificationPreference.objects.get(user=user)
-    except UserNotificationPreference.DoesNotExist:
-        raise Exception(
-            "Notification preferences should be created via user service. "
-            f"No preferences found for user {user.id}"
-        )
 
 def list_all_notification_preferences() -> QuerySet[UserNotificationPreference]:
     return UserNotificationPreference.objects.all()

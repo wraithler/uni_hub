@@ -1,5 +1,5 @@
 from django.test import TransactionTestCase
-from apps.notificationpref.selectors import get_user_notification_preference
+from apps.notificationpref.selectors import user_notification_preference_get
 from apps.users.factories import BaseUserFactory
 from apps.notificationpref.models import UserNotificationPreference
 
@@ -12,5 +12,5 @@ class MultipleUsersTests(TransactionTestCase):
         prefs = [UserNotificationPreference.objects.get(user=user) for user in users]
         
         for user, expected_pref in zip(users, prefs):
-            result = get_user_notification_preference(user=user)
+            result = user_notification_preference_get(user=user)
             self.assertEqual(result, expected_pref)
