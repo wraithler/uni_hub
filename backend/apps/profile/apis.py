@@ -4,7 +4,7 @@ from rest_framework import status, serializers
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from apps.profile.models import Profile
-from apps.profile.selectors import profile_by_user_get
+from apps.profile.selectors import profile_get
 from apps.api.mixins import ApiAuthMixin
 
 
@@ -23,7 +23,7 @@ class ProfileSerializer(serializers.ModelSerializer):
 
 class ProfileView(ApiAuthMixin, APIView):    
     def get_profile(self, user):
-        profile = profile_by_user_get(user)
+        profile = profile_get(user)
         if not profile:
             return None
         return profile
@@ -58,7 +58,7 @@ class ProfileView(ApiAuthMixin, APIView):
 class ProfileCreateView(ApiAuthMixin, APIView):    
     def post(self, request):
  
-        if profile_by_user_get(request.user):
+        if profile_get(request.user):
             return Response(
                 {"detail": "Profile already exists."},
                 status=status.HTTP_400_BAD_REQUEST
