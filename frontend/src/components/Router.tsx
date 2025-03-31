@@ -1,60 +1,40 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import LoginPage from "@/pages/Login.page.tsx";
 import LandingPage from "@/pages/Landing.page.tsx";
-import CommunitiesPage from "@/pages/Communities.page.tsx";
-import CommunityPage from "@/pages/Community.page.tsx";
-import { UserProvider } from "@/components/UserProvider.tsx";
+import CommunitiesPage from "@/pages/communities/Communities.page.tsx";
+import CommunityPage from "@/pages/communities/Community.page.tsx";
 import NotFoundPage from "@/pages/NotFound.page.tsx";
-import CommunityCreatePage from "@/pages/CommunityCreate.Page.tsx";
+import CommunityCreatePage from "@/pages/communities/CommunityCreate.Page.tsx";
+import FeedPage from "@/pages/Feed.page.tsx";
 
 const router = createBrowserRouter([
   {
     path: "/login",
-    element: (
-      <UserProvider>
-        <LoginPage />
-      </UserProvider>
-    ),
+    element: <LoginPage />,
   },
   {
     path: "/",
-    element: (
-      <UserProvider>
-        <LandingPage />
-      </UserProvider>
-    ),
+    element: <LandingPage />,
   },
   {
     path: "/communities",
-    element: (
-      <UserProvider>
-        <CommunitiesPage />
-      </UserProvider>
-    ),
+    element: <CommunitiesPage />,
   },
   {
-    path: "/community",
-    element: (
-      <UserProvider>
-        <CommunityPage />
-      </UserProvider>
-    ),
+    path: "/community/:id",
+    element: <CommunityPage />,
   },
   {
     path: "/communities/create",
-    element: (
-      <UserProvider>
-        <CommunityCreatePage />
-      </UserProvider>
-    ),
+    element: <CommunityCreatePage />,
+  },
+  {
+    path: "/feed",
+    element: <FeedPage />,
   },
   {
     path: "*",
-    element: (
-      <UserProvider>
-        <NotFoundPage />
-      </UserProvider>
-    ),
+    element: <NotFoundPage />,
   },
 ]);
 

@@ -43,3 +43,41 @@ class Post(BaseModel):
             + w3 * relevance_score
             + w4 * connection_score
         )
+
+    def time_since_posted(self):
+        hours = self.hours_since_posted
+        if hours < 1:
+            return f"{int(hours * 60)}m"
+        if hours < 24:
+            return f"{int(hours)}h"
+        return f"{int(hours // 24)}d"
+
+
+class PostLike(models.Model):
+    id = models.AutoField(primary_key=True)
+    user = models.ForeignKey("users.BaseUser", on_delete=models.CASCADE)
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="likes")
+
+    class Meta:
+        unique_together = ["user", "post"]
+
+
+# class PostUnlike(models.Model):
+#     id = models.AutoField(primary_key=True)
+#     user = models.ForeignKey("users.BaseUser", on_delete=models.CASCADE)
+#     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="unlikes")
+
+#     class Meta:
+#         unique_together = ["user", "post"]
+
+
+class PostComment(models.Model):
+    id = models.AutoField(primary_key=True)
+    content = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    created_by = models.ForeignKey("users.BaseUser", on_delete=models.CASCADE)
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="comments")
+
+    class Meta:
+        ordering = ["-created_at"]

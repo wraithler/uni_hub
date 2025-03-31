@@ -1,5 +1,6 @@
 from django.core.exceptions import ValidationError
 from django.db import models
+from django.utils import timezone
 
 from apps.common.models import BaseModel
 
@@ -28,6 +29,21 @@ class Event(BaseModel):
 
         if self.is_virtual_event and not self.virtual_link:
             raise ValidationError("A virtual event must have a virtual link.")
+
+    class Meta:
+        ordering = ["-starts_at"]
+
+    @property
+    def hours_since_posted(self):
+        return (timezone.now() - self.created_at).total_seconds() // 3600
+
+    def time_since_posted(self):
+        hours = self.hours_since_posted
+        if hours < 1:
+            return f"{int(hours * 60)}m"
+        if hours < 24:
+            return f"{int(hours)}h"
+        return f"{int(hours // 24)}d"
 
 
 class EventAttendee(BaseModel):

@@ -17,4 +17,5 @@ class EventFilter(django_filters.FilterSet):
             "community",
             "is_virtual_event",
             "virtual_link",
+            "community__memberships__user",
         )

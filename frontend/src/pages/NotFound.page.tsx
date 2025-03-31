@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import Layout from "@/components/Layout";
+import {Link} from "react-router-dom";
 
 export default function NotFoundPage() {
   // Popular links to help users navigate
@@ -85,14 +86,14 @@ export default function NotFoundPage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
               {popularLinks.map((link, index) => (
                 <Card key={index} className="hover:shadow-md transition-shadow">
-                  <a href={link.href} className="block h-full">
+                  <Link to={link.href} className="block h-full">
                     <CardContent className="p-6 flex flex-col items-center text-center h-full">
                       <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-4">
                         {link.icon}
                       </div>
                       <CardTitle className="text-lg">{link.title}</CardTitle>
                     </CardContent>
-                  </a>
+                  </Link>
                 </Card>
               ))}
             </div>

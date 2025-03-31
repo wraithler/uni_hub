@@ -3,13 +3,8 @@ from typing import List
 from django.db import transaction
 
 from apps.common.services import model_update
-from apps.communities.models import (
-    CommunityTag,
-    Community,
-    CommunityInvitation,
-    CommunityCategory,
-    CommunityGuidelines,
-)
+from apps.communities.models import CommunityTag, Community, CommunityInvitation, CommunityCategory, CommunityGuidelines
+from apps.communities.selectors import community_category_list
 from apps.core.exceptions import ApplicationError
 from apps.files.models import File
 from apps.users.models import BaseUser
@@ -65,16 +60,30 @@ def community_category_update(
 
     return community_category
 
+def get_or_create_tags(tag_names: List[str]) -> List[CommunityTag]:
+    tags = []
+
+    for tag_name in tag_names:
+        tag, _ = CommunityTag.objects.get_or_create(name=tag_name)
+        tags.append(tag)
+
+    return tags
 
 @transaction.atomic
 def community_create(
     *,
     name: str,
     description: str,
-    tags: List[CommunityTag],
+    tags: List[CommunityTag | str],
     created_by: BaseUser,
-    category: CommunityCategory,
+    category: CommunityCategory | str
 ) -> Community:
+    if isinstance(tags[0], str):
+        tags = get_or_create_tags(tags)
+
+    if isinstance(category, str):
+        category = community_category_list(filters={"name": category}).first()
+
     community = Community.objects.create(
         name=name, description=description, created_by=created_by, category=category
     )
@@ -100,7 +109,7 @@ def community_join(*, community: Community, user: BaseUser) -> Community:
     if community.is_member(user):
         raise ApplicationError("User is already a member of this community")
 
-    if community.is_private:
+    if community.privacy == "private":
         invitation = community.invitations.filter(user=user).first()
 
         if invitation:
