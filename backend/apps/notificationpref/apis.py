@@ -6,10 +6,7 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 from apps.notificationpref.models import UserNotificationPreference
 from apps.notificationpref.selectors import user_notification_preference_get
 from apps.notificationpref.services import notification_preference_update 
-
-class ApiAuthMixin:
-    authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticated]
+from apps.api.mixins import ApiAuthMixin
 
 class UserNotificationPreferenceRetrieveAPI(ApiAuthMixin, APIView):
     

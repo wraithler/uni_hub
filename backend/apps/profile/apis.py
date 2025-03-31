@@ -5,10 +5,8 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from apps.profile.models import Profile
 from apps.profile.selectors import profile_by_user_get
+from apps.api.mixins import ApiAuthMixin
 
-class ApiAuthMixin:
-    authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticated]
 
 class ProfileSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(source='user.email', read_only=True)
