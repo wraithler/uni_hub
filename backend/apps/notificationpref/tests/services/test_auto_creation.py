@@ -1,6 +1,8 @@
 from django.test import TestCase
-from apps.users.factories import BaseUserFactory
+
 from apps.notificationpref.models import UserNotificationPreference
+from apps.users.factories import BaseUserFactory
+
 
 class AutoCreationTests(TestCase):
     def setUp(self):

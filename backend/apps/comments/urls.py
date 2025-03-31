@@ -16,8 +16,8 @@ urlpatterns = [
     path("<int:comment_id>/update/", CommentUpdateApi.as_view(), name="update"),
     path("<int:comment_id>/delete/", CommentDeleteApi.as_view(), name="delete"),
     path(
-        "post/<int:post_id>/", 
-        PostCommentsListApi.as_view(), 
+        "post/<int:post_id>/",
+        PostCommentsListApi.as_view(),
         name="post_comments",
     ),
     path("user/<int:user_id>/", UserCommentsListApi.as_view(), name="user_comments"),

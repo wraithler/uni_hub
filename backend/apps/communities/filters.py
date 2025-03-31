@@ -12,7 +12,10 @@ class CommunityFilter(django_filters.FilterSet):
 class CommunityCategoryFilter(django_filters.FilterSet):
     class Meta:
         model = CommunityTag
-        fields = ("id", "name",)
+        fields = (
+            "id",
+            "name",
+        )
 
 
 class CommunityInvitationFilter(django_filters.FilterSet):

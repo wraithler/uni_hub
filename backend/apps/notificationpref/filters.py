@@ -1,6 +1,7 @@
 import django_filters
 from apps.notificationpref.models import UserNotificationPreference
 
+
 class UserNotificationPreferenceFilter(django_filters.FilterSet):
     class Meta:
         model = UserNotificationPreference
