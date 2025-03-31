@@ -18,6 +18,8 @@ class ProfileFilterTests(TestCase):
         self.assertIn(self.profile3, filtered)
 
     def test_filter_by_hobbies(self):
-        filtered = ProfileFilter({"hobbies": "SPORTS"}, queryset=Profile.objects.all()).qs
+        filtered = ProfileFilter(
+            {"hobbies": "SPORTS"}, queryset=Profile.objects.all()
+        ).qs
         self.assertEqual(filtered.count(), 1)
         self.assertEqual(filtered.first(), self.profile1)

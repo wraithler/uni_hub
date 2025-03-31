@@ -3,6 +3,7 @@ from apps.profile.selectors import profile_list
 from apps.users.factories import BaseUserFactory
 from apps.profile.models import Profile
 
+
 class GetProfilesTestCase(TestCase):
     def setUp(self):
         self.user1 = BaseUserFactory.create()
@@ -13,7 +14,7 @@ class GetProfilesTestCase(TestCase):
 
     def test_get_profiles_no_filter(self):
         profiles = list(profile_list())
-        self.assertEqual(len(profiles), 2)  
+        self.assertEqual(len(profiles), 2)
 
     def test_get_profiles_with_filter(self):
         filtered_profiles = list(profile_list(filters={"bio": "User 1 Bio"}))

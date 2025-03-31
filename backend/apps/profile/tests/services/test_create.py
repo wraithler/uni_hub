@@ -4,6 +4,7 @@ from apps.profile.services import profile_create
 from apps.profile.factories import ProfileFactory
 from apps.users.factories import BaseUserFactory
 
+
 class ProfileCreateTests(TestCase):
     def setUp(self):
         self.user1 = BaseUserFactory.create()

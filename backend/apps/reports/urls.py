@@ -16,5 +16,9 @@ urlpatterns = [
     path("<int:report_id>/", ReportDetailApi.as_view(), name="detail"),
     path("<int:report_id>/update/", ReportUpdateApi.as_view(), name="update"),
     path("<int:report_id>/resolve/", ReportResolveApi.as_view(), name="resolve"),
-    path("attachments/upload/", ReportAttachmentUploadApi.as_view(), name="attachment_upload"),
+    path(
+        "attachments/upload/",
+        ReportAttachmentUploadApi.as_view(),
+        name="attachment_upload",
+    ),
 ]

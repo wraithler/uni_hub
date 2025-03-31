@@ -6,12 +6,15 @@ from apps.reports.models import ReportAttachment
 
 
 class ReportAttachmentCreateTests(TestCase):
-    
     def test_report_attachment_create_success(self):
         report = ReportFactory.create()
-        file = SimpleUploadedFile(name="test_file.txt", content=b"Test content", content_type="text/plain")
+        file = SimpleUploadedFile(
+            name="test_file.txt", content=b"Test content", content_type="text/plain"
+        )
 
-        attachment = report_attachment_create(report=report, file=file, description="Test File")
+        attachment = report_attachment_create(
+            report=report, file=file, description="Test File"
+        )
 
         self.assertIsInstance(attachment, ReportAttachment)
         self.assertEqual(attachment.report, report)

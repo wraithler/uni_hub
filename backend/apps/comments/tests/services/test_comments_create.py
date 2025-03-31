@@ -12,9 +12,11 @@ class CommentCreateTests(TestCase):
         community = CommunityFactory.create()
         post = PostFactory.create(community=community)
         user = BaseUserFactory.create()
-        community.memberships.create(user=user) 
+        community.memberships.create(user=user)
 
-        comment = comment_create(content="Test Comment", post_id=post.id, created_by=user)
+        comment = comment_create(
+            content="Test Comment", post_id=post.id, created_by=user
+        )
 
         self.assertIsInstance(comment, Comment)
         self.assertEqual(comment.content, "Test Comment")
@@ -26,4 +28,6 @@ class CommentCreateTests(TestCase):
         user = BaseUserFactory.create()
 
         with self.assertRaises(ApplicationError):
-            comment_create(content="Unauthorized Comment", post_id=post.id, created_by=user)
+            comment_create(
+                content="Unauthorized Comment", post_id=post.id, created_by=user
+            )

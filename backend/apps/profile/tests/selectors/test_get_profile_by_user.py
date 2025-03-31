@@ -22,5 +22,7 @@ class GetProfileByUserTestCase(TestCase):
     def test_get_profile_by_user_not_exists(self):
         with self.assertRaises(NotFound) as context:
             profile_get(self.user3)
-        
-        self.assertEqual(str(context.exception), "Profile not found for the given user.")
+
+        self.assertEqual(
+            str(context.exception), "Profile not found for the given user."
+        )

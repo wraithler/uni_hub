@@ -7,7 +7,6 @@ from apps.reports.models import Report
 
 
 class ReportCreateTests(TestCase):
-    
     def test_report_create_success(self):
         user = BaseUserFactory.create()
         category = ReportCategoryFactory.create()

@@ -3,10 +3,17 @@ from typing import List
 from django.db import transaction
 
 from apps.common.services import model_update
-from apps.communities.models import CommunityTag, Community, CommunityInvitation, CommunityCategory, CommunityGuidelines
+from apps.communities.models import (
+    CommunityTag,
+    Community,
+    CommunityInvitation,
+    CommunityCategory,
+    CommunityGuidelines,
+)
 from apps.core.exceptions import ApplicationError
 from apps.files.models import File
 from apps.users.models import BaseUser
+
 
 @transaction.atomic
 def community_create_new(
@@ -30,7 +37,7 @@ def community_create_new(
         about=about,
         avatar=avatar,
         banner=banner,
-        contact_email=contact_email
+        contact_email=contact_email,
     )
     community.tags.add(*tags)
     community.guidelines.add(*guidelines)
@@ -66,13 +73,10 @@ def community_create(
     description: str,
     tags: List[CommunityTag],
     created_by: BaseUser,
-    category: CommunityCategory
+    category: CommunityCategory,
 ) -> Community:
     community = Community.objects.create(
-        name=name,
-        description=description,
-        created_by=created_by,
-        category=category
+        name=name, description=description, created_by=created_by, category=category
     )
     community.tags.add(*tags)
     community.memberships.create(user=created_by)
@@ -131,6 +135,7 @@ def community_invitation_update(
     )
 
     return invitation
+
 
 @transaction.atomic
 def community_tag_create(*, name: str) -> CommunityTag:

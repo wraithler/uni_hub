@@ -5,6 +5,7 @@ from apps.posts.factories import PostFactory
 from apps.communities.factories import CommunityFactory
 from apps.comments.selectors import comment_list
 
+
 class CommentFilterTests(TestCase):
     def test_comment_filter_by_content(self):
         CommentFactory.create(content="This is comment content 1.")
@@ -41,9 +42,6 @@ class CommentFilterTests(TestCase):
         CommentFactory.create_batch(5, created_by=user, post=post)
         CommentFactory.create_batch(10)
         comments = comment_list(
-            filters={
-                "created_by": user,
-                "post__community__name": community.name
-            }
+            filters={"created_by": user, "post__community__name": community.name}
         )
         self.assertEqual(len(comments), 5)

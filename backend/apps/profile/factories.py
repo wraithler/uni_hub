@@ -8,6 +8,6 @@ class ProfileFactory(factory.django.DjangoModelFactory):
         model = Profile
 
     user = factory.SubFactory(BaseUserFactory)
-    gender = 'M'
-    hobbies = 'SPORTS'
-    bio = factory.Faker('paragraph')
+    gender = "M"
+    hobbies = "SPORTS"
+    bio = factory.Faker("paragraph")

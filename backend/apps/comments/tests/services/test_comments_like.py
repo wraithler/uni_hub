@@ -13,7 +13,7 @@ class CommentLikeTests(TestCase):
         post = PostFactory.create(community=community)
         comment = CommentFactory.create(post=post)
         user = BaseUserFactory.create()
-        community.memberships.create(user=user) 
+        community.memberships.create(user=user)
 
         like = comment_like_create(comment=comment, user=user)
 

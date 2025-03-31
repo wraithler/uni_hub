@@ -3,6 +3,7 @@ from apps.profile.services import get_profile_display_data
 from apps.profile.factories import ProfileFactory
 from apps.users.factories import BaseUserFactory
 
+
 class ProfileDisplayTests(TestCase):
     def setUp(self):
         self.user1 = BaseUserFactory.create()
@@ -13,7 +14,7 @@ class ProfileDisplayTests(TestCase):
             bio="Initial bio",
             website_url="https://example.com",
             github_url="https://github.com/user1",
-            linkedin_url="https://linkedin.com/in/user1"
+            linkedin_url="https://linkedin.com/in/user1",
         )
 
     def test_get_profile_display_data(self):
@@ -24,7 +25,7 @@ class ProfileDisplayTests(TestCase):
             "bio": "Initial bio",
             "website_url": "https://example.com",
             "github_url": "https://github.com/user1",
-            "linkedin_url": "https://linkedin.com/in/user1"
+            "linkedin_url": "https://linkedin.com/in/user1",
         }
         display_data = get_profile_display_data(self.profile1)
         self.assertEqual(display_data, expected_data)

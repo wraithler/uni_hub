@@ -7,6 +7,5 @@ urlpatterns = [
     path("events/", include(("apps.events.urls", "events"))),
     path("friends/", include(("apps.friends.urls", "friends"))),
     path("notification/", include(("apps.notificationpref.urls", "notificationpref"))),
-    path("profile/", include(("apps.profile.urls", "profile"))),  
-
+    path("profile/", include(("apps.profile.urls", "profile"))),
 ]

@@ -3,6 +3,7 @@ from apps.users.factories import BaseUserFactory
 from apps.notificationpref.services import notification_preference_create
 from apps.notificationpref.models import UserNotificationPreference
 
+
 class CreateServiceTests(TestCase):
     def setUp(self):
         self.user = BaseUserFactory.create()

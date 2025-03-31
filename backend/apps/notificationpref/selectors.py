@@ -1,6 +1,6 @@
 from django.db.models import QuerySet
 from apps.notificationpref.models import UserNotificationPreference
-from apps.users.models import BaseUser 
+from apps.users.models import BaseUser
 from apps.common.utils import get_object
 
 

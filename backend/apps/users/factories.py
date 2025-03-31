@@ -1,6 +1,8 @@
 import factory.django
 from faker import Faker
 
+from apps.emails.services import confirmation_email_create
+from apps.notificationpref.services import notification_preference_create
 from apps.users.models import BaseUser
 
 fake = Faker()
@@ -18,3 +20,11 @@ class BaseUserFactory(factory.django.DjangoModelFactory):
     bio = factory.Faker("text")
     academic_department = factory.Faker("text")
     year_of_study = factory.Faker("pyint", min_value=1, max_value=6)
+
+    @factory.post_generation
+    def post(self, create, extracted, **kwargs):
+        if not create:
+            return
+
+        confirmation_email_create(user=self)
+        notification_preference_create(user=self)
