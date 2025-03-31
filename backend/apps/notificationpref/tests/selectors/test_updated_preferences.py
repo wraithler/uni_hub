@@ -1,5 +1,5 @@
 from django.test import TransactionTestCase
-from apps.notificationpref.selectors import get_user_notification_preference
+from apps.notificationpref.selectors import user_notification_preference_get
 from apps.users.factories import BaseUserFactory
 from apps.notificationpref.models import UserNotificationPreference
 
@@ -13,6 +13,6 @@ class PreferenceUpdateTests(TransactionTestCase):
         original_pref.email_notifications = False
         original_pref.save()
         
-        result = get_user_notification_preference(user=user)
+        result = user_notification_preference_get(user=user)
         self.assertFalse(result.email_notifications)
         self.assertEqual(result.updated_at, original_pref.updated_at)

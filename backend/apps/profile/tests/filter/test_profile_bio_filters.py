@@ -4,11 +4,10 @@ from apps.profile.factories import ProfileFactory
 from apps.profile.models import Profile
 
 class ProfileBioFilterTests(TestCase):
-    @classmethod
-    def setUpTestData(cls):
-        cls.profile1 = ProfileFactory.create()
-        cls.profile2 = ProfileFactory.create()
-        cls.profile3 = ProfileFactory(bio="")
+    def setUp(self):
+        self.profile1 = ProfileFactory.create()
+        self.profile2 = ProfileFactory.create()
+        self.profile3 = ProfileFactory(bio="")
 
     def test_filter_has_bio_true(self):
         filtered = ProfileFilter({'has_bio': True}, queryset=Profile.objects.all()).qs

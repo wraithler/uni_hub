@@ -4,7 +4,7 @@ from rest_framework import status, serializers
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from apps.profile.models import Profile
-from apps.profile.selectors import get_profile_by_user
+from apps.profile.selectors import profile_by_user_get
 
 class ApiAuthMixin:
     authentication_classes = [JWTAuthentication]
@@ -23,12 +23,9 @@ class ProfileSerializer(serializers.ModelSerializer):
             'website_url', 'github_url', 'linkedin_url'
         ]
 
-class ProfileView(ApiAuthMixin, APIView):
-    """Handle profile retrieval and updates using selectors"""
-    
+class ProfileView(ApiAuthMixin, APIView):    
     def get_profile(self, user):
-        """Helper method to fetch the profile for a user"""
-        profile = get_profile_by_user(user)
+        profile = profile_by_user_get(user)
         if not profile:
             return None
         return profile
@@ -63,7 +60,7 @@ class ProfileView(ApiAuthMixin, APIView):
 class ProfileCreateView(ApiAuthMixin, APIView):    
     def post(self, request):
  
-        if get_profile_by_user(request.user):
+        if profile_by_user_get(request.user):
             return Response(
                 {"detail": "Profile already exists."},
                 status=status.HTTP_400_BAD_REQUEST

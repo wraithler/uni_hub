@@ -6,10 +6,6 @@ from apps.users.factories import BaseUserFactory
 
 
 class UserNotificationPreferenceTestCase(TestCase):
-    def setUp(self):
-        UserNotificationPreference.objects.all().delete()
-
-
     def test_filter_by_email_notifications(self):
         user = BaseUserFactory.create()
         
