@@ -1,7 +1,7 @@
 from django.test import TestCase
 from apps.users.factories import BaseUserFactory
-from apps.notificationpref.services import notification_preference_update
-from apps.notificationpref.models import UserNotificationPreference
+from apps.notification_preferences.services import notification_preference_update
+from apps.notification_preferences.models import UserNotificationPreference
 
 
 class UpdateServiceTests(TestCase):

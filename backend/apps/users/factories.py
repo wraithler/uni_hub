@@ -2,7 +2,7 @@ import factory.django
 from faker import Faker
 
 from apps.emails.services import confirmation_email_create
-from apps.notificationpref.services import notification_preference_create
+from apps.notification_preferences.services import notification_preference_create
 from apps.users.models import BaseUser
 
 fake = Faker()

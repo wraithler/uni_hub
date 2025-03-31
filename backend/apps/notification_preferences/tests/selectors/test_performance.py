@@ -1,7 +1,7 @@
 from django.test import TransactionTestCase
 from django.test.utils import CaptureQueriesContext
 from django.db import connection
-from apps.notificationpref.selectors import user_notification_preference_get
+from apps.notification_preferences.selectors import user_notification_preference_get
 from apps.users.factories import BaseUserFactory
 
 

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from apps.notificationpref.models import UserNotificationPreference
+from apps.notification_preferences.models import UserNotificationPreference
 
 
 @admin.register(UserNotificationPreference)

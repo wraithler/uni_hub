@@ -1,7 +1,7 @@
 from typing import List
 
 from django.db import transaction
-from apps.notificationpref.models import UserNotificationPreference
+from apps.notification_preferences.models import UserNotificationPreference
 from apps.users.models import BaseUser
 from apps.common.services import model_update
 

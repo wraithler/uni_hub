@@ -1,5 +1,5 @@
 import django_filters
-from apps.notificationpref.models import UserNotificationPreference
+from apps.notification_preferences.models import UserNotificationPreference
 
 
 class UserNotificationPreferenceFilter(django_filters.FilterSet):
