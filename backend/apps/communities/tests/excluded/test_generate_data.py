@@ -5,7 +5,7 @@ from apps.events.factories import EventFactory
 from apps.posts.factories import PostFactory
 
 
-# @skip("Only for development purposes")
+@skip("Only for development purposes")
 class GenerateDataTests(TestCase):
     def test_generate_data(self):
         # Generate 100 posts and 10 events with random created_at dates
