@@ -138,20 +138,20 @@ class PostLikeCreateApi(APIView):
         serializer = self.InputSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        post = post_get(serializer.validated_data['post_id'])
+        post = post_get(serializer.validated_data["post_id"])
         if post is None:
             raise Http404
 
-        like = post_like_create(
-            post=post, 
-            created_by=request.user
+        like = post_like_create(post=post, created_by=request.user)
+
+        return Response(
+            {
+                "id": like.id,
+                "post_id": like.post.id,
+                "created_by_id": like.created_by.id,
+            },
+            status=201,
         )
-        
-        return Response({
-            'id': like.id,
-            'post_id': like.post.id,
-            'created_by_id': like.created_by.id
-        }, status=201)
 
 
 class CommentLikeCreateApi(APIView):
@@ -162,17 +162,17 @@ class CommentLikeCreateApi(APIView):
         serializer = self.InputSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        comment = comment_get(serializer.validated_data['comment_id'])
+        comment = comment_get(serializer.validated_data["comment_id"])
         if comment is None:
             raise Http404
 
-        like = comment_like_create(
-            comment=comment, 
-            created_by=request.user
+        like = comment_like_create(comment=comment, created_by=request.user)
+
+        return Response(
+            {
+                "id": like.id,
+                "comment_id": like.comment.id,
+                "created_by_id": like.created_by.id,
+            },
+            status=201,
         )
-        
-        return Response({
-            'id': like.id,
-            'comment_id': like.comment.id,
-            'created_by_id': like.created_by.id
-        }, status=201)

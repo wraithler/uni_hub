@@ -15,5 +15,13 @@ class FriendRequestAcceptServiceTests(TestCase):
 
         # Ensure friendship is created both ways
         self.assertEqual(Friend.objects.count(), 2)
-        self.assertTrue(Friend.objects.filter(user=friend_request.sender, friend=friend_request.receiver).exists())
-        self.assertTrue(Friend.objects.filter(user=friend_request.receiver, friend=friend_request.sender).exists())
+        self.assertTrue(
+            Friend.objects.filter(
+                user=friend_request.sender, friend=friend_request.receiver
+            ).exists()
+        )
+        self.assertTrue(
+            Friend.objects.filter(
+                user=friend_request.receiver, friend=friend_request.sender
+            ).exists()
+        )

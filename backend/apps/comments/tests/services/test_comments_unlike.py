@@ -12,13 +12,13 @@ class CommentUnlikeTests(TestCase):
         post = PostFactory.create(community=community)
         comment = CommentFactory.create(post=post)
         user = BaseUserFactory.create()
-        community.memberships.create(user=user) 
+        community.memberships.create(user=user)
 
         comment_like_create(comment=comment, user=user)
 
         comment_like_delete(comment=comment, user=user)
 
-        self.assertFalse(comment.likes.filter(user=user).exists()) 
+        self.assertFalse(comment.likes.filter(user=user).exists())
 
     def test_comment_unlike_no_existing_like(self):
         community = CommunityFactory.create()
@@ -26,6 +26,6 @@ class CommentUnlikeTests(TestCase):
         comment = CommentFactory.create(post=post)
         user = BaseUserFactory.create()
 
-        comment_like_delete(comment=comment, user=user) 
+        comment_like_delete(comment=comment, user=user)
 
         self.assertFalse(comment.likes.filter(user=user).exists())
