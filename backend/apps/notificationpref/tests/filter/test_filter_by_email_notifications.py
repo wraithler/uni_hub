@@ -3,8 +3,6 @@ from apps.notificationpref.models import UserNotificationPreference
 from apps.notificationpref.filters import UserNotificationPreferenceFilter
 from apps.users.factories import BaseUserFactory
 
-
-
 class UserNotificationPreferenceTestCase(TestCase):
     def test_filter_by_email_notifications(self):
         user = BaseUserFactory.create()
