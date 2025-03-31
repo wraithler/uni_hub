@@ -9,6 +9,7 @@ from apps.core.exceptions import ApplicationError
 from apps.files.models import File
 from apps.users.models import BaseUser
 
+
 @transaction.atomic
 def community_create_new(
     *,
@@ -31,7 +32,7 @@ def community_create_new(
         about=about,
         avatar=avatar,
         banner=banner,
-        contact_email=contact_email
+        contact_email=contact_email,
     )
     community.tags.add(*tags)
     community.guidelines.add(*guidelines)
@@ -84,10 +85,7 @@ def community_create(
         category = community_category_list(filters={"name": category}).first()
 
     community = Community.objects.create(
-        name=name,
-        description=description,
-        created_by=created_by,
-        category=category
+        name=name, description=description, created_by=created_by, category=category
     )
     community.tags.add(*tags)
     community.memberships.create(user=created_by)
@@ -146,6 +144,7 @@ def community_invitation_update(
     )
 
     return invitation
+
 
 @transaction.atomic
 def community_tag_create(*, name: str) -> CommunityTag:

@@ -75,7 +75,7 @@ class CommunityListApi(APIView):
                 "member_count",
                 "post_count",
                 "tags",
-                "category_name"
+                "category_name",
             )
 
         def get_member_count(self, obj):
@@ -90,7 +90,6 @@ class CommunityListApi(APIView):
         def get_category_name(self, obj):
             return obj.category.name
 
-
     def get(self, request):
         filters_serializer = self.FilterSerializer(data=request.query_params)
         filters_serializer.is_valid(raise_exception=True)
@@ -104,7 +103,9 @@ class CommunityListApi(APIView):
 
         return get_paginated_response(
             pagination_class=self.Pagination,
-            serializer_class=partial(self.OutputSerializer, context={"request": request}),
+            serializer_class=partial(
+                self.OutputSerializer, context={"request": request}
+            ),
             queryset=communities,
             request=request,
             view=self,
