@@ -4,9 +4,7 @@ from apps.reports.services import report_attachment_delete
 from apps.reports.models import ReportAttachment
 
 
-
 class ReportAttachmentDeleteTests(TestCase):
-    
     def test_report_attachment_delete_success(self):
         attachment = ReportAttachmentFactory.create()
 

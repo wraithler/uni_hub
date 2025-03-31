@@ -1,6 +1,10 @@
 from unittest import skip, TestCase  # noqa
 
-from apps.communities.services import community_create, community_tag_create, community_category_create
+from apps.communities.services import (
+    community_create,
+    community_tag_create,
+    community_category_create,
+)
 from apps.users.models import BaseUser
 
 
@@ -28,7 +32,7 @@ class GenerateDataTests(TestCase):
                 community_tag_create(name="Environment"),
             ],
             created_by=BaseUser.objects.first(),
-            category=community_category_create(name="Cultural")
+            category=community_category_create(name="Cultural"),
         )
 
         community_create(
@@ -40,5 +44,5 @@ class GenerateDataTests(TestCase):
                 community_tag_create(name="Collaboration"),
             ],
             created_by=BaseUser.objects.first(),
-            category=community_category_create(name="Interest")
+            category=community_category_create(name="Interest"),
         )
