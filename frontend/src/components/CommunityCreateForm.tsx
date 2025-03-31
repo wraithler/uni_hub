@@ -39,9 +39,10 @@ import {
 } from "@/components/ui/avatar.tsx";
 import { Category } from "@/api/types/communities.tsx";
 import api from "@/api/api.ts";
-import { useNavigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import FeaturedCommunityCard from "@/components/FeaturedCommunityCard.tsx";
 import { CommunityCard } from "@/components/CommunityCard.tsx";
+import { useAuth } from "@/components/auth/AuthProvider.tsx";
 
 const BasicInfoSchema = z.object({
   name: z.string().min(3, { message: "Name must be at least 3 characters" }),
@@ -101,6 +102,14 @@ const multiStepSchema = z.object({
 
 export default function CommunityCreateForm() {
   const [step, setStep] = useState(1);
+  const [tagInputValue, setTagInputValue] = useState("");
+  const [guidelineInputValue, setGuidelineInputValue] = useState("");
+  const [avatarPreview] = useState<string | null>(null);
+  const [bannerPreview] = useState<string | null>(null); // todo: setup previews
+  const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
+
+  const { user } = useAuth();
 
   const form = useForm<z.infer<typeof multiStepSchema>>({
     resolver: zodResolver(multiStepSchema),
@@ -123,12 +132,9 @@ export default function CommunityCreateForm() {
     },
   });
 
-  const [tagInputValue, setTagInputValue] = useState("");
-  const [guidelineInputValue, setGuidelineInputValue] = useState("");
-  const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
-  const [bannerPreview, setBannerPreview] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const navigate = useNavigate();
+  if (!user) {
+    return <Navigate to="/login" />;
+  }
 
   const addTag = () => {
     form.setValue("additionalInfo.tags", [
@@ -334,7 +340,7 @@ export default function CommunityCreateForm() {
                           value={field.value}
                           onValueChange={field.onChange}
                         >
-                          <SelectTrigger id="category">
+                          <SelectTrigger id="category" tabIndex={0}>
                             <SelectValue placeholder="Select a category" />
                           </SelectTrigger>
                           <SelectContent>
@@ -556,7 +562,7 @@ export default function CommunityCreateForm() {
                           type="file"
                           accept="image/*"
                           className="hidden"
-                          onChange={(e) => handleFileChange(e, "avatar")}
+                          // onChange={(e) => handleFileChange(e, "avatar")}
                         />
                         <Label htmlFor="avatar" className="cursor-pointer">
                           <div className="flex items-center gap-2 border rounded-md px-3 py-2 hover:bg-slate-50">
@@ -592,7 +598,7 @@ export default function CommunityCreateForm() {
                         type="file"
                         accept="image/*"
                         className="hidden"
-                        onChange={(e) => handleFileChange(e, "banner")}
+                        // onChange={(e) => handleFileChange(e, "banner")}
                       />
                       <Label htmlFor="banner" className="cursor-pointer">
                         <div className="flex items-center gap-2 border rounded-md px-3 py-2 hover:bg-slate-50">

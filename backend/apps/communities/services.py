@@ -111,7 +111,7 @@ def community_join(*, community: Community, user: BaseUser) -> Community:
     if community.is_member(user):
         raise ApplicationError("User is already a member of this community")
 
-    if community.is_private:
+    if community.privacy == "private":
         invitation = community.invitations.filter(user=user).first()
 
         if invitation:

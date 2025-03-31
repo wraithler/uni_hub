@@ -1,23 +1,20 @@
 import { useState } from "react";
 import { Filter, Search, Users } from "lucide-react";
 
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge.tsx";
+import { Button } from "@/components/ui/button.tsx";
+import { Input } from "@/components/ui/input.tsx";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from "@/components/ui/select.tsx";
 import FeaturedCommunityCard from "@/components/FeaturedCommunityCard.tsx";
 import { CommunityCard } from "@/components/CommunityCard.tsx";
 import Layout from "@/components/Layout.tsx";
 import PageHeader from "@/components/PageHeader.tsx";
-import { useQuery } from "@tanstack/react-query";
-import api from "@/api/api.ts";
-import { CommunityList } from "@/api/types/communities.tsx";
 import {
   Pagination,
   PaginationContent,
@@ -25,40 +22,24 @@ import {
   PaginationLink,
   PaginationPrevious,
 } from "@/components/ui/pagination.tsx";
+import { Link } from "react-router-dom";
+import {useCommunities} from "@/hooks/useCommunities.ts";
 
 export default function CommunitiesPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [offset, setOffset] = useState(0);
 
-  const {
-    data: communities,
-    isError,
-    isPending,
-  } = useQuery({
-    queryKey: ["communities", 12, offset],
-    queryFn: async () => {
-      const response = await api.get("/communities/", {
-        params: { limit: 12, offset: offset },
-      });
-      return response.data as CommunityList;
-    },
-    placeholderData: (prevData) => prevData,
+  const { data: communities } = useCommunities({
+    limit: 12,
+    offset,
+    category_name: selectedCategory === "all" ? undefined : selectedCategory,
   });
 
-  const {
-    data: featuredCommunities,
-    isError: isFeaturedError,
-    isPending: isFeaturedPending,
-  } = useQuery({
-    queryKey: ["featuredCommunities", { limit: 3, offset: 0 }],
-    queryFn: async () => {
-      const response = await api.get("/communities/", {
-        params: { limit: 3, offset: 0 },
-      });
-      return response.data as CommunityList;
-    },
-    placeholderData: (prevData) => prevData,
+  const { data: featuredCommunities } = useCommunities({
+    limit: 3,
+    offset: 0,
+    is_featured: true,
   });
 
   if (communities === undefined || featuredCommunities === undefined) {
@@ -105,9 +86,9 @@ export default function CommunitiesPage() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">All Categories</SelectItem>
-                  <SelectItem value="academic">Academic</SelectItem>
-                  <SelectItem value="interest">Interest-based</SelectItem>
-                  <SelectItem value="cultural">Cultural</SelectItem>
+                  <SelectItem value="Academic">Academic</SelectItem>
+                  <SelectItem value="Interest">Interest-based</SelectItem>
+                  <SelectItem value="Cultural">Cultural</SelectItem>
                 </SelectContent>
               </Select>
               <Button variant="outline" size="icon">
@@ -219,6 +200,7 @@ export default function CommunitiesPage() {
                   <PaginationItem>
                     <PaginationPrevious
                       type="button"
+                      style={{ overflowAnchor: "none" }}
                       onClick={() => setOffset(Math.max(0, offset - 12))}
                     />
                   </PaginationItem>
@@ -226,6 +208,7 @@ export default function CommunitiesPage() {
                     <PaginationItem key={page}>
                       <PaginationLink
                         type="button"
+                        style={{ overflowAnchor: "none" }}
                         onClick={() => setOffset((page - 1) * 12)}
                       >
                         {page}
@@ -249,8 +232,8 @@ export default function CommunitiesPage() {
               like-minded students.
             </p>
           </div>
-          <Button size="lg" className="whitespace-nowrap">
-            <a href="/communities/create">Create Community</a>
+          <Button size="lg" className="whitespace-nowrap" asChild>
+            <Link to="/communities/create">Create Community</Link>
           </Button>
         </div>
       </main>

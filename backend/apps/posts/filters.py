@@ -12,4 +12,5 @@ class PostFilter(django_filters.FilterSet):
             "created_by",
             "community__name",
             "created_at",
+            "community__memberships__user",
         )

@@ -17,7 +17,7 @@ def model_update(
     m2m_data = {}
     update_fields = []
 
-    model_fields = {field.name: field for field in instance._meta.get_fields()}
+    model_fields = {field.name: field for field in instance._meta.get_fields()}  # noqa
 
     for field in fields:
         if field not in data:

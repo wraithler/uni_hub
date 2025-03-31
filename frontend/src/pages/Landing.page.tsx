@@ -19,10 +19,11 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import Layout from "@/components/Layout.tsx";
+import {Link} from "react-router-dom";
 
 export default function LandingPage() {
   return (
-    <Layout>
+    <Layout landing={true}>
       {/* Hero Section */}
       <section className="py-16 md:py-24 bg-gradient-to-b from-slate-50 to-white">
         <div className="container mx-auto px-4 grid md:grid-cols-2 gap-8 items-center">
@@ -36,10 +37,10 @@ export default function LandingPage() {
             </p>
             <div className="flex flex-col sm:flex-row gap-3">
               <Button size="lg" asChild>
-                <a href="/login">
+                <Link to="/login">
                   Get Started
                   <ArrowRight className="ml-2 h-4 w-4" />
-                </a>
+                </Link>
               </Button>
               <Button size="lg" variant="outline" asChild>
                 <a href="#features">Learn More</a>
@@ -132,10 +133,10 @@ export default function LandingPage() {
               </CardContent>
               <CardFooter>
                 <Button variant="ghost" className="gap-1" asChild>
-                  <a href="/communities">
+                  <Link to="/communities">
                     Explore Communities
                     <ChevronRight className="h-4 w-4" />
-                  </a>
+                  </Link>
                 </Button>
               </CardFooter>
             </Card>
@@ -306,10 +307,10 @@ export default function LandingPage() {
 
           <div className="mt-10 text-center">
             <Button size="lg" asChild>
-              <a href="/communities">
+              <Link to="/communities">
                 Explore All Communities
                 <ArrowRight className="ml-2 h-4 w-4" />
-              </a>
+              </Link>
             </Button>
           </div>
         </div>
@@ -381,10 +382,10 @@ export default function LandingPage() {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button size="lg" variant="secondary" asChild>
-              <a href="/login">
+              <Link to="/login">
                 Sign Up Now
                 <ArrowRight className="ml-2 h-4 w-4" />
-              </a>
+              </Link>
             </Button>
             <Button
               size="lg"

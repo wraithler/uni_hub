@@ -1,10 +1,11 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import LoginPage from "@/pages/Login.page.tsx";
 import LandingPage from "@/pages/Landing.page.tsx";
-import CommunitiesPage from "@/pages/Communities.page.tsx";
-import CommunityPage from "@/pages/Community.page.tsx";
+import CommunitiesPage from "@/pages/communities/Communities.page.tsx";
+import CommunityPage from "@/pages/communities/Community.page.tsx";
 import NotFoundPage from "@/pages/NotFound.page.tsx";
-import CommunityCreatePage from "@/pages/CommunityCreate.Page.tsx";
+import CommunityCreatePage from "@/pages/communities/CommunityCreate.Page.tsx";
+import FeedPage from "@/pages/Feed.page.tsx";
 
 const router = createBrowserRouter([
   {
@@ -20,12 +21,16 @@ const router = createBrowserRouter([
     element: <CommunitiesPage />,
   },
   {
-    path: "/community",
+    path: "/community/:id",
     element: <CommunityPage />,
   },
   {
     path: "/communities/create",
     element: <CommunityCreatePage />,
+  },
+  {
+    path: "/feed",
+    element: <FeedPage />,
   },
   {
     path: "*",
