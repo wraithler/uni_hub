@@ -30,3 +30,27 @@ class CommunityFilterTests(TestCase):
         communities = community_list(filters={"category_name": category.name})
 
         self.assertEqual(len(communities), 1)
+
+    def test_community_filter_by_combined(self):
+        category = CommunityCategoryFactory.create()
+        CommunityFactory.create_batch(10, add_categories=[category], is_private=False)
+        CommunityFactory.create_batch(10, add_categories=[category], is_private=True)
+
+        private_communities = community_list(
+            filters={"categories": [category], "visibility": "private"}
+        )
+        public_communities = community_list(
+            filters={"categories": [category], "visibility": "public"}
+        )
+
+        self.assertEqual(len(private_communities), 10)
+        self.assertEqual(len(public_communities), 10)
+
+    def test_community_filter_by_multiple_categories(self):
+        category1 = CommunityCategoryFactory.create()
+        category2 = CommunityCategoryFactory.create()
+        CommunityFactory.create(add_categories=[category1, category2])
+
+        communities = community_list(filters={"categories": [category1, category2]})
+
+        self.assertEqual(len(communities), 1)

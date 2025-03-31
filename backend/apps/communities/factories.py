@@ -1,7 +1,12 @@
 import factory
 from faker import Faker
 
-from apps.communities.models import CommunityTag, Community, CommunityInvitation, CommunityCategory
+from apps.communities.models import (
+    CommunityTag,
+    Community,
+    CommunityInvitation,
+    CommunityCategory,
+)
 from apps.users.factories import BaseUserFactory
 
 fake = Faker()
@@ -41,7 +46,7 @@ class CommunityFactory(factory.django.DjangoModelFactory):
             return
 
         if extracted:
-            self.tags.set(extracted) # noqa
+            self.tags.set(extracted)  # noqa
         else:
             self.tags.set([CommunityTagFactory.create()])  # noqa
 

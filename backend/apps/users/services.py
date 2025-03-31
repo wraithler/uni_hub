@@ -4,7 +4,9 @@ from django.db import transaction
 
 from apps.common.services import model_update
 from apps.emails.services import confirmation_email_create
+from apps.notification_preferences.services import notification_preference_create
 from apps.users.models import BaseUser
+from apps.notification_preferences.models import UserNotificationPreference
 
 
 @transaction.atomic
@@ -27,6 +29,7 @@ def user_create(
     )
 
     confirmation_email_create(user=user)
+    notification_preference_create(user=user)
 
     return user
 
