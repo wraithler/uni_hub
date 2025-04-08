@@ -1,7 +1,7 @@
 from django.test import TestCase
-from apps.comments.factories import CommentFactory
+from apps.reactions.factories import CommentFactory
 from apps.users.factories import BaseUserFactory
-from apps.comments.selectors import comment_list_by_user
+from apps.reactions.selectors import comment_list_by_user
 
 
 class CommentListByUserTests(TestCase):

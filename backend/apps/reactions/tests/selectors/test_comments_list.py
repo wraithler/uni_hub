@@ -1,6 +1,6 @@
 from django.test import TestCase
-from apps.comments.factories import CommentFactory
-from apps.comments.selectors import comment_list
+from apps.reactions.factories import CommentFactory
+from apps.reactions.selectors import comment_list
 
 
 class CommentListTests(TestCase):

@@ -1,5 +1,5 @@
 from django.urls import path
-from apps.comments.apis import (
+from apps.reactions.apis import (
     CommentListApi,
     CommentCreateApi,
     CommentDetailApi,

@@ -1,6 +1,6 @@
 from django.test import TestCase
-from apps.comments.factories import CommentFactory
-from apps.comments.services import comment_update
+from apps.reactions.factories import CommentFactory
+from apps.reactions.services import comment_update
 from apps.core.exceptions import ApplicationError
 from apps.users.factories import BaseUserFactory
 
