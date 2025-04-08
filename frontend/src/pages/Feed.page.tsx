@@ -7,7 +7,7 @@ import {
   AvatarImage,
 } from "@/components/ui/avatar.tsx";
 import { Button } from "@/components/ui/button.tsx";
-import { Filter, TrendingUp } from "lucide-react";
+import { Filter } from "lucide-react";
 import { Tabs } from "@radix-ui/react-tabs";
 import { TabsList, TabsTrigger } from "@/components/ui/tabs.tsx";
 
@@ -103,25 +103,25 @@ export default function FeedPage() {
               </CardContent>
             </Card>
 
-            <Card>
-              <CardHeader className="pb-3">
-                <CardTitle className="text-lg flex items-center gap-2">
-                  <TrendingUp className="h-5 w-5 text-primary" />
-                  Trending Topics
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="pt-0">
-                {/*{trendingTopics.map((topic, index) => (*/}
-                {/*    <div key={index} className="flex items-center justify-between py-2">*/}
-                {/*        <div className="flex items-center gap-2">*/}
-                {/*            <span className="text-muted-foreground font-medium">#{index + 1}</span>*/}
-                {/*            <span className="font-medium">{topic.name}</span>*/}
-                {/*        </div>*/}
-                {/*        <span className="text-xs text-muted-foreground">{topic.posts} posts</span>*/}
-                {/*    </div>*/}
-                {/*))}*/}
-              </CardContent>
-            </Card>
+            {/*<Card>*/}
+            {/*  <CardHeader className="pb-3">*/}
+            {/*    <CardTitle className="text-lg flex items-center gap-2">*/}
+            {/*      <TrendingUp className="h-5 w-5 text-primary" />*/}
+            {/*      Trending Topics*/}
+            {/*    </CardTitle>*/}
+            {/*  </CardHeader>*/}
+            {/*  <CardContent className="pt-0">*/}
+            {/*    /!*{trendingTopics.map((topic, index) => (*!/*/}
+            {/*    /!*    <div key={index} className="flex items-center justify-between py-2">*!/*/}
+            {/*    /!*        <div className="flex items-center gap-2">*!/*/}
+            {/*    /!*            <span className="text-muted-foreground font-medium">#{index + 1}</span>*!/*/}
+            {/*    /!*            <span className="font-medium">{topic.name}</span>*!/*/}
+            {/*    /!*        </div>*!/*/}
+            {/*    /!*        <span className="text-xs text-muted-foreground">{topic.posts} posts</span>*!/*/}
+            {/*    /!*    </div>*!/*/}
+            {/*    /!*))}*!/*/}
+            {/*  </CardContent>*/}
+            {/*</Card>*/}
           </div>
 
           <div className="lg:col-span-2 space-y-6">

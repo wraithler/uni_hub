@@ -1,5 +1,5 @@
 import factory
-from apps.comments.models import Comment
+from apps.reactions.models import Comment
 from apps.posts.factories import PostFactory
 from apps.users.factories import BaseUserFactory
 

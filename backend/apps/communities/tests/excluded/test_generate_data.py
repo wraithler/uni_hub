@@ -11,7 +11,7 @@ from apps.communities.services import (
 from apps.users.models import BaseUser
 
 
-@skip("Only for development purposes")
+# @skip("Only for development purposes")
 class GenerateDataTests(TestCase):
     def test_generate_data(self):
         for i in range(100):

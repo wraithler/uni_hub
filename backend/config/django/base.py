@@ -25,7 +25,7 @@ LOCAL_APPS = [
     "apps.friends.apps.FriendsConfig",
     "apps.feed.apps.FeedConfig",
     "apps.reports.apps.ReportsConfig",
-    "apps.comments.apps.CommentsConfig",
+    "apps.reactions.apps.ReactionsConfig",
     "apps.notification_preferences.apps.NotificationPreferencesConfig",
     "apps.profile.apps.ProfileConfig",
 ]  # TODO: Add others

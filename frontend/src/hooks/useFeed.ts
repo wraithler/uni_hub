@@ -41,5 +41,6 @@ export const useFeed = () => {
         getNextPageParam: (lastPage, allPages) => {
             return lastPage.results.length > 0 ? allPages.length + 1 : undefined;
         },
+        
     })
 };
