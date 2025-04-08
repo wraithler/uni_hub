@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from rest_framework.views import APIView
 
+from apps.api.mixins import ApiAuthMixin
 from apps.api.pagination import get_paginated_response, LimitOffsetPagination
 from apps.feed.selectors import feed_list
 
@@ -9,7 +10,7 @@ class CommunitySerializer(serializers.Serializer):
     id = serializers.IntegerField()
     name = serializers.CharField()
 
-class FeedListApi(APIView):
+class FeedListApi(ApiAuthMixin):
     class Pagination(LimitOffsetPagination):
         default_limit = 10
 

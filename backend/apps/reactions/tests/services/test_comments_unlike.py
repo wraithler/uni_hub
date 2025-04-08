@@ -1,6 +1,6 @@
 from django.test import TestCase
-from apps.comments.factories import CommentFactory
-from apps.comments.services import comment_like_create, comment_like_delete
+from apps.reactions.factories import CommentFactory
+from apps.reactions.services import like_create, like_delete
 from apps.users.factories import BaseUserFactory
 from apps.communities.factories import CommunityFactory
 from apps.posts.factories import PostFactory
@@ -14,9 +14,9 @@ class CommentUnlikeTests(TestCase):
         user = BaseUserFactory.create()
         community.memberships.create(user=user)
 
-        comment_like_create(comment=comment, user=user)
+        like_create(comment=comment, user=user)
 
-        comment_like_delete(comment=comment, user=user)
+        like_delete(comment=comment, user=user)
 
         self.assertFalse(comment.likes.filter(user=user).exists())
 
@@ -26,6 +26,6 @@ class CommentUnlikeTests(TestCase):
         comment = CommentFactory.create(post=post)
         user = BaseUserFactory.create()
 
-        comment_like_delete(comment=comment, user=user)
+        like_delete(comment=comment, user=user)
 
         self.assertFalse(comment.likes.filter(user=user).exists())

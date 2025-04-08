@@ -49,8 +49,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu.tsx";
 import Layout from "@/components/Layout.tsx";
-import { useCommunity } from "@/hooks/useCommunity.ts";
-import { Navigate, useParams } from "react-router-dom";
+import { useCommunity } from "@/hooks/communities/useCommunity.ts";
+import { useParams } from "react-router-dom";
 import {
   bannerCategoryIcons,
   bannerColours,

@@ -1,8 +1,8 @@
 from typing import Optional
 from django.db.models import QuerySet
 from apps.common.utils import get_object
-from apps.comments.filters import CommentFilter
-from apps.comments.models import Comment
+from apps.reactions.filters import CommentFilter
+from apps.reactions.models import Comment
 
 
 def comment_get(comment_id) -> Optional[Comment]:

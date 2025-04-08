@@ -1,5 +1,7 @@
 # Ignore the environment file
 .env
+# But do not ignore the frontend .env file
+!frontend/.env
 
 # Ignore __pycache__
 **/__pycache__/

@@ -1,9 +1,9 @@
 from django.test import TestCase
-from apps.comments.factories import CommentFactory
+from apps.reactions.factories import CommentFactory
 from apps.users.factories import BaseUserFactory
 from apps.posts.factories import PostFactory
 from apps.communities.factories import CommunityFactory
-from apps.comments.selectors import comment_list
+from apps.reactions.selectors import comment_list
 
 
 class CommentFilterTests(TestCase):

@@ -9,6 +9,12 @@ type UserMe = {
     is_email_verified: boolean;
 };
 
+type User = {
+    email: string;
+    first_name: string;
+    last_name: string;
+}
+
 export type {
-    UserMe
+    UserMe, User
 };

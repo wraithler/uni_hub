@@ -1,5 +1,5 @@
 import django_filters
-from apps.comments.models import Comment
+from apps.reactions.models import Comment
 
 
 class CommentFilter(django_filters.FilterSet):

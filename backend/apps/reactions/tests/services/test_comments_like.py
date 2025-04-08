@@ -1,6 +1,6 @@
 from django.test import TestCase
-from apps.comments.factories import CommentFactory
-from apps.comments.services import comment_like_create, comment_like_delete
+from apps.reactions.factories import CommentFactory
+from apps.reactions.services import like_create, like_delete
 from apps.core.exceptions import ApplicationError
 from apps.users.factories import BaseUserFactory
 from apps.communities.factories import CommunityFactory
@@ -15,7 +15,7 @@ class CommentLikeTests(TestCase):
         user = BaseUserFactory.create()
         community.memberships.create(user=user)
 
-        like = comment_like_create(comment=comment, user=user)
+        like = like_create(comment=comment, user=user)
 
         self.assertTrue(comment.likes.filter(user=user).exists())
         self.assertEqual(like.comment, comment)
@@ -26,7 +26,7 @@ class CommentLikeTests(TestCase):
         user = BaseUserFactory.create()
 
         with self.assertRaises(ApplicationError):
-            comment_like_create(comment=comment, user=user)
+            like_create(comment=comment, user=user)
 
     def test_comment_like_duplicate_prevention(self):
         community = CommunityFactory.create()
@@ -35,9 +35,9 @@ class CommentLikeTests(TestCase):
         user = BaseUserFactory.create()
         community.memberships.create(user=user)
 
-        first_like = comment_like_create(comment=comment, user=user)
+        first_like = like_create(comment=comment, user=user)
 
-        second_like = comment_like_create(comment=comment, user=user)
+        second_like = like_create(comment=comment, user=user)
 
         self.assertEqual(comment.likes.filter(user=user).count(), 1)
         self.assertEqual(first_like, second_like)
@@ -49,9 +49,9 @@ class CommentLikeTests(TestCase):
         user = BaseUserFactory.create()
         community.memberships.create(user=user)
 
-        comment_like_create(comment=comment, user=user)
+        like_create(comment=comment, user=user)
 
-        comment_like_delete(comment=comment, user=user)
+        like_delete(comment=comment, user=user)
 
         self.assertFalse(comment.likes.filter(user=user).exists())
 
@@ -62,4 +62,4 @@ class CommentLikeTests(TestCase):
         user = BaseUserFactory.create()
         community.memberships.create(user=user)
 
-        comment_like_delete(comment=comment, user=user)
+        like_delete(comment=comment, user=user)
