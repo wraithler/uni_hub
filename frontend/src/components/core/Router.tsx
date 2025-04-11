@@ -6,6 +6,7 @@ import CommunityPage from "@/pages/communities/Community.page.tsx";
 import NotFoundPage from "@/pages/NotFound.page.tsx";
 import CommunityCreatePage from "@/pages/communities/CommunityCreate.Page.tsx";
 import FeedPage from "@/pages/Feed.page.tsx";
+import { ProtectedRoute } from "@/components/auth/ProtectedRoute.tsx";
 
 const router = createBrowserRouter([
   {
@@ -18,19 +19,37 @@ const router = createBrowserRouter([
   },
   {
     path: "/communities",
-    element: <CommunitiesPage />,
-  },
-  {
-    path: "/community/:id",
-    element: <CommunityPage />,
+    element: <ProtectedRoute />,
+    children: [
+      {
+        path: "",
+        element: <CommunitiesPage />,
+      },
+      {
+        path: "/communities/:id",
+        element: <CommunityPage />,
+      },
+    ],
   },
   {
     path: "/communities/create",
-    element: <CommunityCreatePage />,
+    element: <ProtectedRoute requireEmailVerification={true} />,
+    children: [
+      {
+        path: "",
+        element: <CommunityCreatePage />,
+      },
+    ],
   },
   {
     path: "/feed",
-    element: <FeedPage />,
+    element: <ProtectedRoute />,
+    children: [
+      {
+        path: "",
+        element: <FeedPage />,
+      },
+    ],
   },
   {
     path: "*",

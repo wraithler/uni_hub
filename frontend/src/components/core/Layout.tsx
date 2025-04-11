@@ -1,5 +1,5 @@
-import Footer from "@/components/Footer.tsx";
-import Header from "@/components/Header.tsx";
+import Footer from "@/components/core/Footer.tsx";
+import Header from "@/components/core/Header.tsx";
 import React from "react";
 
 interface LayoutProps {

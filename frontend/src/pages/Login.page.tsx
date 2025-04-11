@@ -25,7 +25,7 @@ export default function LoginPage() {
   const [activeTab, setActiveTab] = useState("login");
 
   if (user) {
-    return <Navigate to="/communities" replace />;
+    return <Navigate to="/feed" replace />;
   }
 
   return (

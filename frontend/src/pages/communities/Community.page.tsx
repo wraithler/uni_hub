@@ -48,13 +48,13 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu.tsx";
-import Layout from "@/components/Layout.tsx";
+import Layout from "@/components/core/Layout.tsx";
 import { useCommunity } from "@/hooks/communities/useCommunity.ts";
 import { useParams } from "react-router-dom";
 import {
   bannerCategoryIcons,
   bannerColours,
-} from "@/api/types/communities.tsx";
+} from "@/api/old/types/communities.tsx";
 import { nameToAvatarFallback } from "@/lib/utils.ts";
 
 export default function CommunityDetail() {
