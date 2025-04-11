@@ -37,12 +37,12 @@ import {
   AvatarFallback,
   AvatarImage,
 } from "@/components/ui/avatar.tsx";
-import { Category } from "@/api/types/communities.tsx";
-import api from "@/api/api.ts";
-import { Navigate, useNavigate } from "react-router-dom";
-import FeaturedCommunityCard from "@/components/FeaturedCommunityCard.tsx";
-import { CommunityCard } from "@/components/CommunityCard.tsx";
+import { Category } from "@/api/old/types/communities.tsx";
+import { Navigate } from "react-router-dom";
+import FeaturedCommunityCard from "@/components/communities/FeaturedCommunityCard.tsx";
+import { CommunityCard } from "@/components/communities/CommunityCard.tsx";
 import { useAuth } from "@/components/auth/AuthProvider.tsx";
+import { useCommunityCreate } from "@/api/communities/useCommunityCreate.ts";
 
 const BasicInfoSchema = z.object({
   name: z.string().min(3, { message: "Name must be at least 3 characters" }),
@@ -107,7 +107,8 @@ export default function CommunityCreateForm() {
   const [avatarPreview] = useState<string | null>(null);
   const [bannerPreview] = useState<string | null>(null); // todo: setup previews
   const [isLoading, setIsLoading] = useState(false);
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
+  const createCommunity = useCommunityCreate();
 
   const { user } = useAuth();
 
@@ -210,24 +211,16 @@ export default function CommunityCreateForm() {
 
   const onSubmit = async (data: z.infer<typeof multiStepSchema>) => {
     setIsLoading(true);
-    try {
-      await api.post("/communities/create/", {
-        name: data.basicInfo.name,
-        description: data.basicInfo.description,
-        category: data.basicInfo.category,
-        contact_email: data.basicInfo.contact_email,
-        tags: data.additionalInfo.tags,
-        about: data.additionalInfo.about,
-        guidelines: data.additionalInfo.guidelines,
-        avatar: data.personalisation.avatar,
-        banner: data.personalisation.banner,
-      }); // todo: move to service
-      navigate("/communities");
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setIsLoading(false);
-    }
+    createCommunity.mutate({
+      name: data.basicInfo.name,
+      description: data.basicInfo.description,
+      category_name: data.basicInfo.category as Category,
+      contact_email: data.basicInfo.contact_email,
+      tags: data.additionalInfo.tags,
+      about: data.additionalInfo.about,
+      guidelines: data.additionalInfo.guidelines,
+    });
+    setIsLoading(false);
   };
 
   return (

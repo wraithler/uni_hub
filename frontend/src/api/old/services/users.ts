@@ -1,6 +1,6 @@
-import api from "@/api/api.ts";
+import api from "@/api/old/api.ts";
 import { AxiosResponse } from "axios";
-import { UserMe } from "../types/users";
+import { UserMe } from "../types/users.ts";
 
 const fetchUserMe = async (): Promise<AxiosResponse<UserMe>> => {
   return await api.get("/auth/me/");

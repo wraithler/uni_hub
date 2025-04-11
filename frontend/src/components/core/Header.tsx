@@ -1,7 +1,8 @@
 import { Button } from "@/components/ui/button.tsx";
 import { Calendar, Home, MessageSquare, Users } from "lucide-react";
-import {useAuth} from "@/components/auth/AuthProvider.tsx";
-import {Link} from "react-router-dom";
+import { useAuth } from "@/components/auth/AuthProvider.tsx";
+import { Link } from "react-router-dom";
+import AdminHeader from "@/components/core/AdminHeader.tsx";
 
 interface HeaderProps {
   landing?: boolean;
@@ -61,7 +62,8 @@ export default function Header({ landing }: HeaderProps) {
   return (
     <>
       {/* Desktop Header */}
-      <header className="border-b bg-white sticky">
+      {user?.is_admin && <AdminHeader />}
+      <header className="border-b bg-white sticky top-0 z-10">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <div className="size-8 rounded-full bg-primary flex items-center justify-center text-primary-foreground font-bold">
@@ -73,9 +75,7 @@ export default function Header({ landing }: HeaderProps) {
           <nav className="hidden md:flex items-center space-x-6">
             {headerTabs.map((tab, index) => (
               <Button variant="ghost" asChild key={index}>
-                <Link
-                  to={tab.href}
-                >
+                <Link to={tab.href}>
                   {tab.icon}
                   <span>{tab.name}</span>
                 </Link>

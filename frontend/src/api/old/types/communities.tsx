@@ -1,6 +1,6 @@
 import { BookOpen, Globe, GraduationCap, Layers, Music } from "lucide-react";
-import { PaginationFilters } from "@/api/types/filters.ts";
-import { PaginationResponse } from "@/api/types/pagination.ts";
+import { PaginationFilters } from "@/api/old/types/filters.ts";
+import { PaginationResponse } from "@/api/old/types/pagination.ts";
 
 interface Community {
   id: number;
@@ -12,6 +12,8 @@ interface Community {
   post_count: number;
   is_member: boolean;
   tags: string[];
+  contact_email: string;
+  about: string;
 }
 
 type CommunityList = PaginationResponse & {

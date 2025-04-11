@@ -5,19 +5,19 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "./ui/card";
+} from "../ui/card.tsx";
 import { MessageSquare, User } from "lucide-react";
 import {
   Avatar,
   AvatarFallback,
   AvatarImage,
 } from "@/components/ui/avatar.tsx";
-import { Button } from "./ui/button";
+import { Button } from "../ui/button.tsx";
 import {
   avatarColours,
   bannerColours,
   Community, featuredBannerCategoryIcons,
-} from "@/api/types/communities.tsx";
+} from "@/api/old/types/communities.tsx";
 import { nameToAvatarFallback } from "@/lib/utils.ts";
 import {Badge} from "@/components/ui/badge.tsx";
 import {Link} from "react-router-dom";
@@ -79,7 +79,7 @@ export default function FeaturedCommunityCard({
       </CardContent>
       <CardFooter className="mt-auto">
         <Button className="w-full" asChild>
-          <Link to={`/community/${id}`}>View Community</Link>
+          <Link to={`/communities/${id}`}>View Community</Link>
         </Button>
       </CardFooter>
     </Card>

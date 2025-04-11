@@ -1,6 +1,6 @@
 import {useInfiniteQuery} from "@tanstack/react-query";
-import api from "@/api/api.ts";
-import {PaginationResponse} from "@/api/types/pagination.ts";
+import api from "@/api/old/api.ts";
+import {PaginationResponse} from "@/api/old/types/pagination.ts";
 
 export type FeedItem = {
     id: number;
@@ -22,6 +22,10 @@ export type FeedItem = {
     comments?: number;
 }
 
+export type FeedFilters = {
+    display: "all" | "posts" | "events";
+}
+
 type Feed = PaginationResponse & {
     results: FeedItem[];
 }
@@ -41,6 +45,6 @@ export const useFeed = () => {
         getNextPageParam: (lastPage, allPages) => {
             return lastPage.results.length > 0 ? allPages.length + 1 : undefined;
         },
-        
+
     })
 };
