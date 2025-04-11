@@ -1,7 +1,7 @@
-import { UserMe } from "@/api/types/users.ts";
+import { UserMe } from "@/api/old/types/users.ts";
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { ACCESS_TOKEN, REFRESH_TOKEN } from "@/constants.ts";
-import api from "@/api/api.ts";
+import api from "@/api/old/api.ts";
 import axios from "axios";
 
 interface AuthContextProps {

@@ -19,7 +19,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import Layout from "@/components/Layout";
+import Layout from "@/components/core/Layout.tsx";
 import {Link} from "react-router-dom";
 
 export default function NotFoundPage() {

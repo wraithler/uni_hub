@@ -1,4 +1,4 @@
-import { badgeCategoryIcons, Community } from "@/api/types/communities.tsx";
+import { badgeCategoryIcons, Community } from "@/api/old/types/communities.tsx";
 import {
   Card,
   CardContent,
@@ -12,7 +12,7 @@ import {
   AvatarImage,
 } from "@/components/ui/avatar.tsx";
 import { nameToAvatarFallback } from "@/lib/utils.ts";
-import { Badge } from "./ui/badge";
+import { Badge } from "../ui/badge.tsx";
 import { MessageSquare, User } from "lucide-react";
 import { Button } from "@/components/ui/button.tsx";
 

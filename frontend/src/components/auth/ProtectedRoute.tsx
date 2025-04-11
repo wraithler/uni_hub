@@ -1,5 +1,6 @@
 import { useAuth } from "@/components/auth/AuthProvider.tsx";
 import { Navigate, Outlet } from "react-router-dom";
+import React from "react";
 
 interface ProtectedRouteProps {
   allowedRoles?: string[];

@@ -11,10 +11,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select.tsx";
-import FeaturedCommunityCard from "@/components/FeaturedCommunityCard.tsx";
-import { CommunityCard } from "@/components/CommunityCard.tsx";
-import Layout from "@/components/Layout.tsx";
-import PageHeader from "@/components/PageHeader.tsx";
+import FeaturedCommunityCard from "@/components/communities/FeaturedCommunityCard.tsx";
+import { CommunityCard } from "@/components/communities/CommunityCard.tsx";
+import Layout from "@/components/core/Layout.tsx";
+import PageHeader from "@/components/core/PageHeader.tsx";
 import {
   Pagination,
   PaginationContent,

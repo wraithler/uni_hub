@@ -10,8 +10,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card.tsx";
-import Layout from "@/components/Layout.tsx";
-import CommunityCreateForm from "@/components/CommunityCreateForm.tsx";
+import Layout from "@/components/core/Layout.tsx";
+import CommunityCreateForm from "@/components/communities/CommunityCreateForm.tsx";
 
 export default function CommunityCreatePage() {
   return (

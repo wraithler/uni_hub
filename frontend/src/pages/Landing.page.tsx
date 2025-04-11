@@ -18,7 +18,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import Layout from "@/components/Layout.tsx";
+import Layout from "@/components/core/Layout.tsx";
 import {Link} from "react-router-dom";
 
 export default function LandingPage() {
