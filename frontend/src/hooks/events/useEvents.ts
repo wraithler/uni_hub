@@ -1,4 +1,4 @@
-import api from "@/api/api.ts";
+import api from "@/api/old/api.ts";
 import { useQuery } from "@tanstack/react-query";
 import { PAGINATION_DEFAULT_LIMIT } from "@/constants.ts";
 

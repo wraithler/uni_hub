@@ -42,7 +42,7 @@ export function LoginForm() {
     setIsLoading(true);
     try {
       login(data.email, data.password);
-      navigate("/");
+      navigate("/feed");
     } catch {
       form.setError("password", {
         type: "manual",

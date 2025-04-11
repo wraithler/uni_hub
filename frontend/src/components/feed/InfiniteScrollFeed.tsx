@@ -1,9 +1,9 @@
 import InfiniteScroll from "react-infinite-scroll-component";
 import {CircleCheck, Loader2, UserCircle} from "lucide-react";
-import { useFeed } from "@/hooks/useFeed.ts";
-import PostCard from "@/components/PostCard.tsx";
+import {useFeed} from "@/hooks/useFeed.ts";
+import PostCard from "@/components/posts/PostCard.tsx";
 import React from "react";
-import EventCard from "@/components/EventCard.tsx";
+import EventCard from "@/components/events/EventCard.tsx";
 import { useAuth } from "@/components/auth/AuthProvider.tsx";
 
 export const InfiniteScrollFeed = () => {
