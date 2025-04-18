@@ -1,31 +1,27 @@
 from django.db.models import QuerySet
-from apps.notification_preferences.models import UserNotificationPreference
+from apps.notifications.models import Notification
 from apps.users.models import BaseUser
-from apps.common.utils import get_object
 
-
-def get_user_notification_preferences(user: BaseUser) -> UserNotificationPreference:
+def get_user_notifications(user: BaseUser) -> QuerySet[Notification]:
     """
-    Retrieves the notification preferences for a specific user.
-    Raises an exception if the user does not have preferences set.
+    Returns all notifications for a specific user.
     """
-    return get_object(UserNotificationPreference, user=user)
+    return Notification.objects.filter(user=user).order_by("-created_at")
 
-
-def list_all_notification_preferences() -> QuerySet[UserNotificationPreference]:
+def get_unread_notifications(user: BaseUser) -> QuerySet[Notification]:
     """
-    Returns a queryset of all users' notification preferences.
-    Useful for sending system-wide notifications or audits.
+    Returns unread notifications for a specific user.
     """
-    return UserNotificationPreference.objects.select_related("user").all()
+    return Notification.objects.filter(user=user, is_read=False).order_by("-created_at")
 
-
-def user_allows_notification(user: BaseUser, notification_type: str) -> bool:
+def user_has_unread_notifications(user: BaseUser) -> bool:
     """
-    Checks if a user allows a specific type of notification.
-    `notification_type` can be 'email', 'sms', 'push', etc.
+    Returns True if the user has any unread notifications.
     """
-    preference = get_user_notification_preferences(user)
+    return Notification.objects.filter(user=user, is_read=False).exists()
 
-    
-    return getattr(preference, f"allow_{notification_type}", False)
+def list_all_notifications() -> QuerySet[Notification]:
+    """
+    Returns a queryset of all notifications in the system.
+    """
+    return Notification.objects.select_related("user").all()
