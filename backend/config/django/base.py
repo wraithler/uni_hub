@@ -28,6 +28,7 @@ LOCAL_APPS = [
     "apps.reactions.apps.ReactionsConfig",
     "apps.notification_preferences.apps.NotificationPreferencesConfig",
     "apps.profile.apps.ProfileConfig",
+    "apps.notifications.apps.NotificationsConfig",
 ]  # TODO: Add others
 
 THIRD_PARTY_APPS = [
