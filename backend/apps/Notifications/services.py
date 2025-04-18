@@ -3,7 +3,6 @@ from django.db import transaction
 from apps.notifications.models import Notification
 from apps.users.models import BaseUser
 
-
 @transaction.atomic
 def notification_create(
     *,
@@ -21,5 +20,4 @@ def notification_create(
         notification_type=notification_type,
         is_read=is_read,
     )
-
     return notification
