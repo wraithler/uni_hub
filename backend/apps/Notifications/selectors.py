@@ -6,22 +6,22 @@ def get_user_notifications(user: BaseUser) -> QuerySet[Notification]:
     """
     Returns all notifications for a specific user.
     """
-    return Notification.objects.filter(user=user).order_by("-created_at")
+    return Notification.objects.filter(recipient=user).order_by("-created_at")
 
 def get_unread_notifications(user: BaseUser) -> QuerySet[Notification]:
     """
     Returns unread notifications for a specific user.
     """
-    return Notification.objects.filter(user=user, is_read=False).order_by("-created_at")
+    return Notification.objects.filter(recipient=user, is_read=False).order_by("-created_at")
 
 def user_has_unread_notifications(user: BaseUser) -> bool:
     """
     Returns True if the user has any unread notifications.
     """
-    return Notification.objects.filter(user=user, is_read=False).exists()
+    return Notification.objects.filter(recipient=user, is_read=False).exists()
 
 def list_all_notifications() -> QuerySet[Notification]:
     """
     Returns a queryset of all notifications in the system.
     """
-    return Notification.objects.select_related("user").all()
+    return Notification.objects.select_related("recipient").all()
