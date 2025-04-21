@@ -2,7 +2,6 @@ import { Router } from "@/components/core/Router.tsx";
 import { EmailVerificationToast } from "@/components/auth/EmailVerificationToast.tsx";
 import { Toaster } from "@/components/ui/sonner.tsx";
 import { AuthProvider } from "@/components/auth/AuthProvider.tsx";
-import { CommandMenu } from "@/components/core/CommandMenu.tsx";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 const queryClient = new QueryClient();
@@ -15,7 +14,6 @@ function App() {
       </QueryClientProvider>
       <Toaster />
       <EmailVerificationToast />
-      <CommandMenu />
     </AuthProvider>
   );
 }
