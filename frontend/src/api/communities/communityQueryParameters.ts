@@ -1,4 +1,4 @@
-import { PaginationProps } from "../index.ts";
+import { PaginationProps } from "@/api";
 
 export type CommunitiesQueryParameters = PaginationProps & {
   category_name?: string;

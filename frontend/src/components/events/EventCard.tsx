@@ -56,11 +56,11 @@ export default function EventCard({
         <div className="flex items-center gap-2">
           <Avatar className="w-6 h-6">
             <AvatarFallback>
-              {created_by.substring(0, 2)}
+              {`${created_by.first_name} ${created_by.last_name}`.substring(0, 2)}
             </AvatarFallback>
           </Avatar>
           <span className="text-xs text-muted-foreground">
-            {created_by}
+            {created_by.first_name} {created_by.last_name}
           </span>
         </div>
         <Button

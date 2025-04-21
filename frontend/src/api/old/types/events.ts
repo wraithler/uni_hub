@@ -1,5 +1,5 @@
-import { PaginationResponse } from "@/api/old/types/pagination.ts";
 import { User } from "@/api/old/types/users.ts";
+import {PaginationResponse} from "@/api";
 
 type Event = {
   id: number;

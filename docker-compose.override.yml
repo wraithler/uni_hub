@@ -3,14 +3,14 @@ version: '3'
 services:
   frontend:
     volumes:
-      - ./frontend:/app  # ONLY FOR DEVELOPMENT (remove for production)
-      - node_modules:/app/node_modules  # ONLY FOR DEVELOPMENT (remove for production)
+      - ./frontend:/app
+      - node_modules:/app/node_modules
     environment:
-      NODE_ENV: development  # ONLY FOR DEVELOPMENT (remove for production)
+      NODE_ENV: development
 
   backend:
     volumes:
-      - ./backend:/app  # ONLY FOR DEVELOPMENT (remove for production)
+      - ./backend:/app
     environment:
       - DJANGO_DEBUG=true
 

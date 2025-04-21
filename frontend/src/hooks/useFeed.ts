@@ -1,12 +1,17 @@
 import {useInfiniteQuery} from "@tanstack/react-query";
 import api from "@/api/old/api.ts";
-import {PaginationResponse} from "@/api/old/types/pagination.ts";
+
+import {PaginationResponse} from "@/api";
 
 export type FeedItem = {
     id: number;
     type: "post" | "event";
     title: string;
-    created_by: string;
+    created_by: {
+        id: number;
+        first_name: string;
+        last_name: string;
+    };
     community: {
         id: number;
         name: string;
@@ -31,7 +36,8 @@ type Feed = PaginationResponse & {
 }
 
 const fetchFeed = async ({pageParam = 1}) => {
-    const offset = pageParam * 10, response = await api.get("/feed/", {
+    const offset = (pageParam - 1) * 10;
+    const response = await api.get("/feed/", {
         params: {limit: 10, offset: offset},
     });
     return response.data as Feed;
