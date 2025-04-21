@@ -50,12 +50,9 @@ import {
 } from "@/components/ui/dropdown-menu.tsx";
 import Layout from "@/components/core/Layout.tsx";
 import { useParams } from "react-router-dom";
-import {
-  bannerCategoryIcons,
-  bannerColours,
-} from "@/api/old/types/communities.tsx";
 import { nameToAvatarFallback } from "@/lib/utils.ts";
 import { useCommunityDetail } from "@/api/communities/useCommunityDetail.ts";
+import categoryConfig from "@/components/communities/CommunityStyling.tsx";
 
 export default function CommunityDetail() {
   const [isFollowing, setIsFollowing] = useState(false);
@@ -69,14 +66,16 @@ export default function CommunityDetail() {
     return null;
   }
 
+  const config = categoryConfig[community.category_name];
+
   return (
     <Layout>
       {/* Community Banner */}
       <div
-        className={`relative h-48 md:h-64 bg-gradient-to-r ${bannerColours[community.category_name]}`}
+        className={`relative h-48 md:h-64 bg-gradient-to-r ${config.bannerGradient}`}
       >
         <div className="absolute inset-0 flex items-center justify-center opacity-20">
-          {bannerCategoryIcons[community.category_name]}
+          {config.icon}
         </div>
         <div className="absolute bottom-0 left-0 w-full">
           <div className="container px-4 mx-auto">
@@ -164,7 +163,7 @@ export default function CommunityDetail() {
               {community.description}
             </p>
             <div className="flex flex-wrap gap-2">
-              {community.tags.map((tag, index) => (
+              {community.tags.map((tag: string, index: number) => (
                 <Badge variant="secondary" key={index}>
                   {tag}
                 </Badge>

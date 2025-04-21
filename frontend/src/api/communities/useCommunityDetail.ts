@@ -8,9 +8,7 @@ type UseCommunityDetailProps = {
 
 export function useCommunityDetail({ id }: UseCommunityDetailProps) {
   const getCommunityFn = async () => {
-    const response = await api.get("/communities/", {
-      params: { id },
-    });
+    const response = await api.get(`/communities/${id}/`);
     return response.data;
   };
 
