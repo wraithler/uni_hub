@@ -7,7 +7,7 @@ import {
   CommandItem,
   CommandList,
 } from "@/components/ui/command.tsx";
-import {Link} from "react-router-dom";
+import { Link } from "react-router-dom";
 
 export function CommandMenu() {
   const [isOpen, setIsOpen] = useState(false);

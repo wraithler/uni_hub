@@ -4,7 +4,7 @@ import { communityQueryKeys } from "@/api/communities/communityQueryKeys.ts";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import { TSFix } from "@/api";
-import {Community} from "@/api/communities/communityTypes.ts";
+import { Community } from "@/api/communities/communityTypes.ts";
 
 export function useCommunityCreate() {
   const queryClient = useQueryClient();

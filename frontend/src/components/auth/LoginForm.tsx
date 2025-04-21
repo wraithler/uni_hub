@@ -15,7 +15,7 @@ import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button.tsx";
 import { useState } from "react";
 import { useAuth } from "@/components/auth/AuthProvider.tsx";
-import {useNavigate} from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const FormSchema = z.object({
   email: z.string().email({ message: "Invalid email address" }),

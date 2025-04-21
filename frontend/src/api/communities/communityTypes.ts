@@ -1,5 +1,5 @@
 import { PaginationResponse } from "@/api";
-import {User} from "@/api/users/userTypes.ts";
+import { User } from "@/api/users/userTypes.ts";
 
 type CommunityCategory = {
   id: number;
