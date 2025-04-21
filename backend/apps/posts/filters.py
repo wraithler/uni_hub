@@ -7,7 +7,6 @@ class PostFilter(django_filters.FilterSet):
         model = Post
         fields = (
             "id",
-            "title",
             "content",
             "created_by",
             "community__name",

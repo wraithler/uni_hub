@@ -3,6 +3,7 @@ from rest_framework import serializers
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from apps.api.pagination import LimitOffsetPagination, get_paginated_response
+from apps.communities.apis import CommunityDetailApi
 from apps.posts.selectors import (
     post_get,
     post_list,
@@ -10,17 +11,16 @@ from apps.posts.selectors import (
     post_list_by_user,
 )
 from apps.posts.services import post_create, post_update, post_delete
+from apps.users.apis import UserDetailApi
 
 
 class PostDetailApi(APIView):
     class OutputSerializer(serializers.Serializer):
         id = serializers.IntegerField()
-        title = serializers.CharField()
         content = serializers.CharField()
         created_at = serializers.DateTimeField()
-        created_by = serializers.IntegerField(source="created_by.id")
-        community = serializers.IntegerField(source="community.id")
-        community_name = serializers.CharField(source="community.name")
+        created_by = UserDetailApi.OutputSerializer()
+        community = CommunityDetailApi.OutputSerializer()
 
     def get(self, request, post_id):
         post = post_get(post_id)
@@ -36,14 +36,12 @@ class PostListApi(APIView):
 
     class FilterSerializer(serializers.Serializer):
         id = serializers.IntegerField(required=False)
-        title = serializers.CharField(required=False)
         content = serializers.CharField(required=False)
         created_by = serializers.IntegerField(required=False)
         community__name = serializers.CharField(required=False)
 
     class OutputSerializer(serializers.Serializer):
         id = serializers.IntegerField()
-        title = serializers.CharField()
         content = serializers.CharField()
         created_at = serializers.DateTimeField()
         created_by_id = serializers.IntegerField()
@@ -64,7 +62,6 @@ class PostListApi(APIView):
 
 class PostCreateApi(APIView):
     class InputSerializer(serializers.Serializer):
-        title = serializers.CharField()
         content = serializers.CharField()
         community_id = serializers.IntegerField()
 
@@ -78,7 +75,6 @@ class PostCreateApi(APIView):
 
 class PostUpdateApi(APIView):
     class InputSerializer(serializers.Serializer):
-        title = serializers.CharField(required=False)
         content = serializers.CharField(required=False)
 
     def post(self, request, post_id):

@@ -10,7 +10,6 @@ from apps.users.models import BaseUser
 @transaction.atomic
 def post_create(
     *,
-    title: str,
     content: str,
     community_id: int,
     created_by: BaseUser,
@@ -23,7 +22,6 @@ def post_create(
         )
 
     post = Post.objects.create(
-        title=title,
         content=content,
         community=community,
         created_by=created_by,

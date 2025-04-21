@@ -8,9 +8,8 @@ from apps.users.models import BaseModel
 
 class Post(BaseModel):
     id = models.AutoField(primary_key=True)
-    title = models.CharField(max_length=255)
     content = models.TextField()
-    created_by = models.ForeignKey("users.BaseUser", on_delete=models.CASCADE)
+    created_by = models.ForeignKey("users.BaseUser", on_delete=models.CASCADE, related_name="posts")
     community = models.ForeignKey(
         Community, on_delete=models.CASCADE, related_name="posts"
     )
@@ -19,9 +18,6 @@ class Post(BaseModel):
     class Meta:
         verbose_name_plural = "Posts"
         ordering = ["-created_at"]
-
-    def __str__(self):
-        return self.title
 
     @property
     def hours_since_posted(self):

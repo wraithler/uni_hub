@@ -1,6 +1,7 @@
 import { BookOpen, Globe, GraduationCap, Layers, Music } from "lucide-react";
 import { PaginationFilters } from "@/api/old/types/filters.ts";
-import { PaginationResponse } from "@/api/old/types/pagination.ts";
+
+import {PaginationResponse} from "@/api";
 
 interface Community {
   id: number;
