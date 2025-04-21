@@ -23,7 +23,7 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination.tsx";
 import { Link } from "react-router-dom";
-import {useCommunities} from "@/hooks/communities/useCommunities.ts";
+import { useCommunities } from "@/api/communities/useCommunities.ts";
 
 export default function CommunitiesPage() {
   const [searchQuery, setSearchQuery] = useState("");

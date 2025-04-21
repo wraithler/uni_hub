@@ -1,9 +1,9 @@
 from rest_framework import serializers
-from rest_framework.views import APIView
 
 from apps.api.mixins import ApiAuthMixin
 from apps.api.pagination import get_paginated_response, LimitOffsetPagination
 from apps.feed.selectors import feed_list
+from apps.users.apis import UserDetailApi
 
 
 class CommunitySerializer(serializers.Serializer):
@@ -17,8 +17,7 @@ class FeedListApi(ApiAuthMixin):
     class FeedItemSerializer(serializers.Serializer):
         id = serializers.IntegerField()
         type = serializers.ChoiceField(choices=["post", "event"])
-        title = serializers.CharField()
-        created_by = serializers.CharField()
+        created_by = UserDetailApi.OutputSerializer()
         community = CommunitySerializer()
         timestamp = serializers.DateTimeField()
 
@@ -27,6 +26,7 @@ class FeedListApi(ApiAuthMixin):
         likes = serializers.IntegerField(required=False, allow_null=True)
         comments = serializers.IntegerField(required=False, allow_null=True)
 
+        title = serializers.CharField(required=False, allow_null=True)
         description = serializers.CharField(required=False, allow_null=True)
         attendees = serializers.IntegerField(required=False, allow_null=True)
         location = serializers.CharField(required=False, allow_null=True)
@@ -38,6 +38,7 @@ class FeedListApi(ApiAuthMixin):
             data = super().to_representation(instance)
 
             if data["type"] == "post":
+                del data["title"]
                 del data["description"]
                 del data["attendees"]
                 del data["location"]

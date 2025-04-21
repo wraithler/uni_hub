@@ -22,11 +22,11 @@ def feed_list(*, user: BaseUser, filters: dict = None) -> QuerySet:
     events_filters = {"community__memberships__user": user, **filters}
 
     posts = post_list(filters=posts_filters).values(
-        "id", "title", "content", "created_by__first_name", "created_by__last_name",
+        "id", "content", "created_by__email", "created_by__first_name", "created_by__last_name",
         "community__name", "created_at", "likes", "comments", "community__id", "created_at"
     )
     events = event_list(filters=events_filters).values(
-        "id", "title", "description", "created_by__first_name", "created_by__last_name",
+        "id", "title", "description", "created_by__email", "created_by__first_name", "created_by__last_name",
         "community__name", "created_at", "attendees", "location", "community__id", "created_at"
     )
 
@@ -35,9 +35,12 @@ def feed_list(*, user: BaseUser, filters: dict = None) -> QuerySet:
         {
             "id": post["id"],
             "type": "post",
-            "title": post["title"],
             "content": post["content"],
-            "created_by": f"{post['created_by__first_name']} {post['created_by__last_name']}",
+            "created_by": {
+                "email": post["created_by__email"],
+                "first_name": post["created_by__first_name"],
+                "last_name": post["created_by__last_name"],
+            },
             "community": {
                 "id": post["community__id"],
                 "name": post["community__name"],
@@ -56,7 +59,11 @@ def feed_list(*, user: BaseUser, filters: dict = None) -> QuerySet:
             "type": "event",
             "title": event["title"],
             "description": event["description"],
-            "created_by": f"{event['created_by__first_name']} {event['created_by__last_name']}",
+            "created_by": {
+                "email": event["created_by__email"],
+                "first_name": event['created_by__first_name'],
+                "last_name": event['created_by__last_name'],
+            },
             "community": {
                 "id": event["community__id"],
                 "name": event["community__name"],
