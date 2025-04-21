@@ -37,7 +37,6 @@ import {
   AvatarFallback,
   AvatarImage,
 } from "@/components/ui/avatar.tsx";
-import { Category } from "@/api/old/types/communities.tsx";
 import { Navigate } from "react-router-dom";
 import FeaturedCommunityCard from "@/components/communities/FeaturedCommunityCard.tsx";
 import { CommunityCard } from "@/components/communities/CommunityCard.tsx";
@@ -214,7 +213,7 @@ export default function CommunityCreateForm() {
     createCommunity.mutate({
       name: data.basicInfo.name,
       description: data.basicInfo.description,
-      category_name: data.basicInfo.category as Category,
+      category_name: data.basicInfo.category,
       contact_email: data.basicInfo.contact_email,
       tags: data.additionalInfo.tags,
       about: data.additionalInfo.about,
@@ -632,14 +631,15 @@ export default function CommunityCreateForm() {
                       id: 0,
                       name: form.getValues("basicInfo.name"),
                       description: form.getValues("basicInfo.description"),
-                      category_name: form.getValues(
-                        "basicInfo.category",
-                      ) as Category,
+                      category_name: form.getValues("basicInfo.category"),
                       tags: form.getValues("additionalInfo.tags"),
                       member_count: 0,
                       post_count: 0,
                       is_member: false,
-                      avatar: avatarPreview || "",
+                      avatar_url: avatarPreview || "",
+                      contact_email: "",
+                      about: "",
+                      guidelines: [],
                     }}
                   />
                   <CommunityCard
@@ -647,14 +647,15 @@ export default function CommunityCreateForm() {
                       id: 0,
                       name: form.getValues("basicInfo.name"),
                       description: form.getValues("basicInfo.description"),
-                      category_name: form.getValues(
-                        "basicInfo.category",
-                      ) as Category,
+                      category_name: form.getValues("basicInfo.category"),
                       tags: form.getValues("additionalInfo.tags"),
                       member_count: 0,
                       post_count: 0,
                       is_member: false,
-                      avatar: avatarPreview || "",
+                      avatar_url: avatarPreview || "",
+                      contact_email: "",
+                      about: "",
+                      guidelines: [],
                     }}
                   />
                 </CardContent>

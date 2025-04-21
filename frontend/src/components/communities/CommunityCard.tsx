@@ -1,4 +1,3 @@
-import { badgeCategoryIcons, Community } from "@/api/old/types/communities.tsx";
 import {
   Card,
   CardContent,
@@ -15,38 +14,31 @@ import { nameToAvatarFallback } from "@/lib/utils.ts";
 import { Badge } from "../ui/badge.tsx";
 import { MessageSquare, User } from "lucide-react";
 import { Button } from "@/components/ui/button.tsx";
+import { Community } from "@/api/communities/communityTypes.ts";
+import categoryConfig from "./CommunityStyling.tsx";
 
 interface CommunityCardProps {
   community: Community;
 }
 
-export function CommunityCard({
-  community: {
-    id,
-    name,
-    description,
-    category_name,
-    avatar,
-    post_count,
-    member_count,
-    tags,
-  },
-}: CommunityCardProps) {
+export function CommunityCard({ community }: CommunityCardProps) {
+  const config = categoryConfig[community.category_name];
+
   return (
-    <Card key={id} className="overflow-hidden flex flex-col">
+    <Card key={community.id} className="overflow-hidden flex flex-col">
       <CardHeader className="pb-2">
         <div className="flex items-start gap-3">
           <Avatar className="w-12 h-12">
-            <AvatarImage src={avatar} alt={name} />
+            <AvatarImage src={community.avatar_url} alt={community.name} />
             <AvatarFallback className="bg-primary text-primary-foreground">
-              {nameToAvatarFallback(name)}
+              {nameToAvatarFallback(community.name)}
             </AvatarFallback>
           </Avatar>
           <div className="space-y-1">
-            <CardTitle className="text-base">{name}</CardTitle>
+            <CardTitle className="text-base">{community.name}</CardTitle>
             <Badge variant="outline" className="flex items-center gap-1 w-fit">
-              {badgeCategoryIcons[category_name]}
-              <span className="capitalize">{category_name}</span>
+              {config.badgeIcon}
+              <span className="capitalize">{community.category_name}</span>
             </Badge>
           </div>
         </div>
@@ -54,10 +46,10 @@ export function CommunityCard({
       <CardContent>
         <div className="flex flex-col flex-grow">
           <p className="text-sm text-muted-foreground line-clamp-2 mb-3">
-            {description}
+            {community.description}
           </p>
           <div className="flex flex-wrap gap-1 mb-3">
-            {tags.map((tag, index) => (
+            {community.tags.map((tag, index) => (
               <Badge key={index} variant="secondary" className="text-xs">
                 {tag}
               </Badge>
@@ -67,10 +59,10 @@ export function CommunityCard({
 
         <div className="flex items-center text-xs text-muted-foreground mt-auto">
           <User className="w-3 h-3 mr-1" />
-          <span>{member_count}</span>
+          <span>{community.member_count}</span>
           <span className="mx-1">•</span>
           <MessageSquare className="w-3 h-3 mr-1" />
-          <span>{post_count}</span>
+          <span>{community.post_count}</span>
         </div>
       </CardContent>
       <CardFooter className="pt-0 mt-auto">

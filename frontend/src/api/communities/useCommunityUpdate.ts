@@ -1,9 +1,9 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
-import { Community } from "@/api/old/types/communities.tsx";
 import api from "@/api/apiClient.ts";
 import { communityQueryKeys } from "@/api/communities/communityQueryKeys.ts";
 import { TSFix } from "@/api";
+import { Community } from "./communityTypes";
 
 export function useCommunityUpdate() {
   const queryClient = useQueryClient();
