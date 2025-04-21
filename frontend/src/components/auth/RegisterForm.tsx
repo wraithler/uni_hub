@@ -54,7 +54,12 @@ export function RegisterForm() {
     setIsLoading(true);
 
     try {
-      await register(data.first_name, data.last_name, data.email, data.password);
+      await register(
+        data.first_name,
+        data.last_name,
+        data.email,
+        data.password,
+      );
       navigate("/feed");
     } catch {
       form.setError("password", {

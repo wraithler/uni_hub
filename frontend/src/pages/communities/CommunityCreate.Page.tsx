@@ -23,7 +23,8 @@ export default function CommunityCreatePage() {
         <div className="mb-8">
           <h1 className="text-3xl font-bold mb-2">Create a community</h1>
           <p className="text-muted-foreground">
-            Start a new community and bring people together around a shared interest
+            Start a new community and bring people together around a shared
+            interest
           </p>
         </div>
         <CommunityCreateForm />

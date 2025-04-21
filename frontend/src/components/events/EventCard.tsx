@@ -1,15 +1,16 @@
 import {
   Card,
   CardContent,
-  CardDescription, CardFooter,
+  CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card.tsx";
 import { Calendar, Clock, MapPin, Users } from "lucide-react";
 import { Badge } from "@/components/ui/badge.tsx";
-import {Button} from "@/components/ui/button.tsx";
-import {Avatar, AvatarFallback} from "@/components/ui/avatar.tsx";
-import {FeedItem} from "@/api/feed/feedTypes.ts";
+import { Button } from "@/components/ui/button.tsx";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar.tsx";
+import { FeedItem } from "@/api/feed/feedTypes.ts";
 
 export default function EventCard({
   id,
@@ -55,18 +56,17 @@ export default function EventCard({
         <div className="flex items-center gap-2">
           <Avatar className="w-6 h-6">
             <AvatarFallback>
-              {`${created_by.first_name} ${created_by.last_name}`.substring(0, 2)}
+              {`${created_by.first_name} ${created_by.last_name}`.substring(
+                0,
+                2,
+              )}
             </AvatarFallback>
           </Avatar>
           <span className="text-xs text-muted-foreground">
             {created_by.first_name} {created_by.last_name}
           </span>
         </div>
-        <Button
-          variant="outline"
-        >
-          RSVP
-        </Button>
+        <Button variant="outline">RSVP</Button>
       </CardFooter>
     </Card>
   );
