@@ -11,7 +11,7 @@ import {
 import { nameToAvatarFallback } from "@/lib/utils.ts";
 import { Textarea } from "@/components/ui/textarea.tsx";
 import { Button } from "@/components/ui/button.tsx";
-import { ImageIcon, Link, Loader2, PenSquare } from "lucide-react";
+import { Loader2, PenSquare } from "lucide-react";
 import CommunitiesCombobox from "@/components/communities/CommunitiesCombobox.tsx";
 import {
   Form,
@@ -80,25 +80,20 @@ export default function PostCreateForm() {
               />
             </div>
             <div className="flex flex-col sm:flex-row gap-3 mt-3 pt-3 border-t justify-between">
-              {/*<div className="flex flex-1">*/}
-                {/*<Button variant="ghost" size="sm" className="flex-1">*/}
-                {/*  <ImageIcon className="h-4 w-4 mr-2" />*/}
-                {/*  Media*/}
-                {/*</Button>*/}
-                <FormField
-                  control={form.control}
-                  name="media"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormControl>
-                        <FileUpload
-                          value={field.value}
-                          onChange={field.onChange}
-                        />
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
+              <FormField
+                control={form.control}
+                name="media"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <FileUpload
+                        value={field.value}
+                        onChange={field.onChange}
+                      />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
               {/*</div>*/}
               <div className="flex flex-col sm:flex-row gap-2 sm:items-center">
                 <FormField
