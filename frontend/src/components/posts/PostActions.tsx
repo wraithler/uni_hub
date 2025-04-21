@@ -11,7 +11,7 @@ import ActionConfirmationDialog from "@/components/common/ActionConfirmationDial
 import { usePostDelete } from "@/api/posts/usePostDelete";
 import { Post } from "@/api/posts/postTypes.ts";
 import { useAuth } from "@/components/auth/AuthProvider.tsx";
-import {FeedItem} from "@/hooks/useFeed.ts";
+import {FeedItem} from "@/api/feed/feedTypes.ts";
 
 type PostActionsProps = {
   post: Post | FeedItem;
@@ -51,7 +51,7 @@ export default function PostActions({ post }: PostActionsProps) {
             <MessageCircleWarning className="mr-2 h-4 w-4" />
             Report
           </DropdownMenuItem>
-          {post.created_by.id === user?.id && (
+          {(post.created_by && post.created_by.id === user?.id) && (
             <DropdownMenuItem
               className="text-red-500"
               onClick={() => setShowDeleteDialog(true)}
