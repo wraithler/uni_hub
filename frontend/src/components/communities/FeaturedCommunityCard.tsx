@@ -39,9 +39,7 @@ export default function FeaturedCommunityCard({
         <div className="absolute -bottom-8 left-4">
           <Avatar className="w-16 h-16 border-4 border-white">
             <AvatarImage src={community.avatar_url} alt="Community" />
-            <AvatarFallback
-              className={`${config.avatarBg} text-white`}
-            >
+            <AvatarFallback className={`${config.avatarBg} text-white`}>
               {nameToAvatarFallback(community.name)}
             </AvatarFallback>
           </Avatar>

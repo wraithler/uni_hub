@@ -36,7 +36,7 @@ export function usePostCreate() {
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: postQueryKeys.all });
-      queryClient.invalidateQueries({ queryKey: ["feed"]})
+      queryClient.invalidateQueries({ queryKey: ["feed"] });
     },
   });
 }
