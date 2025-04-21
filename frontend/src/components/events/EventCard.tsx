@@ -1,4 +1,3 @@
-import { FeedItem } from "@/hooks/useFeed.ts";
 import {
   Card,
   CardContent,
@@ -10,12 +9,12 @@ import { Calendar, Clock, MapPin, Users } from "lucide-react";
 import { Badge } from "@/components/ui/badge.tsx";
 import {Button} from "@/components/ui/button.tsx";
 import {Avatar, AvatarFallback} from "@/components/ui/avatar.tsx";
+import {FeedItem} from "@/api/feed/feedTypes.ts";
 
 export default function EventCard({
   id,
   title,
   created_by,
-  community,
   timestamp,
   description,
   attendees,
