@@ -93,7 +93,7 @@ class PostDeleteApi(APIView):
         post = post_get(post_id)
         if post is None:
             raise Http404
-        post_delete(post)
+        post_delete(post=post, user=request.user)
         return Response(status=204)
 
 

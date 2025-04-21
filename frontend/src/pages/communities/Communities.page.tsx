@@ -24,6 +24,7 @@ import {
 } from "@/components/ui/pagination.tsx";
 import { Link } from "react-router-dom";
 import { useCommunities } from "@/api/communities/useCommunities.ts";
+import { Community } from "@/api/communities/communityTypes.ts";
 
 export default function CommunitiesPage() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -131,7 +132,7 @@ export default function CommunitiesPage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {featuredCommunities.results &&
             featuredCommunities.results.length > 0 ? (
-              featuredCommunities.results.map((community) => (
+              featuredCommunities.results.map((community: Community) => (
                 <FeaturedCommunityCard
                   key={community.id}
                   community={community}
@@ -170,7 +171,7 @@ export default function CommunitiesPage() {
 
           {communities.results && communities.results.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {communities.results.map((community) => (
+              {communities.results.map((community: Community) => (
                 <CommunityCard key={community.id} community={community} />
               ))}
             </div>
