@@ -16,6 +16,8 @@ from apps.users.services import user_create, user_update
 class UserDetailApi(APIView):
     class OutputSerializer(serializers.Serializer):
         email = serializers.EmailField()
+        first_name = serializers.CharField()
+        last_name = serializers.CharField()
 
     def get(self, request, user_id):
         user = user_get(user_id)

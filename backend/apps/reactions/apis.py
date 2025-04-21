@@ -22,7 +22,6 @@ class CommentDetailApi(APIView):
         created_at = serializers.DateTimeField()
         created_by = serializers.IntegerField(source="created_by.id")
         post = serializers.IntegerField(source="post.id")
-        post_title = serializers.CharField(source="post.title")
 
     def get(self, request, comment_id):
         comment = comment_get(comment_id)
@@ -40,7 +39,6 @@ class CommentListApi(APIView):
         id = serializers.IntegerField(required=False)
         content = serializers.CharField(required=False)
         created_by = serializers.IntegerField(required=False)
-        post__title = serializers.CharField(required=False)
 
     class OutputSerializer(serializers.Serializer):
         id = serializers.IntegerField()

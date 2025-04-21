@@ -49,20 +49,20 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu.tsx";
 import Layout from "@/components/core/Layout.tsx";
-import { useCommunity } from "@/hooks/communities/useCommunity.ts";
 import { useParams } from "react-router-dom";
 import {
   bannerCategoryIcons,
   bannerColours,
 } from "@/api/old/types/communities.tsx";
 import { nameToAvatarFallback } from "@/lib/utils.ts";
+import { useCommunityDetail } from "@/api/communities/useCommunityDetail.ts";
 
 export default function CommunityDetail() {
   const [isFollowing, setIsFollowing] = useState(false);
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const { id } = useParams();
-  const { data: community } = useCommunity({
-    community_id: parseInt(id as string),
+  const { data: community } = useCommunityDetail({
+    id: parseInt(id as string),
   });
 
   if (!community) {
