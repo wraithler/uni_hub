@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { communityQueryKeys } from "./communityQueryKeys.ts";
 import api from "../apiClient.ts";
-import {PaginationProps} from "@/api";
+import { PaginationProps } from "@/api";
 
 type UseCommunitiesParams = PaginationProps & {
   my?: boolean;

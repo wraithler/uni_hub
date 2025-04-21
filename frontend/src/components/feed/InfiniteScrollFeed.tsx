@@ -1,11 +1,11 @@
 import InfiniteScroll from "react-infinite-scroll-component";
-import {CircleCheck, Loader2, UserCircle} from "lucide-react";
+import { CircleCheck, Loader2, UserCircle } from "lucide-react";
 import PostCard from "@/components/posts/PostCard.tsx";
 import React from "react";
 import EventCard from "@/components/events/EventCard.tsx";
 import { useAuth } from "@/components/auth/AuthProvider.tsx";
-import {useFeed} from "@/api/feed/useFeed.ts";
-import {FeedItem} from "@/api/feed/feedTypes.ts";
+import { useFeed } from "@/api/feed/useFeed.ts";
+import { FeedItem } from "@/api/feed/feedTypes.ts";
 
 export const InfiniteScrollFeed = () => {
   const { data, fetchNextPage } = useFeed();
@@ -23,9 +23,7 @@ export const InfiniteScrollFeed = () => {
           {!user && (
             <div className="flex flex-col items-center justify-center py-12 text-center col-span-3">
               <UserCircle className="w-12 h-12 mb-4 stroke-ruby-600" />
-              <h3 className="text-lg font-medium mb-2">
-                You're not logged in
-              </h3>
+              <h3 className="text-lg font-medium mb-2">You're not logged in</h3>
               <p className="text-muted-foreground mb-4">
                 To see a personalized feed, please log in to your account.
               </p>

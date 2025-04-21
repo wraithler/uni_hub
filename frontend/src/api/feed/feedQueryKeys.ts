@@ -1,3 +1,3 @@
 export const feedQueryKeys = {
-    infinite: ["feed"]
+  infinite: ["feed"],
 };
