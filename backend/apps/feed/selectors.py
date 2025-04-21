@@ -22,11 +22,11 @@ def feed_list(*, user: BaseUser, filters: dict = None) -> QuerySet:
     events_filters = {"community__memberships__user": user, **filters}
 
     posts = post_list(filters=posts_filters).values(
-        "id", "content", "created_by__email", "created_by__first_name", "created_by__last_name",
+        "id", "content", "created_by__id", "created_by__email", "created_by__first_name", "created_by__last_name",
         "community__name", "created_at", "likes", "comments", "community__id", "created_at"
     )
     events = event_list(filters=events_filters).values(
-        "id", "title", "description", "created_by__email", "created_by__first_name", "created_by__last_name",
+        "id", "title", "description", "created_by__id", "created_by__email", "created_by__first_name", "created_by__last_name",
         "community__name", "created_at", "attendees", "location", "community__id", "created_at"
     )
 
@@ -37,6 +37,7 @@ def feed_list(*, user: BaseUser, filters: dict = None) -> QuerySet:
             "type": "post",
             "content": post["content"],
             "created_by": {
+                "id": post["created_by__id"],
                 "email": post["created_by__email"],
                 "first_name": post["created_by__first_name"],
                 "last_name": post["created_by__last_name"],
@@ -60,6 +61,7 @@ def feed_list(*, user: BaseUser, filters: dict = None) -> QuerySet:
             "title": event["title"],
             "description": event["description"],
             "created_by": {
+                "id": event["created_by__id"],
                 "email": event["created_by__email"],
                 "first_name": event['created_by__first_name'],
                 "last_name": event['created_by__last_name'],
