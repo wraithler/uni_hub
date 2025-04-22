@@ -3,7 +3,7 @@ from django.db import transaction
 from apps.common.services import model_update
 from apps.communities.models import Community
 from apps.core.exceptions import ApplicationError
-from apps.events.models import Event
+from apps.events.models import Event, EventTicket
 from apps.users.models import BaseUser
 
 
@@ -48,3 +48,21 @@ def event_update(*, event: Event, data):
     )
 
     return event
+
+
+@transaction.atomic
+def event_ticket_create(*, event: Event, user: BaseUser) -> EventTicket:
+    ticket, created = EventTicket.objects.get_or_create(event=event, user=user)
+
+    if not ticket.qr_code:
+        ticket.generate_qr_code()
+        ticket.save()
+
+    return ticket
+
+
+@transaction.atomic
+def event_ticket_update(*, ticket: EventTicket, used: bool) -> EventTicket:
+    ticket.used = used
+    ticket.save()
+    return ticket
