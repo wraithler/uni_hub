@@ -1,8 +1,9 @@
 import { Button } from "@/components/ui/button.tsx";
-import { Calendar, Home, MessageSquare, Users } from "lucide-react";
+import {Calendar, Home, MessageSquare, Users} from "lucide-react";
 import { useAuth } from "@/components/auth/AuthProvider.tsx";
 import { Link } from "react-router-dom";
 import AdminHeader from "@/components/core/AdminHeader.tsx";
+import UserDropdownMenu from "@/components/users/UserDropDownMenu.tsx";
 
 interface HeaderProps {
   landing?: boolean;
@@ -57,7 +58,7 @@ const tabs = {
 
 export default function Header({ landing }: HeaderProps) {
   const headerTabs = landing ? tabs.landing : tabs.application;
-  const { user, logout } = useAuth();
+  const { user} = useAuth();
 
   return (
     <>
@@ -84,14 +85,7 @@ export default function Header({ landing }: HeaderProps) {
           </nav>
 
           {user ? (
-            <div className="flex items-center gap-3">
-              <Button variant="ghost" asChild>
-                <Link to="/profile">Profile</Link>
-              </Button>
-              <Button asChild>
-                <a onClick={logout}>Log out</a>
-              </Button>
-            </div>
+            <UserDropdownMenu/>
           ) : (
             <div className="flex items-center gap-3">
               <Button variant="ghost" asChild>
