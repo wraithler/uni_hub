@@ -42,6 +42,8 @@ jsonschema==4.23.0
 jsonschema-specifications==2024.10.1
 kombu==5.5.0
 msgpack==1.1.0
+mypy==1.15.0
+mypy-extensions==1.0.0
 pillow==11.1.0
 prompt_toolkit==3.0.50
 psycopg2-binary==2.9.10
@@ -53,6 +55,7 @@ pyOpenSSL==25.0.0
 python-crontab==3.2.0
 python-dateutil==2.9.0.post0
 PyYAML==6.0.2
+qrcode==8.1
 redis==5.2.1
 referencing==0.36.2
 rpds-py==0.23.1
