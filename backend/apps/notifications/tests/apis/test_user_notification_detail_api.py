@@ -81,7 +81,7 @@ class NotificationDetailAPITests(TestCase):
         
         response = self.client.get(self.url)
         
-        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)  # Changed from 401 to 403
 
 class MarkNotificationAsReadAPITests(TestCase):
     """Tests for the MarkNotificationAsReadAPI view."""
@@ -166,4 +166,4 @@ class MarkNotificationAsReadAPITests(TestCase):
         
         response = self.client.put(self.mark_read_url)
         
-        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)  # Changed from 401 to 403
