@@ -2,11 +2,18 @@ from django.db.models import QuerySet
 from apps.notifications.models import Notification
 from apps.users.models import BaseUser
 
-def get_user_notifications(user: BaseUser) -> QuerySet[Notification]:
+def user_notifications_get(user):
     """
     Returns all notifications for a specific user.
     """
     return Notification.objects.filter(recipient=user).order_by("-created_at")
+
+# Alias for backward compatibility and tests
+def get_user_notifications(user: BaseUser) -> QuerySet[Notification]:
+    """
+    Alias for user_notifications_get for backward compatibility.
+    """
+    return user_notifications_get(user)
 
 def get_unread_notifications(user: BaseUser) -> QuerySet[Notification]:
     """
