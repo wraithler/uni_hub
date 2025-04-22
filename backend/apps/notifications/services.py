@@ -21,3 +21,19 @@ def notification_create(
         is_read=is_read,
     )
     return notification
+
+@transaction.atomic
+def mark_notification_as_read(notification):
+    """
+    Marks a notification as read.
+    
+    Args:
+        notification: The notification object to mark as read
+        
+    Returns:
+        Notification: The updated notification object
+    """
+    notification.is_read = True
+    notification.save(update_fields=['is_read'])
+    
+    return notification
