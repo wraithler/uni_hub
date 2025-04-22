@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useEvents } from "@/api/events/useEvents";
 import {
@@ -24,11 +23,16 @@ type EventsComboboxProps = {
   onChange: (value: number) => void;
 };
 
-export default function EventsCombobox({ value, onChange }: EventsComboboxProps) {
+export default function EventsCombobox({
+  value,
+  onChange,
+}: EventsComboboxProps) {
   const { data } = useEvents();
   const [open, setOpen] = useState(false);
 
-  const selectedEvent = data?.results.find((event: Event) => event.id === value);
+  const selectedEvent = data?.results.find(
+    (event: Event) => event.id === value,
+  );
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -62,7 +66,7 @@ export default function EventsCombobox({ value, onChange }: EventsComboboxProps)
                   <Check
                     className={cn(
                       "ml-auto",
-                      value === event.id ? "opacity-100" : "opacity-0"
+                      value === event.id ? "opacity-100" : "opacity-0",
                     )}
                   />
                 </CommandItem>

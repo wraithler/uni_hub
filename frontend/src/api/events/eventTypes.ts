@@ -1,4 +1,3 @@
-
 import { PaginationResponse } from "@/api";
 import { User } from "@/api/users/userTypes";
 
@@ -13,6 +12,8 @@ export type Event = {
   virtual_link?: string;
   community: number;
   created_by?: User;
+  attendees: number;
+  timestamp: string;
 };
 
 export type EventList = PaginationResponse & {
