@@ -1,5 +1,3 @@
-// 📁 src/components/events/EventCreateForm.tsx
-
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -14,7 +12,14 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage, FormDescription } from "@/components/ui/form";
+import {
+  Form,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormControl,
+  FormMessage,
+} from "@/components/ui/form";
 import { ChevronRight } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import { useAuth } from "@/components/auth/AuthProvider";
@@ -74,7 +79,9 @@ export default function EventCreateForm() {
   if (!user) return <Navigate to="/login" />;
 
   const nextStep = async () => {
-    const valid = await form.trigger(Object.keys(fullSchema.shape)[step - 1] as never);
+    const valid = await form.trigger(
+      Object.keys(fullSchema.shape)[step - 1] as never,
+    );
     if (valid) setStep((s) => s + 1);
   };
 
@@ -165,7 +172,10 @@ export default function EventCreateForm() {
                   <FormItem>
                     <FormLabel>Location</FormLabel>
                     <FormControl>
-                      <Input {...field} placeholder="123 Main St or Building A" />
+                      <Input
+                        {...field}
+                        placeholder="123 Main St or Building A"
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -270,7 +280,9 @@ export default function EventCreateForm() {
                     starts_at: form.getValues("basic.starts_at"),
                     ends_at: form.getValues("basic.ends_at"),
                     location: form.getValues("location.location"),
-                    is_virtual_event: form.getValues("location.is_virtual_event"),
+                    is_virtual_event: form.getValues(
+                      "location.is_virtual_event",
+                    ),
                     virtual_link: form.getValues("location.virtual_link"),
                     community: form.getValues("community.community"),
                   }}
@@ -292,7 +304,7 @@ export default function EventCreateForm() {
                       is_virtual_event: data.location.is_virtual_event,
                       virtual_link: data.location.virtual_link,
                       community: data.community.community,
-                    })
+                    }),
                   )}
                 >
                   Create Event

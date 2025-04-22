@@ -21,12 +21,9 @@ export function useEventUpdate() {
         queryKey: eventQueryKeys.detail(Number(id)),
       });
       const previousEvent = queryClient.getQueryData(
-        eventQueryKeys.detail(Number(id))
-      );
-      queryClient.setQueryData(
         eventQueryKeys.detail(Number(id)),
-        updatedEvent
       );
+      queryClient.setQueryData(eventQueryKeys.detail(Number(id)), updatedEvent);
       return {
         previousEvent,
         updatedEvent,
@@ -35,7 +32,7 @@ export function useEventUpdate() {
     onError: (_err, _updatedEvent, context?: TSFix) => {
       queryClient.setQueryData(
         eventQueryKeys.detail(Number(id)),
-        context?.previousEvent
+        context?.previousEvent,
       );
     },
     onSettled: () => {

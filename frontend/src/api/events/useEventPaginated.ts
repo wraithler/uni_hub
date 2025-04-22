@@ -1,4 +1,3 @@
-
 import { EventsQueryParameters } from "./eventQueryParameters";
 import api from "@/api/apiClient";
 import { useQuery } from "@tanstack/react-query";
