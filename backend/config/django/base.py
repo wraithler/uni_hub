@@ -23,7 +23,11 @@ LOCAL_APPS = [
     "apps.posts.apps.PostsConfig",
     "apps.feedback.apps.FeedbackConfig",
     "apps.friends.apps.FriendsConfig",
-    "apps.comments.apps.CommentsConfig",
+    "apps.feed.apps.FeedConfig",
+    "apps.reports.apps.ReportsConfig",
+    "apps.reactions.apps.ReactionsConfig",
+    "apps.notification_preferences.apps.NotificationPreferencesConfig",
+    "apps.profile.apps.ProfileConfig",
 ]  # TODO: Add others
 
 THIRD_PARTY_APPS = [
@@ -55,7 +59,7 @@ MIDDLEWARE = [
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
-    "django.middleware.csrf.CsrfViewMiddleware",
+    # "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",

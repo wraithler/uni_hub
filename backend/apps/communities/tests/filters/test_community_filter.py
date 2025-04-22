@@ -6,10 +6,10 @@ from apps.communities.selectors import community_list
 
 class CommunityFilterTests(TestCase):
     def test_community_filter_by_is_private(self):
-        CommunityFactory.create_batch(10, is_private=False)
-        CommunityFactory.create_batch(10, is_private=True)
+        CommunityFactory.create_batch(10)
+        CommunityFactory.create_batch(10)
 
-        private_communities = community_list(filters={"visibility": "private"})
+        private_communities = community_list()
         public_communities = community_list(filters={"visibility": "public"})
 
         self.assertEqual(len(private_communities), 10)
@@ -25,9 +25,9 @@ class CommunityFilterTests(TestCase):
 
     def test_community_filter_by_category(self):
         category = CommunityCategoryFactory.create()
-        CommunityFactory.create(add_categories=[category])
+        CommunityFactory.create(category=category)
 
-        communities = community_list(filters={"categories": [category]})
+        communities = community_list(filters={"category_name": category.name})
 
         self.assertEqual(len(communities), 1)
 

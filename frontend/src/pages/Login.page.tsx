@@ -15,11 +15,18 @@ import {
   TabsTrigger,
 } from "../components/ui/tabs.tsx";
 import { Button } from "../components/ui/button.tsx";
-import { LoginForm } from "@/components/LoginForm.tsx";
-import { RegisterForm } from "@/components/RegisterForm.tsx";
+import { LoginForm } from "@/components/auth/LoginForm.tsx";
+import { RegisterForm } from "@/components/auth/RegisterForm.tsx";
+import { Link, Navigate } from "react-router-dom";
+import { useAuth } from "@/components/auth/AuthProvider.tsx";
 
 export default function LoginPage() {
+  const { user } = useAuth();
   const [activeTab, setActiveTab] = useState("login");
+
+  if (user) {
+    return <Navigate to="/feed" replace />;
+  }
 
   return (
     <div className="min-h-screen flex flex-col md:flex-row">
@@ -69,10 +76,10 @@ export default function LoginPage() {
       {/* Login form */}
       <div className="flex-1 flex flex-col">
         <div className="p-4 md:hidden">
-          <a href="/landing-page" className="flex items-center gap-2">
+          <Link to="/landing-page" className="flex items-center gap-2">
             <ArrowLeft className="h-4 w-4" />
             <span>Back to Home</span>
-          </a>
+          </Link>
         </div>
 
         <div className="flex-1 flex items-center justify-center p-6">

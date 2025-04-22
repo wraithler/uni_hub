@@ -5,10 +5,10 @@ from apps.posts.models import Post
 
 @admin.register(Post)
 class PostAdmin(admin.ModelAdmin):
-    list_display = ("title", "community", "created_by", "created_at")
-    search_fields = ("title", "content")
+    list_display = ("community", "created_by", "created_at")
+    search_fields = ("content",)
     list_filter = ("community", "created_by")
-    fieldsets = ((None, {"fields": ("title", "content", "community", "created_by")}),)
+    fieldsets = ((None, {"fields": ("content", "community", "created_by")}),)
     readonly_fields = ("created_at", "updated_at")
 
     def save_model(self, request, obj, form, change):
