@@ -65,13 +65,9 @@ def s3_generate_presigned_post(*, file_path: str, file_type: str) -> Dict[str, A
     presigned_data = client.generate_presigned_post(
         creds.bucket_name,
         file_path,
-        Fields={"acl": acl, "Content-Type": file_type},
+        Fields={"Content-Type": file_type},
         Conditions=[
-            {"acl": acl},
             {"Content-Type": file_type},
-            # As an example, allow file size up to 10 MiB
-            # More on conditions, here:
-            # https://docs.aws.amazon.com/AmazonS3/latest/API/sigv4-HTTPPOSTConstructPolicy.html
             ["content-length-range", 1, creds.max_size],
         ],
         ExpiresIn=expires_in,

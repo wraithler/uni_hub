@@ -45,7 +45,7 @@ class EventListApi(APIView):
             model = Event
             fields = (
                 "id",
-                "name",
+                "title",
                 "description",
                 "starts_at",
                 "ends_at",

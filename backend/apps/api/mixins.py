@@ -9,6 +9,7 @@ from rest_framework.authentication import BaseAuthentication, SessionAuthenticat
 from rest_framework.filters import SearchFilter
 from rest_framework.generics import ListAPIView
 from rest_framework.permissions import BasePermission, IsAuthenticated
+from rest_framework.views import APIView
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
 
@@ -58,7 +59,7 @@ else:
     PermissionClassesType = Sequence[Type[BasePermission]]
 
 
-class ApiAuthMixin:
+class ApiAuthMixin(APIView):
     authentication_classes: Sequence[Type[BaseAuthentication]] = [
         CsrfExemptedSessionAuthentication,
         SessionAsHeaderAuthentication,

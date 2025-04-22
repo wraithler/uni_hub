@@ -10,7 +10,6 @@ from apps.users.models import BaseUser
 @transaction.atomic
 def post_create(
     *,
-    title: str,
     content: str,
     community_id: int,
     created_by: BaseUser,
@@ -23,7 +22,6 @@ def post_create(
         )
 
     post = Post.objects.create(
-        title=title,
         content=content,
         community=community,
         created_by=created_by,
@@ -61,19 +59,3 @@ def post_delete(*, post: Post, user: BaseUser) -> None:
         )
 
     post.delete()
-
-
-@transaction.atomic
-def post_like(*, post: Post, user: BaseUser) -> None:
-    if not post.community.is_member(user):
-        raise ApplicationError("User must be a member of the community to like a post")
-
-    post.likes.get_or_create(user=user)
-
-
-@transaction.atomic
-def post_unlike(*, post: Post, user: BaseUser) -> None:
-    like = post.likes.filter(user=user).first()
-
-    if like:
-        like.delete()

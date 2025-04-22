@@ -6,4 +6,3 @@ class FriendRequestFilter(django_filters.FilterSet):
     class Meta:
         model = FriendRequest
         fields = ("is_accepted", "is_declined", "sender")
-

@@ -11,7 +11,8 @@ class EventFactory(factory.django.DjangoModelFactory):
 
     title = factory.Faker("sentence", nb_words=4)
     description = factory.Faker("text")
-    date = factory.Faker("date_time")
+    starts_at = factory.Faker("date_time")
+    ends_at = factory.Faker("date_time")
     location = factory.Faker("address")
     created_by = factory.SubFactory(BaseUserFactory)
     community = factory.SubFactory(CommunityFactory)
