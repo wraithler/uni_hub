@@ -8,22 +8,22 @@ from apps.notifications.apis import (
 
 urlpatterns = [
     path(
-        "notifications/",
+        "",
         NotificationListAPI.as_view(),
         name="notification-list",
     ),
     path(
-        "notifications/unread/",
+        "unread/",
         UnreadNotificationListAPI.as_view(),
         name="unread-notification-list",
     ),
     path(
-        "notifications/<int:pk>/mark-read/",
+        "<int:pk>/mark-read/",
         MarkNotificationAsReadAPI.as_view(),
         name="mark-notification-as-read",
     ),
     path(
-        "notifications/<int:pk>/",
+        "<int:pk>/",
         NotificationDetailAPI.as_view(),
         name="notification-detail",
     ),
