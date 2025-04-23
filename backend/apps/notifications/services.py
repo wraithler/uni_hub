@@ -23,7 +23,7 @@ def notification_create(
     return notification
 
 @transaction.atomic
-def mark_notification_as_read(notification):
+def notification_mark_as_read(notification: Notification) -> Notification:
     """
     Marks a notification as read.
     
