@@ -152,11 +152,11 @@ class NotificationApisTests(TestCase):
         detail_response = self.client.get(self.detail_url)
         mark_read_response = self.client.put(self.mark_read_url)
         
-        # All requests should be rejected with 401 Unauthorized
-        self.assertEqual(list_response.status_code, status.HTTP_403_UNAUTHORIZED)
-        self.assertEqual(unread_response.status_code, status.HTTP_403_UNAUTHORIZED)
-        self.assertEqual(detail_response.status_code, status.HTTP_403_UNAUTHORIZED)
-        self.assertEqual(mark_read_response.status_code, status.HTTP_403_UNAUTHORIZED)
+        # All requests should be rejected with 403 Forbidden
+        self.assertEqual(list_response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(unread_response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(detail_response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(mark_read_response.status_code, status.HTTP_403_FORBIDDEN)
 
     @patch('apps.notifications.apis.notification_list_by_user')
     def test_notification_list_api_uses_selector(self, mock_selector):
