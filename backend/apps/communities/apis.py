@@ -60,6 +60,7 @@ class CommunityListApi(APIView):
         is_featured = serializers.BooleanField(required=False, allow_null=True)
         category_name = serializers.CharField(required=False, allow_null=True)
         my = serializers.BooleanField(required=False, allow_null=True)
+        name = serializers.CharField(required=False, allow_null=True)
 
     class OutputSerializer(serializers.ModelSerializer):
         member_count = serializers.SerializerMethodField()

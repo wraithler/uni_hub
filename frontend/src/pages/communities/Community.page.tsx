@@ -59,7 +59,7 @@ export default function CommunityDetail() {
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const { id } = useParams();
   const { data: community } = useCommunityDetail({
-    id: parseInt(id as string),
+    id: Number(id),
   });
 
   if (!community) {
@@ -79,10 +79,10 @@ export default function CommunityDetail() {
         </div>
         <div className="absolute bottom-0 left-0 w-full">
           <div className="container px-4 mx-auto">
-            <div className="relative -bottom-12 md:-bottom-6 flex flex-col md:flex-row gap-4 items-start">
+            <div className="relative -bottom-12 md:-bottom-8 flex flex-col md:flex-row gap-4 items-start">
               <Avatar className="w-24 h-24 md:w-32 md:h-32 border-4 border-white shadow-lg">
                 <AvatarImage src="/placeholder.svg" alt={community.name} />
-                <AvatarFallback className="bg-blue-600 text-white text-2xl">
+                <AvatarFallback className={`${config.avatarBg} text-white text-2xl`}>
                   {nameToAvatarFallback(community.name)}
                 </AvatarFallback>
               </Avatar>
