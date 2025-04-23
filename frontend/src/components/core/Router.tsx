@@ -7,6 +7,7 @@ import NotFoundPage from "@/pages/NotFound.page.tsx";
 import CommunityCreatePage from "@/pages/communities/CommunityCreate.Page.tsx";
 import FeedPage from "@/pages/Feed.page.tsx";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute.tsx";
+import TermsOfServicePage from "@/pages/legal/TermsOfService.page.tsx";
 
 const router = createBrowserRouter([
   {
@@ -50,6 +51,10 @@ const router = createBrowserRouter([
         element: <FeedPage />,
       },
     ],
+  },
+  {
+    path: "/terms",
+    element: <TermsOfServicePage/>
   },
   {
     path: "*",
