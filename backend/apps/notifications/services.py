@@ -23,17 +23,23 @@ def notification_create(
     return notification
 
 @transaction.atomic
+def notification_update(notification: Notification, **kwargs) -> Notification:
+    """
+    Update fields on a notification instance.
+    """
+    for field, value in kwargs.items():
+        setattr(notification, field, value)
+    notification.save(update_fields=kwargs.keys())
+    return notification
+
+@transaction.atomic
 def notification_mark_as_read(notification: Notification) -> Notification:
     """
     Marks a notification as read.
-    
-    Args:
-        notification: The notification object to mark as read
-        
-    Returns:
-        Notification: The updated notification object
     """
-    notification.is_read = True
-    notification.save(update_fields=['is_read'])
+    return notification_update(notification, is_read=True)
+
+
+
     
-    return notification
+   
