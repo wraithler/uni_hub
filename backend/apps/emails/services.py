@@ -77,11 +77,11 @@ def email_send_all(emails: QuerySet[Email]) -> None:
         )
 
 
-def confirmation_email_create(user: BaseUser) -> Email:
+def verification_email_create(user: BaseUser) -> Email:
     token = default_token_generator.make_token(user)
     uid = urlsafe_base64_encode(force_bytes(user.pk))
 
-    link = f"http://localhost:3000/api/auth/verify-email/{uid}/{token}"  # TODO: Change to environment variable
+    link = f"http://localhost:3000/verification-email/verify/{uid}/{token}"  # TODO: Change to environment variable
 
     html = render_to_string(
         "emails/verification-email.html", {"verification_link": link}

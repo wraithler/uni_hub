@@ -15,13 +15,7 @@ export const EmailVerificationToast = () => {
           <span className="text-foreground">
             You need to verify your email address to access all features
           </span>
-        ),
-        action: {
-          label: "Resend email",
-          onClick: () => {
-            console.log("Resend email");
-          },
-        },
+        )
       });
     }
   }, [user]);

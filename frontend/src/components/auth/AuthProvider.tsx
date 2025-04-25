@@ -14,6 +14,8 @@ interface AuthContextProps {
     email: string,
     password: string,
   ) => Promise<void>;
+  sendVerificationEmail: () => Promise<void>;
+  verifyEmail: (uid: string, token: string) => Promise<void>;
   logout: () => void;
   isLoading: boolean;
 }
@@ -101,6 +103,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   };
 
+  const sendVerificationEmail = async () => {
+    await api.get("/users/send-email-verification/");
+  };
+
+  const verifyEmail = async (uid: string, token: string) => {
+    await api.post("/users/verify-email", { uid, token });
+  }
+
   useEffect(() => {
     const interceptor = api.interceptors.response.use(
       (response) => response,
@@ -138,7 +148,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
   return (
     <AuthContext.Provider
-      value={{ isAuthenticated, user, login, register, logout, isLoading }}
+      value={{
+        isAuthenticated,
+        user,
+        login,
+        register,
+        sendVerificationEmail,
+        verifyEmail,
+        logout,
+        isLoading,
+      }}
     >
       {!isLoading && children}
     </AuthContext.Provider>
