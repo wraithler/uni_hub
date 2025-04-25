@@ -96,10 +96,10 @@ class NotificationServicesTests(TestCase):
         
         # Verify fields were updated
         self.assertEqual(updated_notification.message, "Updated message")
-        self.assertEqual(updated_notification.notification_type, Notification.NotificationType.WARNING)
+        self.assertEqual(updated_notification.notification_type, Notification.NotificationType.ALERT)
         self.assertFalse(updated_notification.is_read)  # Should remain unchanged
         
         # Verify the database was updated
         db_notification = Notification.objects.get(id=notification.id)
         self.assertEqual(db_notification.message, "Updated message")
-        self.assertEqual(db_notification.notification_type, Notification.NotificationType.WARNING)
+        self.assertEqual(db_notification.notification_type, Notification.NotificationType.ALERT)
