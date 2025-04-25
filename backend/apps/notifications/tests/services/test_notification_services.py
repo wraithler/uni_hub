@@ -90,7 +90,8 @@ class NotificationServicesTests(TestCase):
         updated_notification = notification_update(
             notification,
             message="Updated message",
-            notification_type=Notification.NotificationType.WARNING
+            notification_type=Notification.NotificationType.ALERT,
+            is_read=True
         )
         
         # Verify fields were updated
