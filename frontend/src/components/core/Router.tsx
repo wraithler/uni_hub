@@ -7,6 +7,9 @@ import NotFoundPage from "@/pages/NotFound.page.tsx";
 import CommunityCreatePage from "@/pages/communities/CommunityCreate.Page.tsx";
 import FeedPage from "@/pages/Feed.page.tsx";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute.tsx";
+import ProfilePage from "@/pages/profile/profile.page"; 
+import ProfileCreatePage from "@/pages/profile/ProfileCreatePage"; 
+
 
 const router = createBrowserRouter([
   {
@@ -55,6 +58,29 @@ const router = createBrowserRouter([
     path: "*",
     element: <NotFoundPage />,
   },
+
+  {
+    path: "/profile/create",
+    element: <ProtectedRoute />,
+    children: [
+      {
+        path: "",
+        element: <ProfileCreatePage />, 
+      },
+    ],
+  },
+  
+  {
+    path: "/profile",
+    element: <ProtectedRoute />,
+    children: [
+      {
+        path: "",
+        element: <ProfilePage />,
+      },
+    ],
+  },
+
 ]);
 
 export function Router() {

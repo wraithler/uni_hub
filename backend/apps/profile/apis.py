@@ -30,7 +30,7 @@ class ProfileSerializer(serializers.ModelSerializer):
 
 class ProfileView(ApiAuthMixin, APIView):
     def get_profile(self, user):
-        profile = profile_get(user)
+        profile = profile_get(user=user)
         if not profile:
             return None
         return profile
@@ -59,13 +59,31 @@ class ProfileView(ApiAuthMixin, APIView):
 
 class ProfileCreateView(ApiAuthMixin, APIView):
     def post(self, request):
-        if profile_get(request.user):
+        # Check if the profile already exists for the user
+        existing_profile = profile_get(user=request.user)
+        if existing_profile:
             return Response(
                 {"detail": "Profile already exists."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
+        # Create a new profile if it does not exist
         serializer = ProfileSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save(user=request.user)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        if serializer.is_valid():
+            serializer.save(user=request.user)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    
+class ProfileChoicesView(APIView):
+    def get(self, request):
+        gender_choices = dict(Profile.GENDER_CHOICES)
+        hobby_choices = dict(Profile.HOBBY_CHOICES)
+        return Response(
+            {
+                "gender_choices": gender_choices,
+                "hobby_choices": hobby_choices
+            },
+            status=status.HTTP_200_OK
+        )
