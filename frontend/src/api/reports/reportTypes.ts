@@ -10,30 +10,25 @@ type ReportCategory = {
 type ReportStatus = 'PENDING' | 'UNDER_REVIEW' | 'RESOLVED' | 'CLOSED' | 'REJECTED';
 
 type Report = {
-  // basic parameters
   id?: number;
   title: string;
   description: string;
   category: number;
   evidence_links: any;
   status: ReportStatus;
-  
-  // users
+
   reported_by: User;
   reported_user: number;
   community: Community;
-  
-  // resolution
+
   reviewed_by: number;
   resolution_notes: string;
-  
-  // timestamps
+
   created_at: string;
   updated_at: string;
 };
 
 type ReportList = PaginationResponse & {
-  // extend PaginationResponse to have results of type Report[]
   results: Report[];
 };
 
@@ -43,7 +38,6 @@ type ReportAttachment = {
   description: string | null;
 };
 
-// Input types
 type ReportCreateInput = {
   title: string;
   description: string;
