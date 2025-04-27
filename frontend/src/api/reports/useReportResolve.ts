@@ -3,38 +3,12 @@ import { useParams } from "react-router-dom";
 import api from "@/api/apiClient";
 import { reportQueryKeys } from "@/api/reports/reportQueryKeys";
 import { toast } from "sonner";
-
-export type ReportStatus = 
-  | "PENDING" 
-  | "UNDER_REVIEW" 
-  | "RESOLVED" 
-  | "CLOSED" 
-  | "REJECTED";
-
-export interface Report {
-  id: number;
-  reported_by: number;
-  reported_user?: number;
-  community?: number;
-  category: number;
-  title: string;
-  description: string;
-  evidence_links?: any;
-  status: ReportStatus;
-  reviewed_by?: number;
-  resolution_notes?: string;
-  created_at: string;
-  updated_at: string;
-}
-
-export interface ReportResolveInput {
-  status: ReportStatus;
-  resolution_notes?: string;
-}
-
-interface MutationContext {
-  previousReport: Report | undefined;
-}
+import { 
+  Report, 
+  ReportStatus, 
+  ReportResolveInput, 
+  MutationContext 
+} from "./reportTypes";
 
 export function useReportResolve() {
   const queryClient = useQueryClient();
