@@ -8,10 +8,6 @@ import PageHeader from "@/components/core/PageHeader";
 import ProfileCard from "@/components/profile/ProfileCard";
 import { useState, useEffect } from "react";
 import { useAuth } from "@/components/auth/AuthProvider.tsx";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-
-
 
 type ProfileFormData = {
   gender?: string;
@@ -72,7 +68,9 @@ export default function ProfilePage() {
         return;
       }
 
-      await updateMutation.mutateAsync({ userId: user.id, ...changes });
+      const payload = { userId: user.id, ...changes };
+      console.log("🔵 Sending payload to backend:", payload);
+      await updateMutation.mutateAsync(payload);
       setDirtyFields(new Set()); // Reset dirty fields after successful save
       toast.success("Profile updated successfully!");
     } catch (err) {
