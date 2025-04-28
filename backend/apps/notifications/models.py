@@ -14,6 +14,9 @@ class Notification(BaseModel):
         ALERT = "alert", "Alert"
         REMINDER = "reminder", "Reminder"
         PROMO = "promo", "Promotional"
+        EVENT = "event", "Event"
+        POST = "post", "Post"
+        ANNOUNCEMENT = "announcement", "Announcement"
         
     notification_type = models.CharField(
         max_length=20,
