@@ -7,7 +7,7 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from apps.api.mixins import ApiAuthMixin
+from apps.api.mixins import AuthAPIView
 from apps.api.pagination import get_paginated_response
 from apps.communities.apis import CommunityListApi
 from apps.communities.selectors import community_list
@@ -126,7 +126,7 @@ class UserCommunitiesListApi(APIView):
         )
 
 
-class UserCreateEmailVerificationApi(ApiAuthMixin):
+class UserCreateEmailVerificationApi(AuthAPIView):
     def get(self, request):
         user = request.user
 
@@ -138,7 +138,7 @@ class UserCreateEmailVerificationApi(ApiAuthMixin):
         return Response(status=status.HTTP_200_OK)
 
 
-class UserVerifyEmailApi(ApiAuthMixin):
+class UserVerifyEmailApi(AuthAPIView):
     def post(self, request):
         uid = request.data.get('uid')
         token = request.data.get('token')
