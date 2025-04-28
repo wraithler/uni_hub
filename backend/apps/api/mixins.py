@@ -59,7 +59,7 @@ else:
     PermissionClassesType = Sequence[Type[BasePermission]]
 
 
-class ApiAuthMixin(APIView):
+class AuthAPIView(APIView):
     authentication_classes: Sequence[Type[BaseAuthentication]] = [
         CsrfExemptedSessionAuthentication,
         SessionAsHeaderAuthentication,

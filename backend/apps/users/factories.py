@@ -1,7 +1,7 @@
 import factory.django
 from faker import Faker
 
-from apps.emails.services import confirmation_email_create
+from apps.emails.services import verification_email_create
 from apps.notification_preferences.services import notification_preference_create
 from apps.users.models import BaseUser
 
@@ -26,5 +26,5 @@ class BaseUserFactory(factory.django.DjangoModelFactory):
         if not create:
             return
 
-        confirmation_email_create(user=self)
+        verification_email_create(user=self)
         notification_preference_create(user=self)
