@@ -1,13 +1,19 @@
-import { UserMe } from "@/api/old/types/users.ts";
+import { UserMe } from "@/api/users/userTypes.ts";
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { ACCESS_TOKEN, REFRESH_TOKEN } from "@/constants.ts";
-import api from "@/api/old/api.ts";
 import axios from "axios";
+import api from "@/api/apiClient.ts";
 
 interface AuthContextProps {
   isAuthenticated: boolean;
   user: UserMe | null;
   login: (email: string, password: string) => Promise<void>;
+  register: (
+    firstName: string,
+    lastName: string,
+    email: string,
+    password: string,
+  ) => Promise<void>;
   logout: () => void;
   isLoading: boolean;
 }
@@ -69,6 +75,32 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     localStorage.removeItem(REFRESH_TOKEN);
   };
 
+  const register = async (
+    firstName: string,
+    lastName: string,
+    email: string,
+    password: string,
+  ) => {
+    logout();
+
+    try {
+      const response = await api.post("/users/create/", {
+        first_name: firstName,
+        last_name: lastName,
+        email,
+        password,
+      });
+
+      if (response.status === 200) {
+        await login(email, password);
+      }
+    } catch (error) {
+      setIsAuthenticated(false);
+      setUser(null);
+      throw error;
+    }
+  };
+
   useEffect(() => {
     const interceptor = api.interceptors.response.use(
       (response) => response,
@@ -106,7 +138,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
   return (
     <AuthContext.Provider
-      value={{ isAuthenticated, user, login, logout, isLoading }}
+      value={{ isAuthenticated, user, login, register, logout, isLoading }}
     >
       {!isLoading && children}
     </AuthContext.Provider>

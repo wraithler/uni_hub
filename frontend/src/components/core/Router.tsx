@@ -9,7 +9,7 @@ import FeedPage from "@/pages/Feed.page.tsx";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute.tsx";
 import ProfilePage from "@/pages/profile/profile.page"; 
 import ProfileCreatePage from "@/pages/profile/ProfileCreatePage"; 
-
+import TermsOfServicePage from "@/pages/legal/TermsOfService.page.tsx";
 
 const router = createBrowserRouter([
   {
@@ -55,6 +55,10 @@ const router = createBrowserRouter([
     ],
   },
   {
+    path: "/terms",
+    element: <TermsOfServicePage/>
+  },
+  {
     path: "*",
     element: <NotFoundPage />,
   },
@@ -69,6 +73,7 @@ const router = createBrowserRouter([
       },
     ],
   },
+
   
   {
     path: "/profile",

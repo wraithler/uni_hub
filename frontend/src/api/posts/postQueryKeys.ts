@@ -1,3 +1,3 @@
 export const postQueryKeys = {
-    all: ["posts"]
-}
+  all: ["posts"],
+};

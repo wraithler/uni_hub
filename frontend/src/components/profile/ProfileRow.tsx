@@ -7,13 +7,13 @@ interface ProfileRowProps {
     key: string;
     value: string;
   };
-  onChange: (key: string, value: string) => void; // Change this to handle change
+  onChange: (key: string, value: string) => void; 
   options?: [string, string][]; 
 }
 
 export default function ProfileRow({ row, onChange, options }: ProfileRowProps) {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    onChange(row.key, e.target.value); // Pass the key and value to update the parent state
+    onChange(row.key, e.target.value); 
   };
 
   const renderSelect = (options: [string, string][]) => {

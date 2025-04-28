@@ -13,73 +13,61 @@ import {
   AvatarImage,
 } from "@/components/ui/avatar.tsx";
 import { Button } from "../ui/button.tsx";
-import {
-  avatarColours,
-  bannerColours,
-  Community, featuredBannerCategoryIcons,
-} from "@/api/old/types/communities.tsx";
 import { nameToAvatarFallback } from "@/lib/utils.ts";
-import {Badge} from "@/components/ui/badge.tsx";
-import {Link} from "react-router-dom";
+import { Badge } from "@/components/ui/badge.tsx";
+import { Link } from "react-router-dom";
+import { Community } from "@/api/communities/communityTypes.ts";
+import categoryConfig from "@/components/communities/CommunityStyling.tsx";
 
 interface FeaturedCommunityCardProps {
   community: Community;
 }
 
 export default function FeaturedCommunityCard({
-  community: {
-    id,
-    name,
-    category_name,
-    avatar,
-    description,
-    member_count,
-    post_count,
-    tags,
-  },
+  community,
 }: FeaturedCommunityCardProps) {
+  const config = categoryConfig[community.category_name];
+
   return (
-    <Card className="overflow-hidden flex flex-col overflow-hidden">
+    <Card className="overflow-hidden flex flex-col">
       <div
-        className={`relative h-32 bg-gradient-to-r ${bannerColours[category_name]}`}
+        className={`relative h-32 bg-gradient-to-r ${config.bannerGradient}`}
       >
         <div className="absolute inset-0 flex items-center justify-center">
-          {featuredBannerCategoryIcons[category_name]}
+          {config.featuredIcon}
         </div>
         <div className="absolute -bottom-8 left-4">
           <Avatar className="w-16 h-16 border-4 border-white">
-            <AvatarImage src={avatar} alt="Community" />
-            <AvatarFallback
-              className={`${avatarColours[category_name]} text-white`}
-            >
-              {nameToAvatarFallback(name)}
+            <AvatarImage src={community.avatar_url} alt="Community" />
+            <AvatarFallback className={`${config.avatarBg} text-white`}>
+              {nameToAvatarFallback(community.name)}
             </AvatarFallback>
           </Avatar>
         </div>
       </div>
       <CardHeader className="pt-10 flex-grow">
-        <CardTitle>{name}</CardTitle>
-        <CardDescription>{description}</CardDescription>
+        <CardTitle>{community.name}</CardTitle>
+        <CardDescription>{community.description}</CardDescription>
       </CardHeader>
       <CardContent>
         <div className="flex flex-wrap gap-1 mb-3">
-          {tags.map((tag, index) => (
-              <Badge key={index} variant="secondary" className="text-xs">
-                {tag}
-              </Badge>
+          {community.tags.map((tag, index) => (
+            <Badge key={index} variant="secondary" className="text-xs">
+              {tag}
+            </Badge>
           ))}
         </div>
         <div className="flex items-center text-sm text-muted-foreground">
-          <User className="w-4 h-4 mr-1"/>
-          <span>{member_count} members</span>
+          <User className="w-4 h-4 mr-1" />
+          <span>{community.member_count} members</span>
           <span className="mx-2">•</span>
-          <MessageSquare className="w-4 h-4 mr-1"/>
-          <span>{post_count} posts</span>
+          <MessageSquare className="w-4 h-4 mr-1" />
+          <span>{community.post_count} posts</span>
         </div>
       </CardContent>
       <CardFooter className="mt-auto">
         <Button className="w-full" asChild>
-          <Link to={`/communities/${id}`}>View Community</Link>
+          <Link to={`/communities/${community.id}`}>View Community</Link>
         </Button>
       </CardFooter>
     </Card>

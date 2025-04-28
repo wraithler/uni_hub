@@ -1,16 +1,16 @@
 import { useS3DirectUpload } from "@/api/files/useS3DirectUpload.ts";
-import { Label } from "@/components/ui/label.tsx";
 import { Input } from "@/components/ui/input.tsx";
-import { useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import { Button } from "@/components/ui/button.tsx";
-import { ImageIcon } from "lucide-react";
+import { ImageIcon, Loader2 } from "lucide-react";
+import { toast } from "sonner";
 
 type FileUploadProps = {
   value: string[];
   onChange: (value: string[]) => void;
 };
 
-export default function FileUpload({ value, onChange }: FileUploadProps) {
+export default function FileUpload({ onChange }: FileUploadProps) {
   const { upload, uploading, error } = useS3DirectUpload();
   const [fileIds, setFileIds] = useState<string[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -25,15 +25,15 @@ export default function FileUpload({ value, onChange }: FileUploadProps) {
       const file = files[i];
 
       try {
-        const { fileId, url } = await upload(file);
+        const { fileId } = await upload(file);
         newFileIds.push(fileId);
       } catch (err) {
-        throw err; // todo: handle
+        console.log(err); // todo: handle
       }
     }
 
     setFileIds((prevIds) => [...prevIds, ...newFileIds]);
-    onChange(newFileIds);
+    onChange(fileIds);
   };
 
   const handleButtonClick = () => {
@@ -43,22 +43,33 @@ export default function FileUpload({ value, onChange }: FileUploadProps) {
   };
 
   return (
-    <Button
-      variant="ghost"
-      size="sm"
-      // className="flex-1"
-      type="button"
-      onClick={handleButtonClick}
-    >
-      <ImageIcon className="h-4 w-4 mr-2" />
-      Media
-      <Input
-        type="file"
-        multiple
-        className="hidden"
-        ref={fileInputRef}
-        onChange={handleChange}
-      />
-    </Button>
+    <>
+      <Button
+        variant="ghost"
+        size="sm"
+        type="button"
+        onClick={handleButtonClick}
+      >
+        {uploading ? (
+          <>
+            <Loader2 className="h-4 w-4 mr-2" />
+            Uploading...
+          </>
+        ) : (
+          <>
+            <ImageIcon className="h-4 w-4 mr-2" />
+            Add media
+            <Input
+              type="file"
+              multiple
+              className="hidden"
+              ref={fileInputRef}
+              onChange={handleChange}
+            />
+          </>
+        )}
+      </Button>
+      {error && toast.error("Failed to upload images")}
+    </>
   );
 }

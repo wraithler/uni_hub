@@ -62,10 +62,7 @@ class ProfileCreateView(ApiAuthMixin, APIView):
         # Check if the profile already exists for the user
         existing_profile = profile_get(user=request.user)
         if existing_profile:
-            return Response(
-                {"detail": "Profile already exists."},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+            return Response({"detail": "Profile already exists."}, status=400)
 
         # Create a new profile if it does not exist
         serializer = ProfileSerializer(data=request.data)

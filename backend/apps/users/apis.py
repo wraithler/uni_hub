@@ -15,6 +15,7 @@ from apps.users.services import user_create, user_update
 
 class UserDetailApi(APIView):
     class OutputSerializer(serializers.Serializer):
+        id = serializers.IntegerField()
         email = serializers.EmailField()
         first_name = serializers.CharField()
         last_name = serializers.CharField()

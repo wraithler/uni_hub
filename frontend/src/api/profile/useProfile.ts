@@ -1,7 +1,7 @@
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { getProfile, updateProfile, createProfile } from '@/api/profile'; 
 import { getProfileChoices } from '@/api/profile/profileApi';  
-// import { useAuth } from "@/components/auth/AuthProvider";  
+
 
 
 export const useProfile = () => {

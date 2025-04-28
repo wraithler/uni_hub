@@ -6,7 +6,7 @@ from apps.users.models import BaseUser
 
 
 def profile_get(*, user: BaseUser) -> Optional[Profile]:
-    return Profile.objects.select_related("user").get(user=user)
+    return Profile.objects.select_related("user").filter(user=user).first()
 
 
 def profile_list(*, filters: Dict = None) -> Iterable[Profile]:

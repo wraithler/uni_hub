@@ -1,4 +1,5 @@
-import {PaginationResponse} from "@/api";
+import { PaginationResponse } from "@/api";
+import { User } from "@/api/users/userTypes.ts";
 
 type CommunityCategory = {
   id: number;
@@ -7,25 +8,26 @@ type CommunityCategory = {
 
 type Community = {
   // Basic parameters
-  id: number;
+  id?: number;
   name: string;
-  category: CommunityCategory;
+  category_name: string;
   description: string;
   about: string;
   tags: string[];
   contact_email: string;
-  // created_by: User // TODO: ADD
+  guidelines: string[];
+  created_by?: User;
 
   // Images
-  avatar_url: string;
-  banner_url: string;
+  avatar_url?: string;
+  banner_url?: string;
 
   // Counts
-  member_count: number;
-  post_count: number;
+  member_count?: number;
+  post_count?: number;
 
   // Per user
-  is_member: boolean;
+  is_member?: boolean;
 };
 
 type CommunityList = PaginationResponse & {
