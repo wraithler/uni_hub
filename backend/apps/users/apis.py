@@ -153,7 +153,7 @@ class UserVerifyEmailApi(AuthAPIView):
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
         if default_token_generator.check_token(user, token):
-            user_update(user=user, data={"is_email_verified", True})
+            user_update(user=user, data={"is_email_verified": True})
             return Response(status=status.HTTP_200_OK)
 
         return Response(status=status.HTTP_400_BAD_REQUEST)
