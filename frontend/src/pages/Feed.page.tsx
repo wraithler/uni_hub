@@ -4,7 +4,6 @@ import PostCreateForm from "@/components/posts/PostCreateForm.tsx";
 import FilteredFeed from "@/components/feed/FilteredFeed.tsx";
 
 export default function FeedPage() {
-
   return (
     <Layout>
       <main className="container px-4 py-6 mx-auto">
@@ -13,7 +12,7 @@ export default function FeedPage() {
 
           <div className="lg:col-span-2 space-y-6">
             <PostCreateForm />
-            <FilteredFeed/>
+            <FilteredFeed />
           </div>
         </div>
       </main>

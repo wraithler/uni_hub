@@ -1,11 +1,10 @@
 from rest_framework import serializers
 from rest_framework.response import Response
-from rest_framework.views import APIView
 
-from apps.api.mixins import ApiAuthMixin
+from apps.api.mixins import AuthAPIView
 
 
-class UserMeApi(ApiAuthMixin, APIView):
+class UserMeApi(AuthAPIView):
     class OutputSerializer(serializers.Serializer):
         id = serializers.IntegerField()
         email = serializers.EmailField()

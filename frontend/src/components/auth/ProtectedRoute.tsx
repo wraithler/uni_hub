@@ -26,7 +26,7 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   }
 
   if (requireEmailVerification && user && !user.is_email_verified) {
-    return <Navigate to="/verify-email" replace />;
+    return <Navigate to="/verification-email/send" replace />;
   }
 
   return <Outlet />;

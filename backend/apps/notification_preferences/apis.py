@@ -5,10 +5,10 @@ from rest_framework import serializers
 from apps.notification_preferences.models import UserNotificationPreference
 from apps.notification_preferences.selectors import user_notification_preference_get
 from apps.notification_preferences.services import notification_preference_update
-from apps.api.mixins import ApiAuthMixin
+from apps.api.mixins import AuthAPIView
 
 
-class UserNotificationPreferenceDetailAPI(ApiAuthMixin, APIView):
+class UserNotificationPreferenceDetailAPI(AuthAPIView, APIView):
     class OutputSerializer(serializers.ModelSerializer):
         class Meta:
             model = UserNotificationPreference
@@ -26,7 +26,7 @@ class UserNotificationPreferenceDetailAPI(ApiAuthMixin, APIView):
         return Response(data)
 
 
-class UserNotificationPreferenceUpdateAPI(ApiAuthMixin, APIView):
+class UserNotificationPreferenceUpdateAPI(AuthAPIView, APIView):
     class InputSerializer(serializers.Serializer):
         email_notifications = serializers.BooleanField(required=False)
         sms_notifications = serializers.BooleanField(required=False)
