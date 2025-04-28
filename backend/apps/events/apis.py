@@ -1,12 +1,12 @@
 from django.http import Http404
-from rest_framework import serializers
+from rest_framework import serializers, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from apps.api.pagination import LimitOffsetPagination, get_paginated_response
-from apps.events.models import Event
+from apps.events.models import Event, EventTicket
 from apps.events.selectors import event_get, event_list
-from apps.events.services import event_create, event_update
+from apps.events.services import event_create, event_update, event_ticket_create, event_ticket_update
 
 
 class EventDetailApi(APIView):
@@ -24,11 +24,10 @@ class EventDetailApi(APIView):
     def get(self, request, event_id):
         event = event_get(event_id)
 
-        if event_id is None:
+        if event is None:
             raise Http404
 
         data = self.OutputSerializer(event).data
-
         return Response(data)
 
 
@@ -89,7 +88,6 @@ class EventCreateApi(APIView):
         event = event_create(**serializer.validated_data, created_by=request.user)
 
         data = EventDetailApi.OutputSerializer(event).data
-
         return Response(data)
 
 
@@ -108,12 +106,48 @@ class EventUpdateApi(APIView):
         serializer.is_valid(raise_exception=True)
 
         event = event_get(event_id)
-
         if event is None:
             raise Http404
 
         event = event_update(event, **serializer.validated_data)
-
         data = EventDetailApi.OutputSerializer(event).data
-
         return Response(data)
+
+
+class EventTicketCreateApi(APIView):
+    class OutputSerializer(serializers.ModelSerializer):
+        class Meta:
+            model = EventTicket
+            fields = ['id', 'ticket_id', 'qr_code', 'event', 'user']
+
+    def post(self, request, event_id):
+        user = request.user
+        event = event_get(event_id)
+        if event is None:
+            raise Http404
+
+        ticket = event_ticket_create(event=event, user=user)
+        serializer = self.OutputSerializer(ticket)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
+class EventTicketUpdateApi(APIView):
+    class InputSerializer(serializers.Serializer):
+        used = serializers.BooleanField()
+
+    class OutputSerializer(serializers.ModelSerializer):
+        class Meta:
+            model = EventTicket
+            fields = ['id', 'ticket_id', 'used', 'event', 'user', 'qr_code']
+
+    def patch(self, request, ticket_id):
+        try:
+            ticket = EventTicket.objects.get(id=ticket_id)
+        except EventTicket.DoesNotExist:
+            raise Http404
+
+        serializer = self.InputSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        ticket = event_ticket_update(ticket=ticket, used=serializer.validated_data['used'])
+        return Response(self.OutputSerializer(ticket).data)

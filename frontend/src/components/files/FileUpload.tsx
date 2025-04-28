@@ -47,7 +47,6 @@ export default function FileUpload({ onChange }: FileUploadProps) {
       <Button
         variant="ghost"
         size="sm"
-        // className="flex-1"
         type="button"
         onClick={handleButtonClick}
       >
@@ -59,7 +58,7 @@ export default function FileUpload({ onChange }: FileUploadProps) {
         ) : (
           <>
             <ImageIcon className="h-4 w-4 mr-2" />
-            Media
+            Add media
             <Input
               type="file"
               multiple

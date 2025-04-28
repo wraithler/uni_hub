@@ -1,8 +1,7 @@
 import { CommunitiesQueryParameters } from "./communityQueryParameters.ts";
 import api from "../apiClient.ts";
-import { useQuery } from "@tanstack/react-query";
 import { communityQueryKeys } from "./communityQueryKeys.ts";
-import { STALE_TIME } from "@/api";
+import { usePaginatedQuery } from "@/lib/tanstackExtension.ts";
 
 export function useCommunitiesPaginated(params: CommunitiesQueryParameters) {
   const getCommunitiesPaginatedFn = async () => {
@@ -10,10 +9,10 @@ export function useCommunitiesPaginated(params: CommunitiesQueryParameters) {
     return response.data;
   };
 
-  return useQuery({
+  return usePaginatedQuery({
     queryKey: communityQueryKeys.pagination(params),
     queryFn: getCommunitiesPaginatedFn,
-    placeholderData: (previousData) => previousData,
-    staleTime: STALE_TIME,
+    params,
+    limit: params.limit || 10,
   });
 }

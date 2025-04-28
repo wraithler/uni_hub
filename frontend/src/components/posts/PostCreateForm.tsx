@@ -29,7 +29,7 @@ const Schema = z.object({
     .string()
     .min(10, { message: "Content must contain 10 or more characters" }),
   community_id: z.number(),
-  media: z.array(z.string().url()),
+  media: z.array(z.string().url()).optional(),
   // links: z.array(z.string().url()),
 });
 
@@ -46,6 +46,7 @@ export default function PostCreateForm() {
     setIsLoading(true);
     createPost.mutate(data);
     setIsLoading(false);
+    form.reset({ content: "" });
   };
 
   return (
@@ -87,7 +88,7 @@ export default function PostCreateForm() {
                   <FormItem>
                     <FormControl>
                       <FileUpload
-                        value={field.value}
+                        value={field.value || []}
                         onChange={field.onChange}
                       />
                     </FormControl>

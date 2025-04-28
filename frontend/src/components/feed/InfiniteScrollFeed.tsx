@@ -6,8 +6,9 @@ import EventCard from "@/components/events/EventCard.tsx";
 import { useAuth } from "@/components/auth/AuthProvider.tsx";
 import { useFeed } from "@/api/feed/useFeed.ts";
 import { FeedItem } from "@/api/feed/feedTypes.ts";
+import { FeedFilters } from "@/components/feed/FilteredFeed.tsx";
 
-export const InfiniteScrollFeed = () => {
+export const InfiniteScrollFeed = ({ filters }: { filters: FeedFilters }) => {
   const { data, fetchNextPage } = useFeed();
   const { user } = useAuth();
   return (
@@ -46,13 +47,17 @@ export const InfiniteScrollFeed = () => {
       <div className="space-y-4">
         {data?.pages.map((page, index) => (
           <React.Fragment key={index}>
-            {page.results.map((item: FeedItem) =>
-              item.type === "post" ? (
-                <PostCard key={item.id} {...item} />
-              ) : (
-                <EventCard key={item.id} {...item} />
-              ),
-            )}
+            {page.results
+              .filter((item: FeedItem) =>
+                filters.show === "all" ? true : item.type === filters.show,
+              )
+              .map((item: FeedItem) =>
+                item.type === "post" ? (
+                  <PostCard key={item.id} {...item} />
+                ) : (
+                  <EventCard key={item.id} {...item} />
+                ),
+              )}
           </React.Fragment>
         ))}
       </div>

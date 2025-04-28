@@ -5,7 +5,7 @@ from rest_framework import serializers
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from apps.api.mixins import ApiAuthMixin
+from apps.api.mixins import AuthAPIView
 from apps.api.pagination import LimitOffsetPagination, get_paginated_response
 from apps.communities.models import Community
 from apps.communities.selectors import community_get, community_list
@@ -60,6 +60,8 @@ class CommunityListApi(APIView):
         is_featured = serializers.BooleanField(required=False, allow_null=True)
         category_name = serializers.CharField(required=False, allow_null=True)
         my = serializers.BooleanField(required=False, allow_null=True)
+        name = serializers.CharField(required=False, allow_null=True)
+        sort_by = serializers.CharField(required=False, allow_null=True)
 
     class OutputSerializer(serializers.ModelSerializer):
         member_count = serializers.SerializerMethodField()
@@ -113,7 +115,7 @@ class CommunityListApi(APIView):
         )
 
 
-class CommunityCreateApi(ApiAuthMixin, APIView):
+class CommunityCreateApi(AuthAPIView, APIView):
     class InputSerializer(serializers.Serializer):
         name = serializers.CharField()
         description = serializers.CharField()
