@@ -205,3 +205,209 @@ def notification_get_user_unread(user: BaseUser) -> List[Notification]:
     except Exception as e:
         logger.error(f"Error getting user unread notifications: {str(e)}")
         return []
+
+def notification_create_for_post(
+    *,
+    post,
+    recipient: BaseUser,
+    notification_type: str = Notification.NotificationType.INFO,
+    additional_info: Optional[Dict[str, Any]] = None
+) -> Optional[Notification]:
+    """
+    Create a notification for a new post with detailed information.
+    """
+    try:
+        # Validate required post attributes
+        if not post.title or not post.content or not post.author or not post.community:
+            logger.error("Invalid post data: missing required attributes")
+            return None
+            
+        # Get post details
+        post_details = {
+            "title": post.title,
+            "content": post.content,
+            "author": post.get_full_name() if hasattr(post, 'get_full_name') else (
+                post.author.get_full_name() if hasattr(post.author, 'get_full_name') else 
+                f"{post.author.first_name} {post.author.last_name}"
+            ),
+             "community": post.community.name,
+            **(additional_info or {})
+        }
+        
+        message = (
+            f"New post '{post_details['title']}' in {post_details['community']}:\n"
+            f"• Author: {post_details['author']}\n"
+            f"• Content: {post_details['content'][:100]}..."  
+        )
+        
+        # Add additional info to message if provided
+        if additional_info:
+            message += "\n• Additional Info:"
+            for key, value in additional_info.items():
+                message += f"\n  - {key}: {value}"
+        
+        # Create and log the notification
+        notification = notification_create(
+            recipient=recipient,
+            message=message,
+            notification_type=notification_type
+        )
+        
+        logger.info(
+            f"Post notification created: post_id={post.id}, "
+            f"recipient={recipient.email}, "
+            f"type={notification_type}"
+        )
+        
+        return notification
+        
+    except Exception as e:
+        logger.error(f"Error creating post notification: {str(e)}")
+        return None
+
+def notification_create_for_announcement(
+    *,
+    announcement,
+    recipient: BaseUser,
+    notification_type: str = Notification.NotificationType.INFO,
+    additional_info: Optional[Dict[str, Any]] = None
+) -> Optional[Notification]:
+    """
+    Create a notification for an announcement with detailed information.
+    """
+    try:
+        # Get announcement details
+        announcement_details = {
+            "title": announcement.title,
+            "content": announcement.content,
+            "community": announcement.community.name,
+            "priority": announcement.priority,
+            **(additional_info or {})
+        }
+        
+        message = (
+            f"New announcement '{announcement_details['title']}' in {announcement_details['community']}:\n"
+            f"• Priority: {announcement_details['priority']}\n"
+            f"• Content: {announcement_details['content'][:100]}..."  
+        )
+        
+        # Add additional info to message if provided
+        if additional_info:
+            message += "\n• Additional Info:"
+            for key, value in additional_info.items():
+                message += f"\n  - {key}: {value}"
+        
+        # Create and log the notification
+        notification = notification_create(
+            recipient=recipient,
+            message=message,
+            notification_type=notification_type
+        )
+        
+        logger.info(
+            f"Announcement notification created: announcement_id={announcement.id}, "
+            f"recipient={recipient.email}, "
+            f"type={notification_type}"
+        )
+        
+        return notification
+        
+    except Exception as e:
+        logger.error(f"Error creating announcement notification: {str(e)}")
+        return None
+
+def notification_create_for_community_update(
+    *,
+    community,
+    recipient: BaseUser,
+    update_type: str,
+    notification_type: str = Notification.NotificationType.INFO,
+    additional_info: Optional[Dict[str, Any]] = None
+) -> Optional[Notification]:
+    """
+    Create a notification for community updates with detailed information.
+    """
+    try:
+        # Get community details
+        community_details = {
+            "name": community.name,
+            "description": community.description,
+            "update_type": update_type,
+            **(additional_info or {})
+        }
+        
+        message = (
+            f"Community update for '{community_details['name']}':\n"
+            f"• Update Type: {community_details['update_type']}\n"
+            f"• Description: {community_details['description'][:100]}..."  
+        )
+        
+        # Add additional info to message if provided
+        if additional_info:
+            message += "\n• Additional Info:"
+            for key, value in additional_info.items():
+                message += f"\n  - {key}: {value}"
+        
+        # Create and log the notification
+        notification = notification_create(
+            recipient=recipient,
+            message=message,
+            notification_type=notification_type
+        )
+        
+        logger.info(
+            f"Community update notification created: community_id={community.id}, "
+            f"recipient={recipient.email}, "
+            f"type={notification_type}, "
+            f"update_type={update_type}"
+        )
+        
+        return notification
+        
+    except Exception as e:
+        logger.error(f"Error creating community update notification: {str(e)}")
+        return None
+
+def notification_get_recipients_by_preference(
+    *,
+    notification_type: str,
+    community=None
+) -> List[BaseUser]:
+    """
+    Get all users who should receive notifications based on their preferences.
+    """
+    try:
+        # Base query for users with enabled notifications
+        query = BaseUser.objects.filter(
+            notification_preferences__in_app_notifications=True
+        )
+        
+        # For ALERT and INFO notification types
+        # This allows all users with in_app_notifications=True to receive these types
+        if notification_type not in [Notification.NotificationType.INFO, Notification.NotificationType.ALERT, "info", "alert"]:
+            # Add specific preference filters based on notification type
+            if notification_type in [Notification.NotificationType.EVENT, "event"]:
+                query = query.filter(notification_preferences__event_updates=True)
+            elif notification_type in [Notification.NotificationType.POST, "post"]:
+                query = query.filter(notification_preferences__post_notifications=True)
+            elif notification_type in [Notification.NotificationType.ANNOUNCEMENT, "announcement"]:
+                query = query.filter(notification_preferences__announcements=True)
+        
+        # Filter by community if provided
+        if community:
+            query = query.filter(
+                memberships__community=community  # Ensure user is a member
+            )
+        
+        recipients = query.distinct()
+        
+        logger.info(
+            f"Found {recipients.count()} potential recipients for "
+            f"notification type {notification_type}"
+        )
+        
+        return list(recipients)
+        
+    except Exception as e:
+        logger.error(f"Error getting notification recipients: {str(e)}")
+        return []
