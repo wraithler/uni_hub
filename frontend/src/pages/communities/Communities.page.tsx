@@ -55,9 +55,11 @@ export default function CommunitiesPage() {
             title="Communities"
             description="Discover and join communities that match your interests"
             button={
-              <Button variant="outline">
-                <PlusIcon />
-                Create a community
+              <Button variant="outline" asChild>
+                <Link to="/communities/create">
+                  <PlusIcon />
+                  Create a community
+                </Link>
               </Button>
             }
           />
@@ -75,9 +77,11 @@ export default function CommunitiesPage() {
           title="Communities"
           description="Discover and join communities that match your interests"
           button={
-            <Button variant="outline">
-              <PlusIcon />
-              Create a community
+            <Button variant="outline" asChild>
+              <Link to="/communities/create">
+                <PlusIcon />
+                Create a community
+              </Link>
             </Button>
           }
         />
