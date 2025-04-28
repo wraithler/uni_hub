@@ -1,7 +1,6 @@
 import { UserMe } from "@/api/users/userTypes.ts";
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { ACCESS_TOKEN, REFRESH_TOKEN } from "@/constants.ts";
-import axios from "axios";
 import api from "@/api/apiClient.ts";
 
 interface AuthContextProps {
@@ -130,7 +129,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
             localStorage.setItem(ACCESS_TOKEN, access);
 
             originalRequest.headers.Authorization = `Bearer ${access}`;
-            return axios(originalRequest);
+            return api(originalRequest);
           } catch {
             logout();
             window.location.href = "/login";
