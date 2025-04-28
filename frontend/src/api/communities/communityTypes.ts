@@ -10,13 +10,14 @@ type Community = {
   // Basic parameters
   id?: number;
   name: string;
-  category_name: string;
+  category: string;
   description: string;
   about: string;
   tags: string[];
   contact_email: string;
   guidelines: string[];
   created_by?: User;
+  privacy?: string;
 
   // Images
   avatar_url?: string;
