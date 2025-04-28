@@ -1,9 +1,6 @@
 import { PaginationProps } from "@/api";
 
-export type CommunitySortOptions =
-  | "popular"
-  | "new"
-  | "alphabetical";
+export type CommunitySortOptions = "popular" | "new" | "alphabetical";
 
 export type CommunitiesQueryParameters = PaginationProps & {
   my?: boolean;

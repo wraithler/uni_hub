@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button.tsx";
-import {Calendar, Home, MessageSquare, Users} from "lucide-react";
+import { Calendar, Home, MessageSquare, Users } from "lucide-react";
 import { useAuth } from "@/components/auth/AuthProvider.tsx";
 import { Link } from "react-router-dom";
 import AdminHeader from "@/components/core/AdminHeader.tsx";
@@ -58,7 +58,7 @@ const tabs = {
 
 export default function Header({ landing }: HeaderProps) {
   const headerTabs = landing ? tabs.landing : tabs.application;
-  const { user} = useAuth();
+  const { user } = useAuth();
 
   return (
     <>
@@ -85,7 +85,7 @@ export default function Header({ landing }: HeaderProps) {
           </nav>
 
           {user ? (
-            <UserDropdownMenu/>
+            <UserDropdownMenu />
           ) : (
             <div className="flex items-center gap-3">
               <Button variant="ghost" asChild>

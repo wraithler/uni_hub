@@ -9,8 +9,14 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
-import {LogOut, MessageSquare, Settings, UserCircle, UserPen} from "lucide-react";
-import {useNavigate} from "react-router-dom";
+import {
+  LogOut,
+  MessageSquare,
+  Settings,
+  UserCircle,
+  UserPen,
+} from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 export default function UserDropdownMenu() {
   const { user, logout } = useAuth();
@@ -21,7 +27,9 @@ export default function UserDropdownMenu() {
       <DropdownMenuTrigger asChild>
         <Button variant="ghost">
           <UserCircle className="w-4 h-4" />
-          <span>{user?.first_name} {user?.last_name}</span>
+          <span>
+            {user?.first_name} {user?.last_name}
+          </span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56">
@@ -29,22 +37,22 @@ export default function UserDropdownMenu() {
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
           <DropdownMenuItem onClick={() => navigate("/profile")}>
-            <UserPen/>
+            <UserPen />
             Profile
           </DropdownMenuItem>
           <DropdownMenuItem onClick={() => navigate("/settings")}>
-            <Settings/>
+            <Settings />
             Settings
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={() => navigate("/support")}>
-          <MessageSquare/>
+          <MessageSquare />
           Support
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={logout}>
-          <LogOut/>
+          <LogOut />
           Log out
         </DropdownMenuItem>
       </DropdownMenuContent>

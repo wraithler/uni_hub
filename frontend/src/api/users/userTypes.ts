@@ -19,6 +19,7 @@ type UserMe = User &
     is_superuser: boolean;
     is_staff: boolean;
     is_email_verified: boolean;
+    role: string;
   };
 
 export type { User, UserMe, UserStats };
