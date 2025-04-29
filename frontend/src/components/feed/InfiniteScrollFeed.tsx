@@ -1,6 +1,6 @@
 import InfiniteScroll from "react-infinite-scroll-component";
 import { CircleCheck, UserCircle } from "lucide-react";
-import PostCard from "@/components/posts/PostCard.tsx";
+import FeedCard from "@/components/feed/FeedCard.tsx";
 import React from "react";
 import EventCard from "@/components/events/EventCard.tsx";
 import { useAuth } from "@/components/auth/AuthProvider.tsx";
@@ -54,7 +54,7 @@ export const InfiniteScrollFeed = ({ filters }: { filters: FeedFilters }) => {
               )
               .map((item: FeedItem) =>
                 item.type === "post" ? (
-                  <PostCard key={item.id} {...item} />
+                  <FeedCard key={item.id} {...item} />
                 ) : (
                   <EventCard key={item.id} {...item} />
                 ),

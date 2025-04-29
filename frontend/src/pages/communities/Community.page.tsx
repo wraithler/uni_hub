@@ -7,7 +7,6 @@ import {
   Clock,
   FileText,
   Grid,
-  Heart,
   Info,
   List,
   MapPin,
@@ -16,7 +15,6 @@ import {
   PenSquare,
   Search,
   Share2,
-  Star,
   Users,
 } from "lucide-react";
 
@@ -53,16 +51,35 @@ import { useParams } from "react-router-dom";
 import { nameToAvatarFallback } from "@/lib/utils.ts";
 import { useCommunityDetail } from "@/api/communities/useCommunityDetail.ts";
 import categoryConfig from "@/components/communities/CommunityStyling.tsx";
+import { Spinner } from "@/components/ui/spinner.tsx";
+import { usePostsPaginated } from "@/api/posts/usePostPaginated.ts";
+import { usePosts } from "@/api/posts/usePosts.ts";
+import PostPinnedCard from "@/components/posts/cards/PostPinnedCard.tsx";
+import PostList from "@/components/posts/display/PostList.tsx";
 
 export default function CommunityDetail() {
-  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const { id } = useParams();
+  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+
   const { data: community } = useCommunityDetail({
     id: Number(id),
   });
+  const { data: posts } = usePostsPaginated({
+    community_id: Number(id),
+    limit: 12,
+  });
+  const { data: pinnedPost } = usePosts({
+    pinned: true,
+    community_id: Number(id),
+    limit: 1,
+  });
 
-  if (!community) {
-    return null;
+  if (!community || !posts || !pinnedPost) {
+    return (
+      <Layout>
+        <Spinner className="m-auto mt-5" />
+      </Layout>
+    );
   }
 
   const config = categoryConfig[community.category];
@@ -230,175 +247,10 @@ export default function CommunityDetail() {
             </div>
 
             {/* Pinned Post */}
-            <Card className="mb-6 border-l-4 border-l-blue-500">
-              <CardHeader className="pb-2">
-                <div className="flex items-center justify-between">
-                  <Badge
-                    variant="outline"
-                    className="text-blue-500 border-blue-500"
-                  >
-                    Pinned
-                  </Badge>
-                  <span className="text-xs text-muted-foreground">
-                    2 days ago
-                  </span>
-                </div>
-                <CardTitle className="mt-2">
-                  Welcome to the Computer Science Society!
-                </CardTitle>
-                <CardDescription>
-                  A guide for new members and information about upcoming events
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground">
-                  Welcome to all new members! This post contains essential
-                  information about our community, including how to get
-                  involved, upcoming events, and resources available to members.
-                </p>
-              </CardContent>
-              <CardFooter className="flex justify-between">
-                <div className="flex items-center gap-4">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="flex items-center gap-1 h-8 px-2"
-                  >
-                    <Heart className="w-4 h-4" />
-                    <span>42</span>
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="flex items-center gap-1 h-8 px-2"
-                  >
-                    <MessageSquare className="w-4 h-4" />
-                    <span>18</span>
-                  </Button>
-                </div>
-                <Button size="sm" variant="outline">
-                  Read More
-                </Button>
-              </CardFooter>
-            </Card>
+            <PostPinnedCard post={pinnedPost} />
 
-            {/* Posts Grid/List */}
-            {viewMode === "grid" ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {[1, 2, 3, 4, 5, 6].map((item) => (
-                  <Card key={item}>
-                    <CardHeader className="pb-2">
-                      <div className="flex items-center gap-2 mb-2">
-                        <Avatar className="w-6 h-6">
-                          <AvatarFallback>U</AvatarFallback>
-                        </Avatar>
-                        <span className="text-sm font-medium">
-                          Alex Johnson
-                        </span>
-                        <span className="text-xs text-muted-foreground ml-auto">
-                          3h ago
-                        </span>
-                      </div>
-                      <CardTitle className="text-base">
-                        Hackathon Preparation Tips
-                      </CardTitle>
-                      <CardDescription className="line-clamp-2">
-                        Looking to join our upcoming hackathon? Here are some
-                        essential tips to help you prepare and maximize your
-                        chances of success...
-                      </CardDescription>
-                    </CardHeader>
-                    <CardFooter className="flex justify-between">
-                      <div className="flex items-center gap-2">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="flex items-center gap-1 h-8 px-2"
-                        >
-                          <Heart className="w-4 h-4" />
-                          <span>24</span>
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="flex items-center gap-1 h-8 px-2"
-                        >
-                          <MessageSquare className="w-4 h-4" />
-                          <span>8</span>
-                        </Button>
-                      </div>
-                      <Button size="sm" variant="outline">
-                        View
-                      </Button>
-                    </CardFooter>
-                  </Card>
-                ))}
-              </div>
-            ) : (
-              <div className="space-y-4">
-                {[1, 2, 3, 4, 5].map((item) => (
-                  <Card key={item}>
-                    <CardHeader>
-                      <div className="flex items-center gap-2">
-                        <Avatar className="w-8 h-8">
-                          <AvatarImage src="/placeholder.svg" alt="User" />
-                          <AvatarFallback>AJ</AvatarFallback>
-                        </Avatar>
-                        <div>
-                          <span className="font-medium">Alex Johnson</span>
-                          <p className="text-xs text-muted-foreground">
-                            3h ago
-                          </p>
-                        </div>
-                      </div>
-                    </CardHeader>
-                    <CardContent>
-                      <h3 className="text-lg font-semibold mb-2">
-                        Hackathon Preparation Tips
-                      </h3>
-                      <p className="text-muted-foreground">
-                        Looking to join our upcoming hackathon? Here are some
-                        essential tips to help you prepare and maximize your
-                        chances of success:
-                        <br />
-                        <br />
-                        1. Form a diverse team with complementary skills
-                        <br />
-                        2. Brainstorm project ideas before the event
-                        <br />
-                        3. Familiarize yourself with common APIs and tools
-                        <br />
-                        4. Get plenty of rest before the event
-                        <br />
-                        5. Focus on creating a working prototype rather than a
-                        perfect solution
-                      </p>
-                    </CardContent>
-                    <CardFooter className="flex justify-between">
-                      <div className="flex items-center gap-4">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="flex items-center gap-1 h-8 px-2"
-                        >
-                          <Heart className="w-4 h-4" />
-                          <span>24</span>
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="flex items-center gap-1 h-8 px-2"
-                        >
-                          <MessageSquare className="w-4 h-4" />
-                          <span>8</span>
-                        </Button>
-                      </div>
-                      <Button size="sm">View Post</Button>
-                    </CardFooter>
-                  </Card>
-                ))}
-              </div>
-            )}
+            {/* Posts List */}
+            <PostList variant={viewMode} posts={posts.results} />
 
             {/* Pagination */}
             <div className="flex justify-center mt-8">
