@@ -1,5 +1,5 @@
 import InfiniteScroll from "react-infinite-scroll-component";
-import { CircleCheck, Loader2, UserCircle } from "lucide-react";
+import { CircleCheck, UserCircle } from "lucide-react";
 import PostCard from "@/components/posts/PostCard.tsx";
 import React from "react";
 import EventCard from "@/components/events/EventCard.tsx";
@@ -7,6 +7,7 @@ import { useAuth } from "@/components/auth/AuthProvider.tsx";
 import { useFeed } from "@/api/feed/useFeed.ts";
 import { FeedItem } from "@/api/feed/feedTypes.ts";
 import { FeedFilters } from "@/components/feed/FilteredFeed.tsx";
+import {Spinner} from "@/components/ui/spinner.tsx";
 
 export const InfiniteScrollFeed = ({ filters }: { filters: FeedFilters }) => {
   const { data, fetchNextPage } = useFeed();
@@ -18,7 +19,7 @@ export const InfiniteScrollFeed = ({ filters }: { filters: FeedFilters }) => {
       dataLength={
         data?.pages.reduce((acc, page) => acc + page.results.length, 0) || 0
       }
-      loader={<Loader2 className="m-auto mt-5" />}
+      loader={<Spinner className="m-auto mt-5" />}
       endMessage={
         <>
           {!user && (
