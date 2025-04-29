@@ -63,7 +63,7 @@ export default function Header({ landing }: HeaderProps) {
   return (
     <>
       {/* Desktop Header */}
-      {user?.is_admin && <AdminHeader />}
+      {user?.is_superuser && <AdminHeader />}
       <header className="border-b bg-white sticky top-0 z-10">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
           <div className="flex items-center gap-2">
