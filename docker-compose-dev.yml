@@ -3,7 +3,7 @@ services:
     container_name: frontend
     build:
       context: ./frontend
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.dev
     ports:
       - "${REACT_PORT}:${REACT_PORT}"
     depends_on:
@@ -12,7 +12,7 @@ services:
       - app-network
     volumes:
       - ./frontend:/app
-      - /app/node_modules
+      - node_modules:/app/node_modules
     restart: always
 
   backend:
@@ -58,6 +58,8 @@ services:
       - redis
     networks:
       - app-network
+    volumes:
+      - ./backend:/app
 
   database:
     image: postgres:15.10-alpine
@@ -173,3 +175,4 @@ networks:
 
 volumes:
   postgres-data-dev:
+  node_modules:
