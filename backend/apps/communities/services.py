@@ -76,7 +76,8 @@ def community_create(
     description: str,
     tags: List[CommunityTag | str],
     created_by: BaseUser,
-    category: CommunityCategory | str
+    category: CommunityCategory | str,
+    **kwargs
 ) -> Community:
     if isinstance(tags[0], str):
         tags = get_or_create_tags(tags)
@@ -85,7 +86,7 @@ def community_create(
         category = community_category_list(filters={"name": category}).first()
 
     community = Community.objects.create(
-        name=name, description=description, created_by=created_by, category=category
+        name=name, description=description, created_by=created_by, category=category, **kwargs
     )
     community.tags.add(*tags)
     community.memberships.create(user=created_by)

@@ -107,7 +107,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   const verifyEmail = async (uid: string, token: string) => {
-    await api.post("/users/verify-email", { uid, token });
+    await api.post("/users/verify-email/", { uid, token });
   }
 
   useEffect(() => {
@@ -130,9 +130,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
             originalRequest.headers.Authorization = `Bearer ${access}`;
             return api(originalRequest);
-          } catch {
+          } catch(error) {
             logout();
-            window.location.href = "/login";
+            // @ts-ignore
+            alert(error.message);
           }
         }
 

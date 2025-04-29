@@ -22,7 +22,7 @@ interface CommunityCardProps {
 }
 
 export function CommunityCard({ community }: CommunityCardProps) {
-  const config = categoryConfig[community.category_name];
+  const config = categoryConfig[community.category];
 
   return (
     <Card key={community.id} className="overflow-hidden flex flex-col">
@@ -38,7 +38,7 @@ export function CommunityCard({ community }: CommunityCardProps) {
             <CardTitle className="text-base">{community.name}</CardTitle>
             <Badge variant="outline" className="flex items-center gap-1 w-fit">
               {config.badgeIcon}
-              <span className="capitalize">{community.category_name}</span>
+              <span className="capitalize">{community.category}</span>
             </Badge>
           </div>
         </div>

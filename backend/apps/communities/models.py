@@ -51,6 +51,7 @@ class Community(BaseModel):
 
     PRIVACY_OPTIONS = (
         ("public", "Public"),
+        ("restricted", "Restricted"),
         ("private", "Private"),
     )
 

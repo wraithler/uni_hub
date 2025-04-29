@@ -13,6 +13,7 @@ class Post(BaseModel):
         Community, on_delete=models.CASCADE, related_name="posts"
     )
     likes = GenericRelation("reactions.Like", related_query_name="likes")
+    pinned = models.BooleanField(default=False)
 
     VISIBILITY_CHOICES = [
         ('public', 'Public'),

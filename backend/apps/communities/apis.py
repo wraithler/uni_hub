@@ -14,20 +14,16 @@ from apps.events.apis import EventListApi
 from apps.events.selectors import event_list
 
 
-class CategorySerializer(serializers.Serializer):  # todo: move
-    id = serializers.IntegerField()
-    name = serializers.CharField()
-
-
 class CommunityDetailApi(APIView):
     class OutputSerializer(serializers.Serializer):
         id = serializers.IntegerField()
         name = serializers.CharField()
         description = serializers.CharField()
         tags = serializers.SerializerMethodField()
-        category_name = serializers.SerializerMethodField()
+        category = serializers.SerializerMethodField()
         member_count = serializers.SerializerMethodField()
         post_count = serializers.SerializerMethodField()
+        is_member = serializers.SerializerMethodField()
 
         def get_member_count(self, obj):
             return obj.memberships.count()
@@ -38,8 +34,11 @@ class CommunityDetailApi(APIView):
         def get_tags(self, obj):
             return obj.tags.all().values_list("name", flat=True)
 
-        def get_category_name(self, obj):
+        def get_category(self, obj):
             return obj.category.name
+
+        def get_is_member(self, obj):
+            return obj.is_member(request.user)
 
     def get(self, request, community_id):
         community = community_get(community_id)
@@ -58,7 +57,7 @@ class CommunityListApi(APIView):
 
     class FilterSerializer(serializers.Serializer):
         is_featured = serializers.BooleanField(required=False, allow_null=True)
-        category_name = serializers.CharField(required=False, allow_null=True)
+        category = serializers.CharField(required=False, allow_null=True)
         my = serializers.BooleanField(required=False, allow_null=True)
         name = serializers.CharField(required=False, allow_null=True)
         sort_by = serializers.CharField(required=False, allow_null=True)
@@ -67,7 +66,7 @@ class CommunityListApi(APIView):
         member_count = serializers.SerializerMethodField()
         post_count = serializers.SerializerMethodField()
         tags = serializers.SerializerMethodField()
-        category_name = serializers.SerializerMethodField()
+        category = serializers.SerializerMethodField()
 
         class Meta:
             model = Community
@@ -78,7 +77,7 @@ class CommunityListApi(APIView):
                 "member_count",
                 "post_count",
                 "tags",
-                "category_name",
+                "category",
             )
 
         def get_member_count(self, obj):
@@ -90,7 +89,7 @@ class CommunityListApi(APIView):
         def get_tags(self, obj):
             return obj.tags.all().values_list("name", flat=True)
 
-        def get_category_name(self, obj):
+        def get_category(self, obj):
             return obj.category.name
 
     def get(self, request):
@@ -121,6 +120,8 @@ class CommunityCreateApi(AuthAPIView, APIView):
         description = serializers.CharField()
         tags = serializers.ListField(child=serializers.CharField(), required=False)
         category = serializers.CharField()
+        privacy = serializers.CharField()
+        about = serializers.CharField()
 
     def post(self, request):
         serializer = self.InputSerializer(data=request.data)

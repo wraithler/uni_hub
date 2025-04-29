@@ -55,7 +55,6 @@ import { useCommunityDetail } from "@/api/communities/useCommunityDetail.ts";
 import categoryConfig from "@/components/communities/CommunityStyling.tsx";
 
 export default function CommunityDetail() {
-  const [isFollowing, setIsFollowing] = useState(false);
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const { id } = useParams();
   const { data: community } = useCommunityDetail({
@@ -66,7 +65,7 @@ export default function CommunityDetail() {
     return null;
   }
 
-  const config = categoryConfig[community.category_name];
+  const config = categoryConfig[community.category];
 
   return (
     <Layout>
@@ -90,7 +89,7 @@ export default function CommunityDetail() {
               </Avatar>
               <div className="hidden md:block pt-4">
                 <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-100 mb-2">
-                  {community.category_name}
+                  {community.category}
                 </Badge>
                 <h1 className="text-3xl font-bold text-white drop-shadow-md">
                   {community.name}
@@ -116,29 +115,24 @@ export default function CommunityDetail() {
           <div className="flex items-center gap-4 text-sm text-muted-foreground">
             <div className="flex items-center gap-1">
               <Users className="w-4 h-4" />
-              <span>324 members</span>
+              <span>{community.member_count} members</span>
             </div>
             <div className="flex items-center gap-1">
               <MessageSquare className="w-4 h-4" />
-              <span>1,205 posts</span>
-            </div>
-            <div className="flex items-center gap-1">
-              <Star className="w-4 h-4 text-yellow-500" />
-              <span>4.8/5 rating</span>
+              <span>{community.post_count} posts</span>
             </div>
           </div>
 
           <div className="flex items-center gap-2">
             <Button
-              variant={isFollowing ? "outline" : "default"}
-              onClick={() => setIsFollowing(!isFollowing)}
+              variant={community.is_member ? "outline" : "default"}
               className={
-                isFollowing
+                community.is_member
                   ? "border-primary text-primary hover:bg-primary/10"
                   : ""
               }
             >
-              {isFollowing ? "Following" : "Follow"}
+              {community.is_member ? "Leave" : "Join"}
             </Button>
             <Button variant="outline" size="icon">
               <Share2 className="h-4 w-4" />
