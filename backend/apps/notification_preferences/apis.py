@@ -38,7 +38,9 @@ class UserNotificationPreferenceUpdateAPI(AuthAPIView, APIView):
         if not preference:
             return Http404
 
-        preference = notification_preference_update(notification_preference=preference, data=request.data)
+        preference = notification_preference_update(
+            notification_preference=preference, data=request.data
+        )
 
         data = UserNotificationPreferenceDetailAPI.OutputSerializer(preference).data
 

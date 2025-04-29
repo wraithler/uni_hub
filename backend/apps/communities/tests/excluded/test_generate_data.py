@@ -19,7 +19,8 @@ class GenerateDataTests(TestCase):
                 PostFactory.create(community=Community.objects.first())
             else:
                 EventFactory.create(community=Community.objects.first())
-                
+
+
 #         community_create(
 #             name="Computer Science Society",
 #             description="A community for computer science enthusiasts",
@@ -55,4 +56,3 @@ class GenerateDataTests(TestCase):
 #             created_by=BaseUser.objects.first(),
 #             category=community_category_create(name="Interest"),
 #         )
-

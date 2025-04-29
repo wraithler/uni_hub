@@ -144,4 +144,3 @@ class LikeCreateApi(APIView):
         like = like_create(obj=post, created_by=request.user)
 
         return Response(status=status.HTTP_201_CREATED)
-

@@ -1,8 +1,6 @@
-import uuid
-
 from django.contrib.auth.base_user import AbstractBaseUser
-from django.contrib.auth.models import PermissionsMixin
 from django.contrib.auth.models import BaseUserManager as _BaseUserManager
+from django.contrib.auth.models import PermissionsMixin
 from django.db import models
 
 from apps.common.models import BaseModel
@@ -16,9 +14,7 @@ class BaseUserManager(_BaseUserManager):
         last_name,
         password=None,
         is_active=True,
-        is_admin=False,
         is_superuser=False,
-        is_staff=False,
     ):
         if not email:
             raise ValueError("Users must have an email address")
@@ -34,9 +30,7 @@ class BaseUserManager(_BaseUserManager):
             first_name=first_name,
             last_name=last_name,
             is_active=is_active,
-            is_admin=is_admin,
             is_superuser=is_superuser,
-            is_staff=is_staff,
         )
 
         if password:
@@ -55,41 +49,52 @@ class BaseUserManager(_BaseUserManager):
             first_name=first_name,
             last_name=last_name,
             password=password,
-            is_admin=True,
             is_superuser=True,
-            is_staff=True,
         )
         user.save(using=self._db)
         return user
 
 
 class BaseUser(BaseModel, AbstractBaseUser, PermissionsMixin):
-    email = models.EmailField(verbose_name="Email Address", max_length=255, unique=True)
-    first_name = models.CharField(max_length=255)
-    last_name = models.CharField(max_length=255)
-    bio = models.TextField(blank=True, null=True)
-    academic_department = models.TextField(blank=True, null=True)
-    year_of_study = models.IntegerField(blank=True, null=True)
-    profile_picture = models.ImageField(
-        upload_to="profile_pictures/", blank=True, null=True
-    )
+    class Meta:
+        verbose_name = "User"
+        verbose_name_plural = "Users"
 
-    is_email_verified = models.BooleanField(default=False)
-    is_active = models.BooleanField(default=True)
-    is_admin = models.BooleanField(default=False)
-    is_superuser = models.BooleanField(default=False)
-    is_staff = models.BooleanField(default=False)
-
-    jwt_key = models.UUIDField(default=uuid.uuid4)
-
+    objects = BaseUserManager()
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = [
         "first_name",
         "last_name",
     ]  # Required for createsuperuser
 
-    objects = BaseUserManager()
+    email = models.EmailField(verbose_name="Email Address", max_length=255, unique=True)
+    first_name = models.CharField(max_length=255)
+    last_name = models.CharField(max_length=255)
 
-    class Meta:
-        verbose_name = "User"
-        verbose_name_plural = "Users"
+    bio = models.TextField(blank=True, null=True)
+    academic_department = models.TextField(blank=True, null=True)
+    year_of_study = models.IntegerField(blank=True, null=True)
+
+    profile_picture = models.ForeignKey(
+        "files.File", on_delete=models.SET_NULL, null=True, blank=True, related_name="profile"
+    )
+    banner_picture = models.ForeignKey(
+        "files.File", on_delete=models.SET_NULL, null=True, blank=True, related_name="banner"
+    )
+
+    ROLE_OPTIONS = (
+        ("student", "Student"),
+        ("faculty", "Faculty"),
+        ("admin", "Admin"),
+    )
+
+    role = models.CharField(
+        max_length=10,
+        choices=ROLE_OPTIONS,
+        default="student",
+    )
+    is_email_verified = models.BooleanField(default=False)
+    is_active = models.BooleanField(
+        default=True
+    )  # (opposite of suspended for test cases)
+    is_superuser = models.BooleanField(default=False)
