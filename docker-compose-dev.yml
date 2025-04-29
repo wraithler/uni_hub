@@ -1,18 +1,19 @@
-version: '3'
-
 services:
   frontend:
     container_name: frontend
     build:
       context: ./frontend
-    environment:
-      NODE_ENV: production
+      dockerfile: Dockerfile
     ports:
       - "${REACT_PORT}:${REACT_PORT}"
     depends_on:
       - backend
     networks:
       - app-network
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    restart: always
 
   backend:
     container_name: backend
@@ -69,6 +70,8 @@ services:
       - POSTGRES_DB=${POSTGRES_NAME}
     networks:
       - app-network
+    volumes:
+      - postgres-data-dev:/var/lib/postgresql/data
 
   mailhog:
     image: mailhog/mailhog
@@ -121,6 +124,7 @@ services:
     depends_on:
       - backend
       - redis
+      - database
     networks:
       - app-network
 
@@ -128,7 +132,7 @@ services:
     container_name: celery_beat
     build:
       context: ./backend
-    command: celery -A apps.tasks beat -l info --scheduler django_celery_beat.schedulers:DatabaseScheduler
+    command: [ "/app/wait-for-it.sh", "database:5432", "--timeout=30", "--strict", "--", "celery", "-A", "apps.tasks", "beat", "-l", "info", "--scheduler", "django_celery_beat.schedulers:DatabaseScheduler" ]
     environment:
       - POSTGRES_NAME=${POSTGRES_NAME}
       - POSTGRES_USER=${POSTGRES_USER}
@@ -158,6 +162,7 @@ services:
       - backend
       - redis
       - celery
+      - database
     networks:
       - app-network
 
@@ -165,3 +170,6 @@ services:
 networks:
   app-network:
     driver: bridge
+
+volumes:
+  postgres-data-dev:
