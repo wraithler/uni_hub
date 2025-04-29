@@ -38,7 +38,7 @@ class CommunityDetailApi(APIView):
             return obj.category.name
 
         def get_is_member(self, obj):
-            return obj.is_member(request.user)
+            return obj.is_member(self.context.get("request").user)
 
     def get(self, request, community_id):
         community = community_get(community_id)

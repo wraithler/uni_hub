@@ -9,4 +9,5 @@ export type PostsQueryParameters = PaginationProps & {
   created_by?: number;
   search?: string;
   sort_by?: PostSortOptions;
+  pinned?: boolean;
 };

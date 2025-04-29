@@ -4,10 +4,12 @@ from apps.communities.models import Community, CommunityTag, CommunityInvitation
 
 
 class CommunityFilter(django_filters.FilterSet):
-    category_name = django_filters.CharFilter(field_name='category__name', lookup_expr='icontains')
-    my = django_filters.BooleanFilter(method='filter_my')
-    name = django_filters.CharFilter(method='filter_name_or_tag')
-    sort_by = django_filters.CharFilter(method='filter_sort_by')
+    category_name = django_filters.CharFilter(
+        field_name="category__name", lookup_expr="icontains"
+    )
+    my = django_filters.BooleanFilter(method="filter_my")
+    name = django_filters.CharFilter(method="filter_name_or_tag")
+    sort_by = django_filters.CharFilter(method="filter_sort_by")
 
     class Meta:
         model = Community
@@ -41,9 +43,9 @@ class CommunityFilter(django_filters.FilterSet):
         queryset = super(CommunityFilter, self).filter_queryset(queryset)
 
         queryset = queryset.filter(
-            Q(privacy='public') |
-            Q(privacy='restricted') |
-            (Q(privacy='private') & Q(memberships__user=self.request.user))
+            Q(privacy="public")
+            | Q(privacy="restricted")
+            | (Q(privacy="private") & Q(memberships__user=self.request.user))
         )
 
         return queryset

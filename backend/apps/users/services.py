@@ -16,7 +16,6 @@ def user_create(
     first_name: str,
     last_name: str,
     is_active: bool = True,
-    is_admin: bool = False,
     password: Optional[str] = None,
 ) -> BaseUser:
     user = BaseUser.objects.create_user(
@@ -24,7 +23,6 @@ def user_create(
         first_name=first_name,
         last_name=last_name,
         is_active=is_active,
-        is_admin=is_admin,
         password=password,
     )
 

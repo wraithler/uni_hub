@@ -8,7 +8,12 @@ from apps.communities.filters import (
     CommunityCategoryFilter,
     CommunityInvitationFilter,
 )
-from apps.communities.models import Community, CommunityTag, CommunityInvitation, CommunityCategory
+from apps.communities.models import (
+    Community,
+    CommunityTag,
+    CommunityInvitation,
+    CommunityCategory,
+)
 
 
 def community_get(community_id) -> Optional[Community]:

@@ -41,14 +41,11 @@ class UserListApi(APIView):
 
     class FilterSerializer(serializers.Serializer):
         id = serializers.IntegerField(required=False)
-        is_admin = serializers.BooleanField(
-            required=False, allow_null=True, default=None
-        )
 
     class OutputSerializer(serializers.ModelSerializer):
         class Meta:
             model = BaseUser
-            fields = ("id", "email", "is_admin")
+            fields = ("id", "email")
 
     def get(self, request):
         filters_serializer = self.FilterSerializer(data=request.query_params)
@@ -140,8 +137,8 @@ class UserCreateEmailVerificationApi(AuthAPIView):
 
 class UserVerifyEmailApi(AuthAPIView):
     def post(self, request):
-        uid = request.data.get('uid')
-        token = request.data.get('token')
+        uid = request.data.get("uid")
+        token = request.data.get("token")
 
         if not uid or not token:
             return Response(status=status.HTTP_400_BAD_REQUEST)

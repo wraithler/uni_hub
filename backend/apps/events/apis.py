@@ -6,7 +6,12 @@ from rest_framework.views import APIView
 from apps.api.pagination import LimitOffsetPagination, get_paginated_response
 from apps.events.models import Event, EventTicket
 from apps.events.selectors import event_get, event_list
-from apps.events.services import event_create, event_update, event_ticket_create, event_ticket_update
+from apps.events.services import (
+    event_create,
+    event_update,
+    event_ticket_create,
+    event_ticket_update,
+)
 
 
 class EventDetailApi(APIView):
@@ -118,7 +123,7 @@ class EventTicketCreateApi(APIView):
     class OutputSerializer(serializers.ModelSerializer):
         class Meta:
             model = EventTicket
-            fields = ['id', 'ticket_id', 'qr_code', 'event', 'user']
+            fields = ["id", "ticket_id", "qr_code", "event", "user"]
 
     def post(self, request, event_id):
         user = request.user
@@ -138,7 +143,7 @@ class EventTicketUpdateApi(APIView):
     class OutputSerializer(serializers.ModelSerializer):
         class Meta:
             model = EventTicket
-            fields = ['id', 'ticket_id', 'used', 'event', 'user', 'qr_code']
+            fields = ["id", "ticket_id", "used", "event", "user", "qr_code"]
 
     def patch(self, request, ticket_id):
         try:
@@ -149,5 +154,7 @@ class EventTicketUpdateApi(APIView):
         serializer = self.InputSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        ticket = event_ticket_update(ticket=ticket, used=serializer.validated_data['used'])
+        ticket = event_ticket_update(
+            ticket=ticket, used=serializer.validated_data["used"]
+        )
         return Response(self.OutputSerializer(ticket).data)

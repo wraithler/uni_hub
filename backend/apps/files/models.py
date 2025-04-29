@@ -3,7 +3,6 @@ from django.db import models
 
 from apps.common.models import BaseModel
 from apps.files.utils import file_generate_upload_path
-from apps.users.models import BaseUser
 
 
 class File(BaseModel):
@@ -14,7 +13,7 @@ class File(BaseModel):
     file_name = models.CharField(max_length=255, unique=True)
     file_type = models.CharField(max_length=255)
 
-    uploaded_by = models.ForeignKey(BaseUser, null=True, on_delete=models.SET_NULL)
+    uploaded_by = models.ForeignKey("users.BaseUser", null=True, on_delete=models.SET_NULL)
 
     upload_finished_at = models.DateTimeField(blank=True, null=True)
 

@@ -20,6 +20,7 @@ class Like(models.Model):
         unique_together = ["user", "content_type", "object_id"]
         verbose_name_plural = "Comment Likes"
 
+
 class Comment(BaseModel):
     content = models.TextField()
     created_by = models.ForeignKey(
