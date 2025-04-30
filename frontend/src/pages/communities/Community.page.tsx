@@ -56,6 +56,7 @@ import { usePostsPaginated } from "@/api/posts/usePostPaginated.ts";
 import { usePosts } from "@/api/posts/usePosts.ts";
 import PostPinnedCard from "@/components/posts/cards/PostPinnedCard.tsx";
 import PostList from "@/components/posts/display/PostList.tsx";
+import PaginationBox from "@/components/common/PaginationBox.tsx";
 
 export default function CommunityDetail() {
   const { id } = useParams();
@@ -64,7 +65,7 @@ export default function CommunityDetail() {
   const { data: community } = useCommunityDetail({
     id: Number(id),
   });
-  const { data: posts } = usePostsPaginated({
+  const { data: posts, pagination } = usePostsPaginated({
     community_id: Number(id),
     limit: 12,
   });
@@ -247,39 +248,15 @@ export default function CommunityDetail() {
             </div>
 
             {/* Pinned Post */}
-            <PostPinnedCard post={pinnedPost} />
+            {pinnedPost.results.length > 0 && (
+              <PostPinnedCard post={pinnedPost.results[0]} />
+            )}
 
             {/* Posts List */}
             <PostList variant={viewMode} posts={posts.results} />
 
             {/* Pagination */}
-            <div className="flex justify-center mt-8">
-              <div className="flex items-center gap-1">
-                <Button variant="outline" size="sm" disabled>
-                  Previous
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="w-9 h-9 p-0 bg-primary text-primary-foreground"
-                >
-                  1
-                </Button>
-                <Button variant="outline" size="sm" className="w-9 h-9 p-0">
-                  2
-                </Button>
-                <Button variant="outline" size="sm" className="w-9 h-9 p-0">
-                  3
-                </Button>
-                <span className="mx-1">...</span>
-                <Button variant="outline" size="sm" className="w-9 h-9 p-0">
-                  8
-                </Button>
-                <Button variant="outline" size="sm">
-                  Next
-                </Button>
-              </div>
-            </div>
+            {pagination && <PaginationBox pagination={pagination} />}
           </TabsContent>
 
           {/* Events Tab */}

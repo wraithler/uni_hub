@@ -4,8 +4,8 @@ import { postQueryKeys } from "./postQueryKeys.ts";
 import { usePaginatedQuery } from "@/lib/tanstackExtension.ts";
 
 export function usePostsPaginated(params: PostsQueryParameters) {
-  const getPostsPaginatedFn = async () => {
-    const response = await api.get("/posts/", { params });
+  const getPostsPaginatedFn = async (paginatedParams: PostsQueryParameters) => {
+    const response = await api.get("/posts/", { params: paginatedParams });
     return response.data;
   };
 

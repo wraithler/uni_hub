@@ -4,8 +4,12 @@ import { communityQueryKeys } from "./communityQueryKeys.ts";
 import { usePaginatedQuery } from "@/lib/tanstackExtension.ts";
 
 export function useCommunitiesPaginated(params: CommunitiesQueryParameters) {
-  const getCommunitiesPaginatedFn = async () => {
-    const response = await api.get("/communities/", { params });
+  const getCommunitiesPaginatedFn = async (
+    paginatedParams: CommunitiesQueryParameters,
+  ) => {
+    const response = await api.get("/communities/", {
+      params: paginatedParams,
+    });
     return response.data;
   };
 
