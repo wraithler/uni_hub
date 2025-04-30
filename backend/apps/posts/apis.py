@@ -39,12 +39,14 @@ class PostListApi(APIView):
         content = serializers.CharField(required=False)
         created_by = serializers.IntegerField(required=False)
         community__name = serializers.CharField(required=False)
+        pinned = serializers.BooleanField(required=False)
+        community__id = serializers.IntegerField(required=False)
 
     class OutputSerializer(serializers.Serializer):
         id = serializers.IntegerField()
         content = serializers.CharField()
         created_at = serializers.DateTimeField()
-        created_by_id = serializers.IntegerField()
+        created_by = UserDetailApi.OutputSerializer()
         community_id = serializers.IntegerField()
 
     def get(self, request):
