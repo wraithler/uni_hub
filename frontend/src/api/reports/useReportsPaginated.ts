@@ -1,12 +1,11 @@
-
 import { ReportQueryParams } from "./reportQueryParameters.ts";
 import api from "../apiClient.ts";
 import { reportQueryKeys } from "./reportQueryKeys.ts";
 import {usePaginatedQuery} from "@/lib/tanstackExtension.ts";
 
 export function useReportsPaginated(params: ReportQueryParams) {
-  const getReportsPaginatedFn = async () => {
-    const response = await api.get("/reports/", { params });
+  const getReportsPaginatedFn = async(paginatedParams: ReportQueryParams) => {
+    const response = await api.get("/reports/", {params: paginatedParams});
     return response.data;
   };
 
