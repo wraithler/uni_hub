@@ -24,33 +24,6 @@ export function useReportResolve() {
 
   return useMutation<Report, Error, ReportResolveInput, MutationContext>({
     mutationFn: resolveReportFn,
-    onMutate: async (resolveData) => {
-      await queryClient.cancelQueries({
-        queryKey: reportQueryKeys.detail(Number(id)),
-      });
-      
-      const previousReport = queryClient.getQueryData<Report>(
-        reportQueryKeys.detail(Number(id))
-      );
-      
-      // Create an optimistic update with the new status
-      if (previousReport) {
-        const optimisticReport = {
-          ...previousReport,
-          status: resolveData.status,
-          resolution_notes: resolveData.resolution_notes || previousReport.resolution_notes,
-        };
-        
-        queryClient.setQueryData(
-          reportQueryKeys.detail(Number(id)),
-          optimisticReport
-        );
-      }
-      
-      return {
-        previousReport,
-      };
-    },
     onSuccess: (data) => {
       const statusMessages: Record<ReportStatus, string> = {
         'RESOLVED': 'The report has been resolved',
@@ -62,15 +35,8 @@ export function useReportResolve() {
       
       toast.success(statusMessages[data.status] || 'Report status updated');
     },
-    onError: (_err, _resolveData, context) => {
+    onError: (_err, _resolveData) => {
       toast.error('Failed to update report status');
-      
-      if (context) {
-        queryClient.setQueryData(
-          reportQueryKeys.detail(Number(id)),
-          context.previousReport
-        );
-      }
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: reportQueryKeys.detail(Number(id)) });
