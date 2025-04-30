@@ -12,6 +12,13 @@ export default function PaginationBox({
 }: {
   pagination: PaginationProps;
 }) {
+  const buttonStyle = (p: number) => {
+    if (pagination?.currentPage === p) {
+      return "bg-primary text-primary-foreground";
+    }
+    return "text-muted-foreground hover:bg-accent hover:text-accent-foreground";
+  }
+
   return (
     <div className="flex justify-center mt-8">
       <Pagination>
@@ -28,6 +35,7 @@ export default function PaginationBox({
               <PaginationLink
                 type="button"
                 style={{ overflowAnchor: "none" }}
+                className={buttonStyle(page)}
                 onClick={() => pagination?.setPage(page)}
               >
                 {page}

@@ -24,7 +24,7 @@ export default function PostPinnedCard({ post }: { post: Post }) {
       </CardHeader>
       <CardContent>
         <p className="text-muted-foreground">
-          {post.content?.substring(0, 64)}
+          {post.content}
         </p>
       </CardContent>
       <CardFooter className="flex justify-between">
