@@ -28,14 +28,27 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const [user, setUser] = useState<UserMe | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    const token = localStorage.getItem(ACCESS_TOKEN);
-    if (token) {
-      verifyToken(token);
-    } else {
-      setIsLoading(false);
+  // Function to refresh the token
+  const refreshAuthToken = async () => {
+    try {
+      const refreshToken = localStorage.getItem(REFRESH_TOKEN);
+      if (!refreshToken) throw new Error("No refresh token available");
+
+      const response = await api.post("/auth/token/refresh/", {
+        refresh: refreshToken,
+      });
+
+      const { access } = response.data;
+      localStorage.setItem(ACCESS_TOKEN, access);
+
+      return access;
+    } catch (error) {
+      // If refresh fails, clear everything
+      localStorage.removeItem(ACCESS_TOKEN);
+      localStorage.removeItem(REFRESH_TOKEN);
+      throw error;
     }
-  }, []);
+  };
 
   const verifyToken = async (token: string) => {
     try {
@@ -44,14 +57,43 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       });
       setIsAuthenticated(true);
       setUser(response.data);
-    } catch {
-      setIsAuthenticated(false);
-      setUser(null);
-      localStorage.removeItem(ACCESS_TOKEN);
+      return true;
+    } catch (error) {
+      // Try to refresh the token if verification fails
+      try {
+        const newToken = await refreshAuthToken();
+        const response = await api.get("/auth/me/", {
+          headers: { Authorization: `Bearer ${newToken}` },
+        });
+        setIsAuthenticated(true);
+        setUser(response.data);
+        return true;
+      } catch {
+        setIsAuthenticated(false);
+        setUser(null);
+        localStorage.removeItem(ACCESS_TOKEN);
+        localStorage.removeItem(REFRESH_TOKEN);
+        return false;
+      }
     } finally {
       setIsLoading(false);
     }
   };
+
+  useEffect(() => {
+    const initAuth = async () => {
+      setIsLoading(true);
+      const token = localStorage.getItem(ACCESS_TOKEN);
+
+      if (token) {
+        await verifyToken(token);
+      } else {
+        setIsLoading(false);
+      }
+    };
+
+    initAuth();
+  }, []);
 
   const login = async (email: string, password: string) => {
     try {
@@ -116,24 +158,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       async (error) => {
         const originalRequest = error.config;
 
-        if (error.response.status === 401 && !originalRequest._retry) {
+        if (error.response?.status === 401 && !originalRequest._retry) {
           originalRequest._retry = true;
 
           try {
-            const refreshToken = localStorage.getItem(REFRESH_TOKEN);
-            const response = await api.post("/auth/token/refresh/", {
-              refresh: refreshToken,
-            });
-
-            const { access } = response.data;
-            localStorage.setItem(ACCESS_TOKEN, access);
-
-            originalRequest.headers.Authorization = `Bearer ${access}`;
+            const newToken = await refreshAuthToken();
+            originalRequest.headers.Authorization = `Bearer ${newToken}`;
             return api(originalRequest);
-          } catch(error) {
+          } catch(refreshError) {
             logout();
-            // @ts-ignore
-            alert(error.message);
+            return Promise.reject(refreshError);
           }
         }
 
@@ -159,7 +193,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         isLoading,
       }}
     >
-      {!isLoading && children}
+      {children}
     </AuthContext.Provider>
   );
 };

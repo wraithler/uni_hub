@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models import Q
 
 from apps.common.models import BaseModel
 
@@ -70,7 +71,11 @@ class Community(BaseModel):
         return self.memberships.filter(user=user, is_admin=True).exists()
 
     def is_moderator(self, user):
-        return self.memberships.filter(user=user, is_moderator=True).exists()
+        return (
+            self.memberships.filter(user=user)
+            .filter(Q(is_moderator=True) | Q(is_admin=True))
+            .exists()
+        )
 
 
 class CommunityMembership(BaseModel):
@@ -111,3 +116,17 @@ class CommunityGuidelines(BaseModel):
 
     class Meta:
         verbose_name_plural = "Community Guidelines"
+
+
+class CommunityJoinRequest(BaseModel):
+    id = models.AutoField(primary_key=True)
+    community = models.ForeignKey(
+        Community, on_delete=models.CASCADE, related_name="join_requests"
+    )
+    user = models.ForeignKey(
+        "users.BaseUser", on_delete=models.CASCADE, related_name="join_requests"
+    )
+    is_accepted = models.BooleanField(default=False)
+
+    class Meta:
+        unique_together = ["community", "user"]

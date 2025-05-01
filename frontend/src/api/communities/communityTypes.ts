@@ -1,5 +1,6 @@
 import { PaginationResponse } from "@/api";
 import { User } from "@/api/users/userTypes.ts";
+import {Growth} from "@/api/commonTypes.ts";
 
 type CommunityCategory = {
   id: number;
@@ -36,4 +37,14 @@ type CommunityList = PaginationResponse & {
   results: Community[];
 };
 
-export type { CommunityCategory, Community, CommunityList };
+type CommunityDashboard = {
+  total_members: number;
+  pending_requests: number;
+  total_posts: number;
+  total_events: number;
+
+  member_growth: Growth[];
+  engagement: any;
+}
+
+export type { CommunityCategory, Community, CommunityList, CommunityDashboard };

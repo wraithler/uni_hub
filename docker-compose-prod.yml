@@ -10,6 +10,11 @@ services:
       - backend
     networks:
       - app-network
+    restart: unless-stopped
+    environment:
+      REACT_APP_BACKEND_URL: ${DJANGO_BASE_BACKEND_URL}
+    env_file:
+      - .env
 
   backend:
     container_name: backend
@@ -17,143 +22,75 @@ services:
       context: ./backend
     ports:
       - "${DJANGO_PORT}:${DJANGO_PORT}"
-    environment:
-      - POSTGRES_NAME=${POSTGRES_NAME}
-      - POSTGRES_USER=${POSTGRES_USER}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-      - POSTGRES_HOST=${POSTGRES_HOST}
-      - POSTGRES_PORT=${POSTGRES_PORT}
-      - REDIS_HOST=redis
-      - REDIS_PORT=${REDIS_PORT}
-      - DJANGO_DEBUG=false
-      - DJANGO_BASE_BACKEND_URL=${DJANGO_BASE_BACKEND_URL}
-      - DJANGO_BASE_FRONTEND_URL=${DJANGO_BASE_FRONTEND_URL}
-      - DJANGO_CORS_ORIGIN_WHITELIST=${DJANGO_CORS_ORIGIN_WHITELIST}
-      - DJANGO_LANGUAGE_CODE=${DJANGO_LANGUAGE_CODE}
-      - DJANGO_TIME_ZONE=${DJANGO_TIME_ZONE}
-      - SECRET_KEY=${SECRET_KEY}
-      - SECURE_SSL_REDIRECT=${SECURE_SSL_REDIRECT}
-      - SECURE_CONTENT_TYPE_NOSNIFF=${SECURE_CONTENT_TYPE_NOSNIFF}
-      - MAILHOG_UI_PORT=${MAILHOG_UI_PORT}
-      - MAILHOG_SMTP_PORT=${MAILHOG_SMTP_PORT}
-      - CELERY_BROKER_URL=${CELERY_BROKER_URL}
-      - EMAIL_HOST=${EMAIL_HOST}
-      - EMAIL_USE_TLS=${EMAIL_USE_TLS}
-      - EMAIL_USE_SSL=${EMAIL_USE_SSL}
-      - EMAIL_HOST_USER=${EMAIL_HOST_USER}
-      - EMAIL_HOST_PASSWORD=${EMAIL_HOST_PASSWORD}
-      - SENTRY_DSN=${SENTRY_DSN}
-      - USE_S3=${USE_S3}
-      - AWS_ACCESS_KEY=${AWS_ACCESS_KEY}
-      - AWS_SECRET_KEY=${AWS_SECRET_KEY}
-      - AWS_STORAGE_BUCKET_NAME=${AWS_STORAGE_BUCKET_NAME}
-      - AWS_REGION=${AWS_REGION}
     depends_on:
       - database
-      - mailhog
       - redis
     networks:
       - app-network
+    restart: unless-stopped
+    env_file:
+      - .env
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:${DJANGO_PORT}/health/ || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   database:
+    container_name: database
     image: postgres:15.10-alpine
-    container_name: postgres
     ports:
       - "${POSTGRES_PORT}:${POSTGRES_PORT}"
     environment:
-      - POSTGRES_USER=${POSTGRES_USER}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-      - POSTGRES_DB=${POSTGRES_NAME}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_NAME}
     networks:
       - app-network
     volumes:
       - postgres-data:/var/lib/postgresql/data
+    restart: unless-stopped
 
   mailhog:
     image: mailhog/mailhog
-    container_name: mailhog
     ports:
       - "${MAILHOG_UI_PORT}:${MAILHOG_UI_PORT}"
       - "${MAILHOG_SMTP_PORT}:${MAILHOG_SMTP_PORT}"
     networks:
       - app-network
+    restart: unless-stopped
 
   redis:
-    image: redis
-    container_name: redis
+    image: redis:7-alpine
     ports:
       - "${REDIS_PORT}:${REDIS_PORT}"
-    restart: always
     networks:
       - app-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   celery:
-    container_name: celery
     build:
       context: ./backend
-    command: celery -A apps.tasks worker --loglevel=debug --without-gossip --without-mingle --without-heartbeat
-    environment:
-      - POSTGRES_NAME=${POSTGRES_NAME}
-      - POSTGRES_USER=${POSTGRES_USER}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-      - POSTGRES_HOST=${POSTGRES_HOST}
-      - POSTGRES_PORT=${POSTGRES_PORT}
-      - REDIS_HOST=redis
-      - REDIS_PORT=${REDIS_PORT}
-      - DJANGO_DEBUG=false
-      - DJANGO_BASE_BACKEND_URL=${DJANGO_BASE_BACKEND_URL}
-      - DJANGO_BASE_FRONTEND_URL=${DJANGO_BASE_FRONTEND_URL}
-      - DJANGO_CORS_ORIGIN_WHITELIST=${DJANGO_CORS_ORIGIN_WHITELIST}
-      - DJANGO_LANGUAGE_CODE=${DJANGO_LANGUAGE_CODE}
-      - DJANGO_TIME_ZONE=${DJANGO_TIME_ZONE}
-      - SECRET_KEY=${SECRET_KEY}
-      - SECURE_SSL_REDIRECT=${SECURE_SSL_REDIRECT}
-      - SECURE_CONTENT_TYPE_NOSNIFF=${SECURE_CONTENT_TYPE_NOSNIFF}
-      - MAILHOG_UI_PORT=${MAILHOG_UI_PORT}
-      - MAILHOG_SMTP_PORT=${MAILHOG_SMTP_PORT}
-      - CELERY_BROKER_URL=${CELERY_BROKER_URL}
-      - EMAIL_HOST=${EMAIL_HOST}
-      - EMAIL_USE_TLS=${EMAIL_USE_TLS}
-      - EMAIL_USE_SSL=${EMAIL_USE_SSL}
-      - EMAIL_HOST_USER=${EMAIL_HOST_USER}
-      - EMAIL_HOST_PASSWORD=${EMAIL_HOST_PASSWORD}
+    command: celery -A apps.tasks worker --loglevel=info --without-gossip --without-mingle --without-heartbeat
     depends_on:
       - backend
       - redis
       - database
     networks:
       - app-network
+    restart: unless-stopped
+    env_file:
+      - .env
 
   celery_beat:
-    container_name: celery_beat
     build:
       context: ./backend
-    command: celery -A apps.tasks beat -l info --scheduler django_celery_beat.schedulers:DatabaseScheduler
-    environment:
-      - POSTGRES_NAME=${POSTGRES_NAME}
-      - POSTGRES_USER=${POSTGRES_USER}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-      - POSTGRES_HOST=${POSTGRES_HOST}
-      - POSTGRES_PORT=${POSTGRES_PORT}
-      - REDIS_HOST=redis
-      - REDIS_PORT=${REDIS_PORT}
-      - DJANGO_DEBUG=false
-      - DJANGO_BASE_BACKEND_URL=${DJANGO_BASE_BACKEND_URL}
-      - DJANGO_BASE_FRONTEND_URL=${DJANGO_BASE_FRONTEND_URL}
-      - DJANGO_CORS_ORIGIN_WHITELIST=${DJANGO_CORS_ORIGIN_WHITELIST}
-      - DJANGO_LANGUAGE_CODE=${DJANGO_LANGUAGE_CODE}
-      - DJANGO_TIME_ZONE=${DJANGO_TIME_ZONE}
-      - SECRET_KEY=${SECRET_KEY}
-      - SECURE_SSL_REDIRECT=${SECURE_SSL_REDIRECT}
-      - SECURE_CONTENT_TYPE_NOSNIFF=${SECURE_CONTENT_TYPE_NOSNIFF}
-      - MAILHOG_UI_PORT=${MAILHOG_UI_PORT}
-      - MAILHOG_SMTP_PORT=${MAILHOG_SMTP_PORT}
-      - CELERY_BROKER_URL=${CELERY_BROKER_URL}
-      - EMAIL_HOST=${EMAIL_HOST}
-      - EMAIL_USE_TLS=${EMAIL_USE_TLS}
-      - EMAIL_USE_SSL=${EMAIL_USE_SSL}
-      - EMAIL_HOST_USER=${EMAIL_HOST_USER}
-      - EMAIL_HOST_PASSWORD=${EMAIL_HOST_PASSWORD}
+    command: celery -A apps.tasks beat --loglevel=info --scheduler django_celery_beat.schedulers:DatabaseScheduler --without-gossip --without-mingle --without-heartbeat
     depends_on:
       - backend
       - redis
@@ -161,7 +98,9 @@ services:
       - database
     networks:
       - app-network
-
+    restart: unless-stopped
+    env_file:
+      - .env
 
 networks:
   app-network:
@@ -169,4 +108,3 @@ networks:
 
 volumes:
   postgres-data:
-
