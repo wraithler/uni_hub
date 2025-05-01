@@ -76,10 +76,18 @@ class BaseUser(BaseModel, AbstractBaseUser, PermissionsMixin):
     year_of_study = models.IntegerField(blank=True, null=True)
 
     profile_picture = models.ForeignKey(
-        "files.File", on_delete=models.SET_NULL, null=True, blank=True, related_name="profile"
+        "files.File",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="profile",
     )
     banner_picture = models.ForeignKey(
-        "files.File", on_delete=models.SET_NULL, null=True, blank=True, related_name="banner"
+        "files.File",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="banner",
     )
 
     ROLE_OPTIONS = (

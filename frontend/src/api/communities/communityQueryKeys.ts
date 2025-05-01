@@ -4,6 +4,7 @@ export const communityQueryKeys = {
   all: ["communities"],
   details: () => [...communityQueryKeys.all, "detail"],
   detail: (id: number) => [...communityQueryKeys.details(), id],
+  dashboard: (id: number) => [...communityQueryKeys.all, "dashboard", id],
   pagination: ({
     limit,
     offset,

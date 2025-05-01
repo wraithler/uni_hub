@@ -13,5 +13,5 @@ class PostFilter(django_filters.FilterSet):
             "created_at",
             "community__memberships__user",
             "community__id",
-            "pinned"
+            "pinned",
         )

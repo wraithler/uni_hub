@@ -1,3 +1,4 @@
+from datetime import timedelta
 from typing import Dict, Any, List, Tuple
 
 from django.db import models
@@ -54,3 +55,63 @@ def model_update(
         has_updated = True
 
     return instance, has_updated
+
+def counts_by_delta(model, attributes):
+    data = []
+
+    for i in range(7):
+        day_start = (timezone.now() - (timedelta(days=1) * i)).replace(hour=0, minute=0, second=0, microsecond=0)
+        day_end = day_start + timedelta(days=1)
+        label = day_start.strftime("%A")[:3]
+
+        day_data = {
+            "label": label,
+        }
+
+        for attr in attributes:
+            attr_queryset = getattr(model, attr).all()
+            filtered_count = attr_queryset.filter(created_at__gte=day_start, created_at__lt=day_end).count()
+
+            day_data[attr] = filtered_count
+
+        data.append(day_data)
+
+    return data
+
+
+def calculate_growth(model, attribute, delta, n_delta):
+    """
+    Calculate the growth rate of an attribute.
+    :param model: The model to calculate the growth for.
+    :param attribute: The attribute to calculate the growth for.
+    :param delta: The delta to calculate the growth for (e.g. timedelta(days=30)
+    :param n_delta: The number of deltas to calculate the growth for. (e.g. 12 where delta=timedelta(days=30) for 12 months)
+    """
+    def growth(previous, current):
+        if previous == 0:
+            return 100.0 if current > 0 else 0.0
+        return round(((current - previous) / previous) * 100, 1)
+
+    data = []
+
+    for i in range(n_delta):
+        then = timezone.now() - (delta * i)
+        previous_time = then - delta
+        month = then.month
+        year = then.year
+        label = f"{month}/{year}"
+
+        attr_queryset = getattr(model, attribute).all()
+        attr_then = attr_queryset.filter(created_at__lte=then).count()
+        attr_previous = attr_queryset.filter(created_at__lte=previous_time).count()
+
+        period_growth = growth(attr_previous, attr_then)
+
+        data.append({
+            "label": label,
+            "count": attr_then,
+            "growth": period_growth,
+            "month": then.strftime("%B")[:3],
+        })
+
+    return data
