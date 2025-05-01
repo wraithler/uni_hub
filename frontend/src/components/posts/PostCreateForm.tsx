@@ -23,6 +23,8 @@ import {
 import { useState } from "react";
 import { useAuth } from "@/components/auth/AuthProvider.tsx";
 import FileUpload from "@/components/files/FileUpload.tsx";
+import { toast } from "sonner";
+import axios from "axios";
 
 const Schema = z.object({
   content: z
@@ -34,7 +36,7 @@ const Schema = z.object({
 });
 
 export default function PostCreateForm() {
-  const createPost = usePostCreate();
+  const { mutate, error } = usePostCreate();
   const { user } = useAuth();
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
@@ -42,11 +44,28 @@ export default function PostCreateForm() {
     resolver: zodResolver(Schema),
   });
 
-  const onSubmit = async (data: z.infer<typeof Schema>) => {
+  const onSubmit = (data: z.infer<typeof Schema>) => {
     setIsLoading(true);
-    createPost.mutate(data);
-    setIsLoading(false);
+    mutate(data);
+
+    if (error) {
+      if (axios.isAxiosError(error)) {
+        if (error.response?.data.extra?.reason) {
+          toast.error(
+            "Your post was flagged to be potential spam. If you think this is a mistake, contact support.",
+          );
+        } else {
+          toast.error(
+            "An error occurred while creating your post. Please try again.",
+          );
+        }
+        setIsLoading(false);
+      }
+      return;
+    }
+
     form.reset({ content: "" });
+    setIsLoading(false);
   };
 
   return (
@@ -120,7 +139,7 @@ export default function PostCreateForm() {
                   {isLoading ? (
                     <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Creating Community...
+                      Posting...
                     </>
                   ) : (
                     <>

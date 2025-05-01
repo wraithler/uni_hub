@@ -6,13 +6,13 @@ type Post = {
   // Basic parameters
   id?: number;
   content: string;
-  created_at: string;
-  updated_at: string;
-  created_by: User;
-  community: Community;
+  created_at?: string;
+  updated_at?: string;
+  created_by?: User;
+  community?: Community;
   
   // Visibility
-  visibility: 'public' | 'members';
+  visibility?: 'public' | 'members';
   
   // Counts
   like_count?: number;
