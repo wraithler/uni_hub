@@ -1,19 +1,18 @@
-import { EventsQueryParameters } from "./eventQueryParameters";
-import api from "@/api/apiClient";
-import { useQuery } from "@tanstack/react-query";
+import { EventsQueryParameters } from "./eventQueryParameters.ts";
+import api from "../apiClient";
 import { eventQueryKeys } from "./eventQueryKeys";
-import { STALE_TIME } from "@/api";
+import { usePaginatedQuery } from "@/lib/tanstackExtension";
 
-export function useEventsPaginated(params: EventsQueryParameters) {
+export function useEventPaginated(params: EventsQueryParameters) {
   const getEventsPaginatedFn = async () => {
     const response = await api.get("/events/", { params });
     return response.data;
   };
 
-  return useQuery({
+  return usePaginatedQuery({
     queryKey: eventQueryKeys.pagination(params),
     queryFn: getEventsPaginatedFn,
-    placeholderData: (previousData) => previousData,
-    staleTime: STALE_TIME,
+    params,
+    limit: params.limit || 12,
   });
 }

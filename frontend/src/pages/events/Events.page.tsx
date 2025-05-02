@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { Filter, Search, Users } from "lucide-react";
-
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -15,38 +14,35 @@ import FeaturedEventCard from "@/components/events/FeaturedEventCard";
 import EventCard from "@/components/events/EventCard";
 import Layout from "@/components/core/Layout";
 import PageHeader from "@/components/core/PageHeader";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-  PaginationLink,
-  PaginationPrevious,
-} from "@/components/ui/pagination";
 import { Link } from "react-router-dom";
 import { useEvents } from "@/api/events/useEvents";
 import { Event } from "@/api/events/eventTypes";
+import { useEventPaginated } from "@/api/events/useEventPaginated";
+import PaginationBox from "@/components/common/PaginationBox";
+import { useDebounce } from "@/lib/utils"; // optional if you wanna debounce search
 
 export default function EventsPage() {
   const [searchQuery, setSearchQuery] = useState("");
-  const [offset, setOffset] = useState(0);
+  const debouncedSearchQuery = useDebounce(searchQuery, 300); // optional
+  const [sortBy, setSortBy] = useState("upcoming");
 
-  const { data: events } = useEvents({
+  const {
+    data: events,
+    pagination,
+    isLoading,
+  } = useEventPaginated({
     limit: 12,
-    offset,
+    name: debouncedSearchQuery,
+    sort_by: sortBy,
   });
 
   const { data: featuredEvents } = useEvents({
     limit: 3,
     offset: 0,
+    is_featured: true,
   });
 
-  if (!events || !featuredEvents) return null;
-
-  const totalPages = Math.ceil(events.count / 12);
-  const currentPage = offset / 12 + 1;
-  const nextPages = [currentPage + 1, currentPage + 2].filter((p) => p <= totalPages);
-  const prevPages = [currentPage - 1, currentPage - 2].filter((p) => p > 0);
-  const pages = [...prevPages, currentPage, ...nextPages];
+  if (!events || !featuredEvents || isLoading) return null;
 
   return (
     <Layout>
@@ -56,6 +52,7 @@ export default function EventsPage() {
           description="Discover and attend exciting events on campus"
         />
 
+        {/* Search and Filter */}
         <div className="mb-8 space-y-4">
           <div className="flex flex-col md:flex-row gap-4">
             <div className="relative flex-grow">
@@ -110,7 +107,7 @@ export default function EventsPage() {
         <div>
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-xl font-semibold">All Events</h2>
-            <Select defaultValue="upcoming">
+            <Select value={sortBy} onValueChange={setSortBy}>
               <SelectTrigger className="w-[180px]">
                 <SelectValue placeholder="Sort by" />
               </SelectTrigger>
@@ -139,30 +136,8 @@ export default function EventsPage() {
             </div>
           )}
 
-          {events.results.length > 0 && (
-            <div className="flex justify-center mt-8">
-              <Pagination>
-                <PaginationContent>
-                  <PaginationItem>
-                    <PaginationPrevious
-                      type="button"
-                      onClick={() => setOffset(Math.max(0, offset - 12))}
-                    />
-                  </PaginationItem>
-                  {pages.map((page) => (
-                    <PaginationItem key={page}>
-                      <PaginationLink
-                        type="button"
-                        onClick={() => setOffset((page - 1) * 12)}
-                      >
-                        {page}
-                      </PaginationLink>
-                    </PaginationItem>
-                  ))}
-                </PaginationContent>
-              </Pagination>
-            </div>
-          )}
+          {/* Updated Pagination */}
+          {pagination && <PaginationBox pagination={pagination} />}
         </div>
 
         {/* Create Event */}
