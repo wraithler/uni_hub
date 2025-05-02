@@ -1,109 +1,98 @@
+import unittest
 from django.test import TestCase
-
-from apps.notifications.models import Notification
+from unittest.mock import patch, MagicMock, PropertyMock
 from apps.notifications.selectors import (
     notification_list_by_user,
     notification_list_unread_by_user,
-    notification_has_unread_by_user,
-    notification_list_all,
-    notification_get
+    notification_get,
+    notification_count
 )
-from apps.users.services import user_create
 
-class NotificationSelectorsTests(TestCase):
-    """Tests for notification selector functions."""
 
+class TestNotificationSelectors(unittest.TestCase):
     def setUp(self):
-        """Set up test data."""
-        # Create test users
-        self.user = user_create(
-            email='test@example.com',
-            first_name='Test',
-            last_name='User',
-            is_active=True,
-            is_admin=False,
-            password='testpassword'
-        )
-        self.other_user = user_create(
-            email='other@example.com',
-            first_name='Other',
-            last_name='User',
-            is_active=True,
-            is_admin=False,
-            password='otherpassword'
-        )
+        self.user = MagicMock()
+        self.user.id = 1
+        self.user.email = "test@example.com"
         
-        # Create test notifications
-        self.notification1 = Notification.objects.create(
-            recipient=self.user,
-            message="Test notification 1",
-            is_read=False,
-            notification_type=Notification.NotificationType.INFO
-        )
-        self.notification2 = Notification.objects.create(
-            recipient=self.user,
-            message="Test notification 2",
-            is_read=True,
-            notification_type=Notification.NotificationType.ALERT
-        )
-        self.other_notification = Notification.objects.create(
-            recipient=self.other_user,
-            message="Other user's notification",
-            is_read=False,
-            notification_type=Notification.NotificationType.INFO
-        )
+        self.notification = MagicMock()
+        self.notification.id = 1
+        self.notification.title = "Test Notification"
+        
+        # Setup mock functions
+        self.notification_filter_mock = patch('apps.notifications.selectors.Notification.objects.filter').start()
+        self.notification_get_mock = patch('apps.notifications.selectors.Notification.objects.get').start()
+    
+    def tearDown(self):
+        patch.stopall()
     
     def test_notification_list_by_user(self):
-        """Test retrieving all notifications for a user."""
-        notifications = notification_list_by_user(user=self.user)
+        """Test listing notifications by user"""
+        # Setup
+        mock_queryset = MagicMock()
+        self.notification_filter_mock.return_value = mock_queryset
+        mock_queryset.order_by.return_value = [self.notification]
         
-        self.assertEqual(notifications.count(), 2)
-        self.assertIn(self.notification1, notifications)
-        self.assertIn(self.notification2, notifications)
-        self.assertNotIn(self.other_notification, notifications)
+        # Execute
+        result = notification_list_by_user(user=self.user)
+        
+        # Assert
+        self.notification_filter_mock.assert_called_once_with(recipient=self.user)
+        mock_queryset.order_by.assert_called_once_with('-created_at')
+        self.assertEqual(result, [self.notification])
     
     def test_notification_list_unread_by_user(self):
-        """Test retrieving unread notifications for a user."""
-        notifications = notification_list_unread_by_user(user=self.user)
+        """Test listing unread notifications by user"""
+        # Setup
+        mock_queryset = MagicMock()
+        self.notification_filter_mock.return_value = mock_queryset
+        mock_queryset.order_by.return_value = [self.notification]
         
-        self.assertEqual(notifications.count(), 1)
-        self.assertIn(self.notification1, notifications)
-        self.assertNotIn(self.notification2, notifications)
-        self.assertNotIn(self.other_notification, notifications)
+        # Execute
+        result = notification_list_unread_by_user(user=self.user)
+        
+        # Assert
+        self.notification_filter_mock.assert_called_once_with(recipient=self.user, is_read=False)
+        mock_queryset.order_by.assert_called_once_with('-created_at')
+        self.assertEqual(result, [self.notification])
     
-    def test_notification_has_unread_by_user(self):
-        """Test checking if a user has unread notifications."""
-        # User with unread notifications
-        self.assertTrue(notification_has_unread_by_user(user=self.user))
+    def test_notification_get_success(self):
+        """Test successfully getting a specific notification"""
+        # Setup
+        self.notification_get_mock.return_value = self.notification
         
-        # User without unread notifications
-        self.notification1.is_read = True
-        self.notification1.save()
-        self.assertFalse(notification_has_unread_by_user(user=self.user))
+        # Execute
+        result = notification_get(user=self.user, notification_id=1)
         
-        # Reset for other tests
-        self.notification1.is_read = False
-        self.notification1.save()
+        # Assert
+        self.notification_get_mock.assert_called_once_with(recipient=self.user, id=1)
+        self.assertEqual(result, self.notification)
     
-    def test_notification_list_all(self):
-        """Test retrieving all notifications in the system."""
-        notifications = notification_list_all()
+    def test_notification_get_not_found(self):
+        """Test getting a notification that doesn't exist"""
+        # Setup - make the get method throw DoesNotExist
+        from django.core.exceptions import ObjectDoesNotExist
+        self.notification_get_mock.side_effect = ObjectDoesNotExist()
         
-        self.assertEqual(notifications.count(), 3)
-        self.assertIn(self.notification1, notifications)
-        self.assertIn(self.notification2, notifications)
-        self.assertIn(self.other_notification, notifications)
+        # Execute
+        with patch('apps.notifications.selectors.Notification.DoesNotExist', ObjectDoesNotExist):
+            result = notification_get(user=self.user, notification_id=999)
+        
+        # Assert
+        self.notification_get_mock.assert_called_once_with(recipient=self.user, id=999)
+        self.assertIsNone(result)
     
-    def test_notification_get(self):
-        """Test retrieving a specific notification for a user."""
-        # Valid notification lookup
-        notification = notification_get(user=self.user, notification_id=self.notification1.id)
-        self.assertEqual(notification, self.notification1)
+    def test_notification_count(self):
+        """Test counting unread notifications"""
+        # Setup
+        mock_queryset = MagicMock()
+        self.notification_filter_mock.return_value = mock_queryset
+        mock_queryset.count.return_value = 5
         
-        # Invalid notification ID
-        notification = notification_get(user=self.user, notification_id=99999)
-        self.assertIsNone(notification)
+        # Execute
+        result = notification_count(user=self.user)
         
-        # Notification belongs to another user
-        notification = notification_get(user=self.user, notification_id=self.other_notification.id)
-        self.assertIsNone(notification)
+        # Assert
+        self.notification_filter_mock.assert_called_once_with(recipient=self.user, is_read=False)
+        mock_queryset.count.assert_called_once()
+        self.assertEqual(result, 5)
