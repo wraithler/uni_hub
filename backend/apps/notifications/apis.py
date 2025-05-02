@@ -1,81 +1,71 @@
-from django.http import Http404
-from rest_framework.views import APIView
+from rest_framework import status, serializers
 from rest_framework.response import Response
-from rest_framework import serializers
+from rest_framework.views import APIView
+from apps.api.mixins import AuthAPIView
+from .models import Notification
+from .selectors import notification_list_by_user, notification_list_unread_by_user, notification_count
+from .services import notification_mark_as_read, notification_mark_all_as_read, notification_delete, notification_delete_all
+from apps.api.pagination import LimitOffsetPagination
 
-from apps.notifications.models import Notification
-from apps.notifications.selectors import (
-    notification_list_by_user, 
-    notification_list_unread_by_user,
-    notification_get
-)
-from apps.notifications.services import notification_mark_as_read
-from apps.api.mixins import ApiAuthMixin
 
-class NotificationListAPI(ApiAuthMixin, APIView):
-    """
-    Retrieves a list of all notifications for the authenticated user.
-    """
-    class OutputSerializer(serializers.ModelSerializer):
-        class Meta:
-            model = Notification
-            fields = "__all__"
-            read_only_fields = ("recipient",)
-    
+class NotificationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Notification
+        fields = '__all__'
+
+
+class NotificationListAPI(AuthAPIView):
     def get(self, request):
-        notifications = notification_list_by_user(user=request.user)
-        if not notifications:
-            return Response({"message": "No notifications found."}, status=404)
-        
-        data = self.OutputSerializer(notifications, many=True).data
-        return Response(data)
+        user = request.user
+        notifications = notification_list_by_user(user=user)
+        serializer = NotificationSerializer(notifications, many=True)
+        return Response(serializer.data)
 
-class UnreadNotificationListAPI(ApiAuthMixin, APIView):
-    """
-    Retrieves a list of unread notifications for the authenticated user.
-    """
-    class OutputSerializer(serializers.ModelSerializer):
-        class Meta:
-            model = Notification
-            fields = "__all__"
-            read_only_fields = ("recipient",)
-    
+
+class NotificationUnreadListAPI(AuthAPIView):
     def get(self, request):
-        notifications = notification_list_unread_by_user(user=request.user)
-        if not notifications:
-            return Response({"message": "No unread notifications found."}, status=404)
-        
-        data = self.OutputSerializer(notifications, many=True).data
-        return Response(data)
+        user = request.user
+        notifications = notification_list_unread_by_user(user=user)
+        serializer = NotificationSerializer(notifications, many=True)
+        return Response(serializer.data)
 
-class NotificationDetailAPI(ApiAuthMixin, APIView):
-    """
-    Retrieves details of a single notification for the authenticated user.
-    """
-    class OutputSerializer(serializers.ModelSerializer):
-        class Meta:
-            model = Notification
-            fields = "__all__"
-            read_only_fields = ("recipient",)
-    
-    def get(self, request, pk):
-        notification = notification_get(user=request.user, notification_id=pk)
-        if not notification:
-            raise Http404("Notification not found.")
-        
-        data = self.OutputSerializer(notification).data
-        return Response(data)
 
-class MarkNotificationAsReadAPI(ApiAuthMixin, APIView):
-    """
-    Marks a notification as read.
-    """
-    def put(self, request, pk):
-        notification = notification_get(user=request.user, notification_id=pk)
-        if not notification:
-            raise Http404("Notification not found.")
-        
-        # Use the service function to mark as read
-        notification_mark_as_read(notification=notification)
-        
-        return Response({"message": "Notification marked as read."})
+class NotificationMarkAsReadAPI(AuthAPIView):
+    def post(self, request, pk):
+        success = notification_mark_as_read(notification_id=pk)
+        if success:
+            return Response({"detail": "Notification marked as read"}, status=status.HTTP_200_OK)
+        return Response({"detail": "Notification not found"}, status=status.HTTP_404_NOT_FOUND)
+
+
+class NotificationMarkAllAsReadAPI(AuthAPIView):
+    def post(self, request):
+        user = request.user
+        success = notification_mark_all_as_read(user=user)
+        if success:
+            return Response({"detail": "All notifications marked as read"}, status=status.HTTP_200_OK)
+        return Response({"detail": "No unread notifications"}, status=status.HTTP_200_OK)
+
+
+class NotificationDeleteAPI(AuthAPIView):
+    def delete(self, request, pk):
+        success = notification_delete(notification_id=pk)
+        if success:
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        return Response({"detail": "Notification not found"}, status=status.HTTP_404_NOT_FOUND)
+
+
+class NotificationDeleteAllAPI(AuthAPIView):
+    def delete(self, request):
+        user = request.user
+        success = notification_delete_all(user=user)
+        if success:
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        return Response({"detail": "No notifications to delete"}, status=status.HTTP_200_OK)
+
+
+class NotificationCountAPI(AuthAPIView):
+    def get(self, request):
+        user = request.user
+        count = notification_count(user=user)
+        return Response({"count": count}, status=status.HTTP_200_OK)
