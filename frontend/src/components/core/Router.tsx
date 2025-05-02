@@ -7,6 +7,10 @@ import NotFoundPage from "@/pages/NotFound.page.tsx";
 import CommunityCreatePage from "@/pages/communities/CommunityCreate.Page.tsx";
 import FeedPage from "@/pages/Feed.page.tsx";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute.tsx";
+import TermsOfServicePage from "@/pages/legal/TermsOfService.page.tsx";
+import SendVerificationEmailPage from "@/pages/email-verification/SendVerificationEmail.page.tsx";
+import VerifyEmailPage from "@/pages/email-verification/VerifyEmail.page.tsx";
+import CommunityDashboardPage from "@/pages/communities/dashboard/CommunityDashboard.page.tsx";
 
 const router = createBrowserRouter([
   {
@@ -29,6 +33,10 @@ const router = createBrowserRouter([
         path: "/communities/:id",
         element: <CommunityPage />,
       },
+      {
+        path: "/communities/:id/dashboard",
+        element: <CommunityDashboardPage/>
+      }
     ],
   },
   {
@@ -50,6 +58,28 @@ const router = createBrowserRouter([
         element: <FeedPage />,
       },
     ],
+  },
+  {
+    path: "/verification-email",
+    element: <ProtectedRoute />,
+    children: [
+      {
+        path: "/verification-email/send",
+        element: <SendVerificationEmailPage />,
+      },
+      {
+        path: "/verification-email/verify/:uid/:token",
+        element: <VerifyEmailPage />,
+      },
+    ],
+  },
+  {
+    path: "/verify-email",
+    element: <VerifyEmailPage />,
+  },
+  {
+    path: "/terms",
+    element: <TermsOfServicePage />,
   },
   {
     path: "*",

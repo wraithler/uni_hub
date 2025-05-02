@@ -1,6 +1,5 @@
 import { useState } from "react";
-import { Filter, Search, Users } from "lucide-react";
-
+import { Filter, PlusIcon, Search, Users } from "lucide-react";
 import { Badge } from "@/components/ui/badge.tsx";
 import { Button } from "@/components/ui/button.tsx";
 import { Input } from "@/components/ui/input.tsx";
@@ -15,44 +14,60 @@ import FeaturedCommunityCard from "@/components/communities/FeaturedCommunityCar
 import { CommunityCard } from "@/components/communities/CommunityCard.tsx";
 import Layout from "@/components/core/Layout.tsx";
 import PageHeader from "@/components/core/PageHeader.tsx";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-  PaginationLink,
-  PaginationPrevious,
-} from "@/components/ui/pagination.tsx";
 import { Link } from "react-router-dom";
-import {useCommunities} from "@/hooks/communities/useCommunities.ts";
+import { useCommunities } from "@/api/communities/useCommunities.ts";
+import { Community } from "@/api/communities/communityTypes.ts";
+import { Spinner } from "@/components/ui/spinner.tsx";
+import { useDebounce } from "@/lib/utils.ts";
+import { useCommunitiesPaginated } from "@/api/communities/useCommunitiesPaginated.ts";
+import PaginationBox from "@/components/common/PaginationBox.tsx";
+import { CommunitySortOptions } from "@/api/communities/communityQueryParameters.ts";
 
 export default function CommunitiesPage() {
-  const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
-  const [offset, setOffset] = useState(0);
+  const [sortBy, setSortBy] = useState<CommunitySortOptions>("alphabetical");
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const debouncedSearchQuery = useDebounce(searchQuery, 300);
 
-  const { data: communities } = useCommunities({
+  const {
+    data: communities,
+    isLoading: isLoading,
+    pagination,
+  } = useCommunitiesPaginated({
     limit: 12,
-    offset,
     category_name: selectedCategory === "all" ? undefined : selectedCategory,
+    name: debouncedSearchQuery,
+    sort_by: sortBy,
   });
 
-  const { data: featuredCommunities } = useCommunities({
-    limit: 3,
-    offset: 0,
-    is_featured: true,
-  });
+  const { data: featuredCommunities, isLoading: isFeaturedLoading } =
+    useCommunities({
+      limit: 3,
+      offset: 0,
+      is_featured: true,
+    });
 
-  if (communities === undefined || featuredCommunities === undefined) {
-    return null;
+  if (isFeaturedLoading || isLoading) {
+    return (
+      <Layout>
+        <main className="container px-4 py-6 mx-auto">
+          <PageHeader
+            title="Communities"
+            description="Discover and join communities that match your interests"
+            button={
+              <Button variant="outline" asChild>
+                <Link to="/communities/create">
+                  <PlusIcon />
+                  Create a community
+                </Link>
+              </Button>
+            }
+          />
+          <Spinner className="mt-8" />
+        </main>
+      </Layout>
+    );
   }
-
-  const totalPages = Math.ceil(communities?.count / 12);
-  const currentPage = offset / 12 + 1;
-  const nextPages = [currentPage + 1, currentPage + 2].filter(
-    (p) => p <= totalPages,
-  );
-  const prevPages = [currentPage - 1, currentPage - 2].filter((p) => p > 0);
-  const pages = [...prevPages, currentPage, ...nextPages];
 
   return (
     <Layout>
@@ -61,7 +76,40 @@ export default function CommunitiesPage() {
         <PageHeader
           title="Communities"
           description="Discover and join communities that match your interests"
+          button={
+            <Button variant="outline" asChild>
+              <Link to="/communities/create">
+                <PlusIcon />
+                Create a community
+              </Link>
+            </Button>
+          }
         />
+
+        {/* Featured Communities */}
+        <div className="mb-8">
+          <h2 className="text-xl font-semibold mb-4">Featured Communities</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {featuredCommunities.results.length > 0 ? (
+              featuredCommunities.results.map((community: Community) => (
+                <FeaturedCommunityCard
+                  key={community.id}
+                  community={community}
+                />
+              ))
+            ) : (
+              <div className="flex flex-col items-center justify-center py-12 text-center col-span-3">
+                <Users className="w-12 h-12 text-muted-foreground mb-4" />
+                <h3 className="text-lg font-medium mb-2">
+                  No featured communities
+                </h3>
+                <p className="text-muted-foreground mb-4">
+                  There are no featured communities at the moment.
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
 
         {/* Search and Filters */}
         <div className="mb-8 space-y-4">
@@ -108,12 +156,6 @@ export default function CommunitiesPage() {
               variant="outline"
               className="cursor-pointer hover:bg-slate-100"
             >
-              Recently Active
-            </Badge>
-            <Badge
-              variant="outline"
-              className="cursor-pointer hover:bg-slate-100"
-            >
               Newly Created
             </Badge>
             <Badge
@@ -125,52 +167,27 @@ export default function CommunitiesPage() {
           </div>
         </div>
 
-        {/* Featured Communities */}
-        <div className="mb-8">
-          <h2 className="text-xl font-semibold mb-4">Featured Communities</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {featuredCommunities.results &&
-            featuredCommunities.results.length > 0 ? (
-              featuredCommunities.results.map((community) => (
-                <FeaturedCommunityCard
-                  key={community.id}
-                  community={community}
-                />
-              ))
-            ) : (
-              <div className="flex flex-col items-center justify-center py-12 text-center col-span-3">
-                <Users className="w-12 h-12 text-muted-foreground mb-4" />
-                <h3 className="text-lg font-medium mb-2">
-                  No featured communities
-                </h3>
-                <p className="text-muted-foreground mb-4">
-                  There are no featured communities at the moment.
-                </p>
-              </div>
-            )}
-          </div>
-        </div>
-
         {/* All Communities */}
         <div>
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-xl font-semibold">All Communities</h2>
-            <Select defaultValue="popular">
+            <Select
+              defaultValue={sortBy}
+              onValueChange={(val) => setSortBy(val as CommunitySortOptions)}
+            >
               <SelectTrigger className="w-[180px]">
                 <SelectValue placeholder="Sort by" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="popular">Most Popular</SelectItem>
-                <SelectItem value="recent">Recently Active</SelectItem>
-                <SelectItem value="new">Newly Created</SelectItem>
                 <SelectItem value="alphabetical">Alphabetical</SelectItem>
+                <SelectItem value="popular">Most Popular</SelectItem>
+                <SelectItem value="new">Newly Created</SelectItem>
               </SelectContent>
             </Select>
           </div>
-
-          {communities.results && communities.results.length > 0 ? (
+          {communities.results.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {communities.results.map((community) => (
+              {communities.results.map((community: Community) => (
                 <CommunityCard key={community.id} community={community} />
               ))}
             </div>
@@ -193,36 +210,11 @@ export default function CommunitiesPage() {
           )}
 
           {/* Pagination */}
-          {communities.results && communities.results.length > 0 && (
-            <div className="flex justify-center mt-8">
-              <Pagination>
-                <PaginationContent>
-                  <PaginationItem>
-                    <PaginationPrevious
-                      type="button"
-                      style={{ overflowAnchor: "none" }}
-                      onClick={() => setOffset(Math.max(0, offset - 12))}
-                    />
-                  </PaginationItem>
-                  {pages.map((page) => (
-                    <PaginationItem key={page}>
-                      <PaginationLink
-                        type="button"
-                        style={{ overflowAnchor: "none" }}
-                        onClick={() => setOffset((page - 1) * 12)}
-                      >
-                        {page}
-                      </PaginationLink>
-                    </PaginationItem>
-                  ))}
-                </PaginationContent>
-              </Pagination>
-            </div>
-          )}
+          {pagination && <PaginationBox pagination={pagination} />}
         </div>
 
         {/* Create Community */}
-        <div className="mt-12 bg-slate-100 rounded-lg p-6 flex flex-col md:flex-row items-center justify-between gap-4">
+        <div className="mt-8 mb-8 bg-slate-100 rounded-lg p-6 flex flex-col md:flex-row items-center justify-between gap-4">
           <div>
             <h3 className="text-xl font-semibold mb-2">
               Start Your Own Community

@@ -6,7 +6,6 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover.tsx";
 import { Button } from "@/components/ui/button.tsx";
-import { Community } from "@/api/old/types/communities.tsx";
 import { Check, ChevronsUpDown } from "lucide-react";
 import {
   Command,
@@ -17,12 +16,23 @@ import {
   CommandList,
 } from "@/components/ui/command.tsx";
 import { cn } from "@/lib/utils.ts";
+import { Community } from "@/api/communities/communityTypes.ts";
 
-export default function CommunitiesCombobox() {
+type CommunitiesComboboxProps = {
+  value: number;
+  onChange: (value: number) => void;
+};
+
+export default function CommunitiesCombobox({
+  value,
+  onChange,
+}: CommunitiesComboboxProps) {
   const { data } = useCommunities({ my: true });
-
-  const [value, setValue] = useState("");
   const [open, setOpen] = useState(false);
+
+  const selectedCommunity = data?.results.find(
+    (community: Community) => community.id === value,
+  );
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -33,11 +43,7 @@ export default function CommunitiesCombobox() {
           aria-expanded={open}
           className="w-[250px] justify-between"
         >
-          {value
-            ? data.results.find(
-                (community: Community) => community.name === value,
-              ).name
-            : "Select community..."}
+          {selectedCommunity?.name ?? "Select a community..."}
           <ChevronsUpDown className="opacity-50" />
         </Button>
       </PopoverTrigger>
@@ -47,26 +53,25 @@ export default function CommunitiesCombobox() {
           <CommandList>
             <CommandEmpty>No communities found.</CommandEmpty>
             <CommandGroup>
-              {data && data.results.map((community: Community) => (
-                <CommandItem
-                  key={community.id}
-                  value={community.name}
-                  onSelect={(cv) => {
-                    setValue(cv === value ? "" : cv);
-                    setOpen(false);
-                  }}
-                >
-                  {community.name}
-                  <Check
-                    className={cn(
-                      "ml-auto",
-                      value === community.name
-                        ? "opacity-100"
-                        : "opacity-0",
-                    )}
-                  />
-                </CommandItem>
-              ))}
+              {data &&
+                data.results.map((community: Community) => (
+                  <CommandItem
+                    key={community.id}
+                    value={community.name}
+                    onSelect={() => {
+                      onChange(community.id);
+                      setOpen(false);
+                    }}
+                  >
+                    {community.name}
+                    <Check
+                      className={cn(
+                        "ml-auto",
+                        value === community.id ? "opacity-100" : "opacity-0",
+                      )}
+                    />
+                  </CommandItem>
+                ))}
             </CommandGroup>
           </CommandList>
         </Command>

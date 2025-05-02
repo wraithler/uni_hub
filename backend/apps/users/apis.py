@@ -1,13 +1,17 @@
-from django.http import Http404
-from rest_framework import serializers
+from django.contrib.auth.tokens import default_token_generator
+from django.http import Http404, HttpResponseForbidden
+from django.utils.http import urlsafe_base64_decode
+from rest_framework import serializers, status
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from apps.api.mixins import AuthAPIView
 from apps.api.pagination import get_paginated_response
 from apps.communities.apis import CommunityListApi
 from apps.communities.selectors import community_list
+from apps.emails.services import verification_email_create
 from apps.users.models import BaseUser
 from apps.users.selectors import user_get, user_list
 from apps.users.services import user_create, user_update
@@ -15,7 +19,10 @@ from apps.users.services import user_create, user_update
 
 class UserDetailApi(APIView):
     class OutputSerializer(serializers.Serializer):
+        id = serializers.IntegerField()
         email = serializers.EmailField()
+        first_name = serializers.CharField()
+        last_name = serializers.CharField()
 
     def get(self, request, user_id):
         user = user_get(user_id)
@@ -34,14 +41,11 @@ class UserListApi(APIView):
 
     class FilterSerializer(serializers.Serializer):
         id = serializers.IntegerField(required=False)
-        is_admin = serializers.BooleanField(
-            required=False, allow_null=True, default=None
-        )
 
     class OutputSerializer(serializers.ModelSerializer):
         class Meta:
             model = BaseUser
-            fields = ("id", "email", "is_admin")
+            fields = ("id", "email")
 
     def get(self, request):
         filters_serializer = self.FilterSerializer(data=request.query_params)
@@ -117,3 +121,36 @@ class UserCommunitiesListApi(APIView):
             request=request,
             view=self,
         )
+
+
+class UserCreateEmailVerificationApi(AuthAPIView):
+    def get(self, request):
+        user = request.user
+
+        if not user or user.is_email_verified:
+            return HttpResponseForbidden()
+
+        verification_email_create(user)
+
+        return Response(status=status.HTTP_200_OK)
+
+
+class UserVerifyEmailApi(AuthAPIView):
+    def post(self, request):
+        uid = request.data.get("uid")
+        token = request.data.get("token")
+
+        if not uid or not token:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
+        uid = urlsafe_base64_decode(uid)
+        user = user_get(uid)
+
+        if not user or user != request.user:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
+        if default_token_generator.check_token(user, token):
+            user_update(user=user, data={"is_email_verified": True})
+            return Response(status=status.HTTP_200_OK)
+
+        return Response(status=status.HTTP_400_BAD_REQUEST)

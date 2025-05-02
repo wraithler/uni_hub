@@ -5,7 +5,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from apps.profile.models import Profile
 from apps.profile.selectors import profile_get
-from apps.api.mixins import ApiAuthMixin
+from apps.api.mixins import AuthAPIView
 
 
 class ProfileSerializer(serializers.ModelSerializer):
@@ -28,7 +28,7 @@ class ProfileSerializer(serializers.ModelSerializer):
         ]
 
 
-class ProfileView(ApiAuthMixin, APIView):
+class ProfileView(AuthAPIView, APIView):
     def get_profile(self, user):
         profile = profile_get(user)
         if not profile:
@@ -57,7 +57,7 @@ class ProfileView(ApiAuthMixin, APIView):
         return Response(serializer.data)
 
 
-class ProfileCreateView(ApiAuthMixin, APIView):
+class ProfileCreateView(AuthAPIView, APIView):
     def post(self, request):
         if profile_get(request.user):
             return Response(

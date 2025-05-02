@@ -1,12 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
 import { communityQueryKeys } from "./communityQueryKeys.ts";
 import api from "../apiClient.ts";
+import { CommunitiesQueryParameters } from "@/api/communities/communityQueryParameters.ts";
 
-export type UseCommunitiesParams = {
-  my?: boolean;
-};
-
-export function useCommunities(params: UseCommunitiesParams) {
+export function useCommunities(params: CommunitiesQueryParameters) {
   const getCommunitiesFn = async () => {
     const response = await api.get("/communities/", {
       params,
@@ -15,7 +12,8 @@ export function useCommunities(params: UseCommunitiesParams) {
   };
 
   return useQuery({
-    queryKey: communityQueryKeys.all,
+    queryKey: [communityQueryKeys.all, params],
     queryFn: getCommunitiesFn,
+    placeholderData: (prev) => prev,
   });
 }

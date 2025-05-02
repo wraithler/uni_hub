@@ -13,7 +13,6 @@ import { Input } from "@/components/ui/input.tsx";
 import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button.tsx";
 import { useState } from "react";
-import { fetchRegister } from "@/api/old/services/users.ts";
 import { Checkbox } from "@/components/ui/checkbox.tsx";
 import { useAuth } from "@/components/auth/AuthProvider.tsx";
 import { useNavigate } from "react-router-dom";
@@ -48,20 +47,19 @@ export function RegisterForm() {
   });
 
   const [isLoading, setIsLoading] = useState(false);
-  const { login } = useAuth();
+  const { register } = useAuth();
   const navigate = useNavigate();
 
   async function onSubmit(data: z.infer<typeof FormSchema>) {
     setIsLoading(true);
 
     try {
-      await fetchRegister(
+      await register(
         data.first_name,
         data.last_name,
         data.email,
         data.password,
       );
-      login(data.email, data.password);
       navigate("/feed");
     } catch {
       form.setError("password", {

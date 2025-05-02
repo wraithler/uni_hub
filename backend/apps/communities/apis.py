@@ -1,22 +1,22 @@
 from functools import partial
 
+from django.core.exceptions import PermissionDenied
 from django.http import Http404
 from rest_framework import serializers
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from apps.api.mixins import ApiAuthMixin
+from apps.api.mixins import AuthAPIView
 from apps.api.pagination import LimitOffsetPagination, get_paginated_response
 from apps.communities.models import Community
-from apps.communities.selectors import community_get, community_list
+from apps.communities.selectors import (
+    community_get,
+    community_list,
+    community_dashboard_get,
+)
 from apps.communities.services import community_create, community_update, community_join
 from apps.events.apis import EventListApi
 from apps.events.selectors import event_list
-
-
-class CategorySerializer(serializers.Serializer):  # todo: move
-    id = serializers.IntegerField()
-    name = serializers.CharField()
 
 
 class CommunityDetailApi(APIView):
@@ -25,9 +25,10 @@ class CommunityDetailApi(APIView):
         name = serializers.CharField()
         description = serializers.CharField()
         tags = serializers.SerializerMethodField()
-        category_name = serializers.SerializerMethodField()
+        category = serializers.SerializerMethodField()
         member_count = serializers.SerializerMethodField()
         post_count = serializers.SerializerMethodField()
+        is_member = serializers.SerializerMethodField()
 
         def get_member_count(self, obj):
             return obj.memberships.count()
@@ -38,8 +39,11 @@ class CommunityDetailApi(APIView):
         def get_tags(self, obj):
             return obj.tags.all().values_list("name", flat=True)
 
-        def get_category_name(self, obj):
+        def get_category(self, obj):
             return obj.category.name
+
+        def get_is_member(self, obj):
+            return obj.is_member(self.context.get("request").user)
 
     def get(self, request, community_id):
         community = community_get(community_id)
@@ -58,14 +62,16 @@ class CommunityListApi(APIView):
 
     class FilterSerializer(serializers.Serializer):
         is_featured = serializers.BooleanField(required=False, allow_null=True)
-        category_name = serializers.CharField(required=False, allow_null=True)
+        category = serializers.CharField(required=False, allow_null=True)
         my = serializers.BooleanField(required=False, allow_null=True)
+        name = serializers.CharField(required=False, allow_null=True)
+        sort_by = serializers.CharField(required=False, allow_null=True)
 
     class OutputSerializer(serializers.ModelSerializer):
         member_count = serializers.SerializerMethodField()
         post_count = serializers.SerializerMethodField()
         tags = serializers.SerializerMethodField()
-        category_name = serializers.SerializerMethodField()
+        category = serializers.SerializerMethodField()
 
         class Meta:
             model = Community
@@ -76,7 +82,7 @@ class CommunityListApi(APIView):
                 "member_count",
                 "post_count",
                 "tags",
-                "category_name",
+                "category",
             )
 
         def get_member_count(self, obj):
@@ -88,7 +94,7 @@ class CommunityListApi(APIView):
         def get_tags(self, obj):
             return obj.tags.all().values_list("name", flat=True)
 
-        def get_category_name(self, obj):
+        def get_category(self, obj):
             return obj.category.name
 
     def get(self, request):
@@ -113,12 +119,14 @@ class CommunityListApi(APIView):
         )
 
 
-class CommunityCreateApi(ApiAuthMixin, APIView):
+class CommunityCreateApi(AuthAPIView):
     class InputSerializer(serializers.Serializer):
         name = serializers.CharField()
         description = serializers.CharField()
         tags = serializers.ListField(child=serializers.CharField(), required=False)
         category = serializers.CharField()
+        privacy = serializers.CharField()
+        about = serializers.CharField()
 
     def post(self, request):
         serializer = self.InputSerializer(data=request.data)
@@ -182,3 +190,27 @@ class CommunityJoinApi(APIView):
         community_join(community=community, user=user)
 
         return Response()
+
+
+class CommunityDashboardDetailApi(AuthAPIView):
+    class OutputSerializer(serializers.Serializer):
+        total_members = serializers.IntegerField()
+        pending_requests = serializers.IntegerField()
+        total_posts = serializers.IntegerField()
+        total_events = serializers.IntegerField()
+        member_growth = serializers.JSONField()
+        engagement = serializers.JSONField()
+
+    def get(self, request, community_id):
+        community = community_get(community_id)
+
+        if community is None:
+            raise Http404
+
+        if not community.is_moderator(request.user):
+            raise PermissionDenied
+
+        dashboard_data = community_dashboard_get(community_id=community_id)
+        data = self.OutputSerializer(dashboard_data).data
+
+        return Response(data)

@@ -1,7 +1,7 @@
 from django.contrib import admin, messages
 from django.core.exceptions import ValidationError
 
-from apps.events.models import Event
+from apps.events.models import Event, EventTicket
 
 
 @admin.register(Event)
@@ -50,3 +50,10 @@ class EventAdmin(admin.ModelAdmin):
             obj.save()
         except ValidationError as exc:
             self.message_user(request, str(exc), messages.ERROR)
+
+
+@admin.register(EventTicket)
+class EventTicketAdmin(admin.ModelAdmin):
+    list_display = ("event", "user", "ticket_id", "created_at")
+    search_fields = ("user__username", "event__title", "ticket_id")
+    readonly_fields = ("ticket_id", "qr_code", "created_at", "updated_at")
