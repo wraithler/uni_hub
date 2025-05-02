@@ -1,18 +1,19 @@
 import factory
-from factory import Faker, SubFactory
-from factory.django import DjangoModelFactory
-
-from apps.notifications.models import Notification
+from django.contrib.contenttypes.models import ContentType
 from apps.users.factories import BaseUserFactory
+from .models import Notification
 
 
-class NotificationFactory(DjangoModelFactory):
+class NotificationFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Notification
 
-    recipient = SubFactory(BaseUserFactory)
-    message = Faker("paragraph")
-    is_read = Faker("boolean")
-    notification_type = Faker(
-        "random_element", elements=["info", "alert", "reminder", "promo"]
-    )
+    recipient = factory.SubFactory(BaseUserFactory)
+    title = factory.Faker('sentence')
+    message = factory.Faker('paragraph')
+    notification_type = 'info'
+    channel = 'in_app'
+    status = 'sent'
+    is_read = False
+    content_type = factory.LazyFunction(lambda: ContentType.objects.get_for_model(BaseUserFactory._meta.model))
+    object_id = factory.Sequence(lambda n: n)
