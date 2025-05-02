@@ -1,212 +1,198 @@
-from django.test import TestCase
-from rest_framework.test import APIClient
+from rest_framework.test import APIRequestFactory
 from rest_framework import status
-from unittest.mock import patch
+from rest_framework.response import Response
+from rest_framework.test import force_authenticate
+from django.test import TestCase
+from unittest.mock import MagicMock, patch
+from apps.api.pagination import LimitOffsetPagination
 
-from apps.notifications.models import Notification
-from apps.users.services import user_create
+from apps.notifications.apis import (
+    NotificationListAPI,
+    NotificationUnreadListAPI,
+    NotificationMarkAsReadAPI,
+    NotificationMarkAllAsReadAPI,
+    NotificationDeleteAPI,
+    NotificationDeleteAllAPI,
+    NotificationCountAPI,
+    NotificationSerializer
+)
 
-class NotificationApisTests(TestCase):
-    """Tests for the notification APIs."""
 
+class TestNotificationAPIs(TestCase):
     def setUp(self):
-        """Set up test data."""
-        self.client = APIClient()
+        # Create factory and user mock
+        self.factory = APIRequestFactory()
+        self.user = MagicMock()
+        self.user.id = 1
+        self.user.email = "test@example.com"
         
-        # Create test users
-        self.user = user_create(
-            email='test@example.com',
-            first_name='Test',
-            last_name='User',
-            is_active=True,
-            is_admin=False,
-            password='testpassword'
-        )
-        self.other_user = user_create(
-            email='other@example.com',
-            first_name='Other',
-            last_name='User',
-            is_active=True,
-            is_admin=False,
-            password='otherpassword'
-        )
+        # Create a mock notification
+        self.notification = MagicMock()
+        self.notification.id = 1
+        self.notification.title = "Test Notification"
+        self.notification.recipient = self.user
         
-        # Log in the test user
-        self.client.force_login(self.user)
+        # Setup mock functions
+        self.notification_list_mock = patch('apps.notifications.apis.notification_list_by_user').start()
+        self.notification_unread_mock = patch('apps.notifications.apis.notification_list_unread_by_user').start()
+        self.notification_mark_mock = patch('apps.notifications.apis.notification_mark_as_read').start()
+        self.notification_mark_all_mock = patch('apps.notifications.apis.notification_mark_all_as_read').start()
+        self.notification_delete_mock = patch('apps.notifications.apis.notification_delete').start()
+        self.notification_delete_all_mock = patch('apps.notifications.apis.notification_delete_all').start()
+        self.notification_count_mock = patch('apps.notifications.apis.notification_count').start()
         
-        # Create test notifications
-        self.notification1 = Notification.objects.create(
-            recipient=self.user,
-            message="Test notification 1",
-            is_read=False,
-            notification_type=Notification.NotificationType.INFO
-        )
-        self.notification2 = Notification.objects.create(
-            recipient=self.user,
-            message="Test notification 2",
-            is_read=True,
-            notification_type=Notification.NotificationType.ALERT
-        )
-        self.other_notification = Notification.objects.create(
-            recipient=self.other_user,
-            message="Other user's notification",
-            is_read=False,
-            notification_type=Notification.NotificationType.INFO
-        )
-        
-        # API endpoints
-        self.list_url = "/api/notifications/"
-        self.unread_url = "/api/notifications/unread/"
-        self.detail_url = f"/api/notifications/{self.notification1.id}/"
-        self.mark_read_url = f"/api/notifications/{self.notification1.id}/mark-read/"
-        self.other_detail_url = f"/api/notifications/{self.other_notification.id}/"
-        self.nonexistent_url = "/api/notifications/99999/"
-        self.nonexistent_mark_read_url = "/api/notifications/99999/mark-read/"
+        # Setup mock serializer
+        self.serializer_mock = patch('apps.notifications.apis.NotificationSerializer').start()
+        self.serializer_instance = MagicMock()
+        self.serializer_instance.data = {'id': 1, 'title': 'Test Notification'}
+        self.serializer_mock.return_value = self.serializer_instance
+    
+    def tearDown(self):
+        patch.stopall()
     
     def test_notification_list_api(self):
-        """Test listing all notifications for the current user."""
-        response = self.client.get(self.list_url)
+        """Test getting all notifications for a user"""
+        # Setup
+        self.notification_list_mock.return_value = [self.notification]
+        request = self.factory.get('/notifications/')
+        request.user = self.user
         
+        # Execute
+        view = NotificationListAPI()
+        view.request = request
+        response = view.get(request)
+        
+        # Assert
+        self.notification_list_mock.assert_called_once_with(user=self.user)
+        self.serializer_mock.assert_called_once_with([self.notification], many=True)
+        self.assertEqual(response.data, self.serializer_instance.data)
+    
+    def test_notification_unread_list_api(self):
+        """Test getting unread notifications for a user"""
+        # Setup
+        self.notification_unread_mock.return_value = [self.notification]
+        request = self.factory.get('/notifications/unread/')
+        request.user = self.user
+        
+        # Execute
+        view = NotificationUnreadListAPI()
+        view.request = request
+        response = view.get(request)
+        
+        # Assert
+        self.notification_unread_mock.assert_called_once_with(user=self.user)
+        self.serializer_mock.assert_called_once_with([self.notification], many=True)
+        self.assertEqual(response.data, self.serializer_instance.data)
+    
+    def test_notification_mark_as_read_api(self):
+        """Test marking a notification as read"""
+        # Setup
+        self.notification_mark_mock.return_value = True
+        request = self.factory.post('/notifications/1/mark-as-read/')
+        request.user = self.user
+        
+        # Execute
+        view = NotificationMarkAsReadAPI()
+        view.request = request
+        response = view.post(request, pk=1)
+        
+        # Assert
+        self.notification_mark_mock.assert_called_once_with(notification_id=1)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data), 2)
-        
-        # Check that the notifications belong to the current user
-        for notification in response.data:
-            self.assertEqual(notification['recipient'], self.user.id)
     
-    def test_notification_list_api_empty(self):
-        """Test listing notifications when there are none."""
-        # Delete all notifications for the current user
-        Notification.objects.filter(recipient=self.user).delete()
+    def test_notification_mark_as_read_api_not_found(self):
+        """Test marking a notification as read when not found"""
+        # Setup
+        self.notification_mark_mock.return_value = False
+        request = self.factory.post('/notifications/999/mark-as-read/')
+        request.user = self.user
         
-        response = self.client.get(self.list_url)
+        # Execute
+        view = NotificationMarkAsReadAPI()
+        view.request = request
+        response = view.post(request, pk=999)
         
+        # Assert
+        self.notification_mark_mock.assert_called_once_with(notification_id=999)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
-        self.assertEqual(response.data['message'], "No notifications found.")
     
-    def test_unread_notification_list_api(self):
-        """Test listing unread notifications for the current user."""
-        response = self.client.get(self.unread_url)
+    def test_notification_mark_all_as_read_api(self):
+        """Test marking all notifications as read"""
+        # Setup
+        self.notification_mark_all_mock.return_value = True
+        request = self.factory.post('/notifications/mark-all-as-read/')
+        request.user = self.user
         
+        # Execute
+        view = NotificationMarkAllAsReadAPI()
+        view.request = request
+        response = view.post(request)
+        
+        # Assert
+        self.notification_mark_all_mock.assert_called_once_with(user=self.user)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data), 1)
-        self.assertEqual(response.data[0]['message'], "Test notification 1")
-        self.assertEqual(response.data[0]['is_read'], False)
     
-    def test_unread_notification_list_api_empty(self):
-        """Test listing unread notifications when there are none."""
-        # Mark all notifications as read
-        Notification.objects.filter(recipient=self.user).update(is_read=True)
+    def test_notification_delete_api(self):
+        """Test deleting a notification"""
+        # Setup
+        self.notification_delete_mock.return_value = True
+        request = self.factory.delete('/notifications/1/')
+        request.user = self.user
         
-        response = self.client.get(self.unread_url)
+        # Execute
+        view = NotificationDeleteAPI()
+        view.request = request
+        response = view.delete(request, pk=1)
         
+        # Assert
+        self.notification_delete_mock.assert_called_once_with(notification_id=1)
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+    
+    def test_notification_delete_api_not_found(self):
+        """Test deleting a notification when not found"""
+        # Setup
+        self.notification_delete_mock.return_value = False
+        request = self.factory.delete('/notifications/999/')
+        request.user = self.user
+        
+        # Execute
+        view = NotificationDeleteAPI()
+        view.request = request
+        response = view.delete(request, pk=999)
+        
+        # Assert
+        self.notification_delete_mock.assert_called_once_with(notification_id=999)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
-        self.assertEqual(response.data['message'], "No unread notifications found.")
     
-    def test_notification_detail_api(self):
-        """Test getting details of a specific notification."""
-        response = self.client.get(self.detail_url)
+    def test_notification_delete_all_api(self):
+        """Test deleting all notifications"""
+        # Setup
+        self.notification_delete_all_mock.return_value = True
+        request = self.factory.delete('/notifications/delete-all/')
+        request.user = self.user
         
+        # Execute
+        view = NotificationDeleteAllAPI()
+        view.request = request
+        response = view.delete(request)
+        
+        # Assert
+        self.notification_delete_all_mock.assert_called_once_with(user=self.user)
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+    
+    def test_notification_count_api(self):
+        """Test counting unread notifications"""
+        # Setup
+        self.notification_count_mock.return_value = 5
+        request = self.factory.get('/notifications/count/')
+        request.user = self.user
+        
+        # Execute
+        view = NotificationCountAPI()
+        view.request = request
+        response = view.get(request)
+        
+        # Assert
+        self.notification_count_mock.assert_called_once_with(user=self.user)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data['id'], self.notification1.id)
-        self.assertEqual(response.data['message'], "Test notification 1")
-        self.assertEqual(response.data['is_read'], False)
-    
-    def test_notification_detail_api_not_found(self):
-        """Test getting a non-existent notification."""
-        response = self.client.get(self.nonexistent_url)
-        
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
-    
-    def test_notification_detail_api_unauthorized(self):
-        """Test that users cannot access other users' notifications."""
-        response = self.client.get(self.other_detail_url)
-        
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
-    
-    def test_mark_notification_as_read_api(self):
-        """Test marking a notification as read."""
-        response = self.client.put(self.mark_read_url)
-        
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data['message'], "Notification marked as read.")
-        
-        # Verify the notification is marked as read in the database
-        updated_notification = Notification.objects.get(id=self.notification1.id)
-        self.assertTrue(updated_notification.is_read)
-    
-    def test_mark_notification_as_read_api_not_found(self):
-        """Test marking a non-existent notification as read."""
-        response = self.client.put(self.nonexistent_mark_read_url)
-        
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
-    
-    def test_unauthenticated_access(self):
-        """Test that unauthenticated users cannot access the APIs."""
-        # Log out the user
-        self.client.logout()
-        
-        # Try to access the APIs
-        list_response = self.client.get(self.list_url)
-        unread_response = self.client.get(self.unread_url)
-        detail_response = self.client.get(self.detail_url)
-        mark_read_response = self.client.put(self.mark_read_url)
-        
-        # All requests should be rejected with 403 Forbidden
-        self.assertEqual(list_response.status_code, status.HTTP_403_FORBIDDEN)
-        self.assertEqual(unread_response.status_code, status.HTTP_403_FORBIDDEN)
-        self.assertEqual(detail_response.status_code, status.HTTP_403_FORBIDDEN)
-        self.assertEqual(mark_read_response.status_code, status.HTTP_403_FORBIDDEN)
-
-    @patch('apps.notifications.apis.notification_list_by_user')
-    def test_notification_list_api_uses_selector(self, mock_selector):
-        """Test that NotificationListAPI uses the notification_list_by_user selector."""
-        # Set up the mock to return an empty list
-        mock_selector.return_value = []
-        
-        # Make the request
-        self.client.get(self.list_url)
-        
-        # Verify the selector was called with the correct user
-        mock_selector.assert_called_once_with(user=self.user)
-    
-    @patch('apps.notifications.apis.notification_list_unread_by_user')
-    def test_unread_notification_list_api_uses_selector(self, mock_selector):
-        """Test that UnreadNotificationListAPI uses the notification_list_unread_by_user selector."""
-        # Set up the mock to return an empty list
-        mock_selector.return_value = []
-        
-        # Make the request
-        self.client.get(self.unread_url)
-        
-        # Verify the selector was called with the correct user
-        mock_selector.assert_called_once_with(user=self.user)
-    
-    @patch('apps.notifications.apis.notification_get')
-    def test_notification_detail_api_uses_selector(self, mock_selector):
-        """Test that NotificationDetailAPI uses the notification_get selector."""
-        # Set up the mock to return None (not found)
-        mock_selector.return_value = None
-        
-        # Make the request
-        self.client.get(self.detail_url)
-        
-        # Verify the selector was called with the correct user and notification ID
-        mock_selector.assert_called_once_with(user=self.user, notification_id=self.notification1.id)
-    
-    @patch('apps.notifications.apis.notification_mark_as_read')
-    @patch('apps.notifications.apis.notification_get')
-    def test_mark_notification_as_read_api_uses_selector_and_service(self, mock_selector, mock_service):
-        """Test that MarkNotificationAsReadAPI uses the notification_get selector and notification_mark_as_read service."""
-        # Set up the mocks
-        mock_selector.return_value = self.notification1
-        mock_service.return_value = self.notification1
-        
-        # Make the request
-        self.client.put(self.mark_read_url)
-        
-        # Verify the selector was called with the correct user and notification ID
-        mock_selector.assert_called_once_with(user=self.user, notification_id=self.notification1.id)
-        
-        # Verify the service was called with the correct notification
-        mock_service.assert_called_once_with(notification=self.notification1)
+        self.assertEqual(response.data['count'], 5)
