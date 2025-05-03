@@ -1,12 +1,9 @@
 from django.utils import timezone
 from django.contrib.contenttypes.models import ContentType
-from django.template.loader import render_to_string
 from typing import List, Optional
 from .models import Notification
 from apps.notification_preferences.models import UserNotificationPreference
-from apps.emails.models import Email
-from apps.emails.services import email_send
-from apps.emails.tasks import email_send as email_send_task
+from apps.emails.services import send_notification_email
 
 def get_user_preferences(user):
     """
@@ -25,17 +22,13 @@ def should_send_notification(user, notification_type: str, channel: str) -> bool
     if not preferences:
         return True  # Default to True if no preferences
 
-    # Map notification types to preference fields
-    type_to_preference = {
-        'post': 'post_notifications',
-        'event': 'event_updates',
-        'announcement': 'announcements',
-    }
-
-    # Check if user has  this type of notification
-    if notification_type in type_to_preference:
-        if not getattr(preferences, type_to_preference[notification_type], True):
-            return False
+    # Check if user has this type of notification
+    if notification_type == 'post' and not getattr(preferences, 'post_notifications', True):
+        return False
+    if notification_type == 'event' and not getattr(preferences, 'event_updates', True):
+        return False
+    if notification_type == 'announcement' and not getattr(preferences, 'announcements', True):
+        return False
 
     # Check if user has  this channel
     if channel == 'email' and not preferences.email_notifications:
@@ -44,30 +37,6 @@ def should_send_notification(user, notification_type: str, channel: str) -> bool
         return False
 
     return True
-
-def send_notification_email(notification: Notification) -> Email:
-    """
-    Send a notification via email using the notification template.
-    """
-    # Render the email template
-    html = render_to_string(
-        "notifications/email/notification.html",
-        {"notification": notification}
-    )
-    
-    # Create email record
-    email = Email.objects.create(
-        to=notification.recipient.email,
-        subject=notification.title,
-        html=html,
-        plain_text=notification.message,
-        status=Email.Status.SENDING,
-    )
-    
-    # Send email asynchronously
-    email_send_task.delay(email.id)
-    
-    return email
 
 def notification_create(*, 
         recipient, 
@@ -86,7 +55,7 @@ def notification_create(*,
     # Prepare notification data
     notification_data = {
         'recipient': recipient,
-        'title': title or message[:50] + ('...' if len(message) > 50 else ''),
+        'title': title or (message[:50] + ('...' if len(message) > 50 else '')),
         'message': message,
         'notification_type': notification_type,
         'channel': channel,
