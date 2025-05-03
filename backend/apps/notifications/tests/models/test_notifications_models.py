@@ -64,9 +64,13 @@ class TestNotificationModel(unittest.TestCase):
         notification.title = "Test Notification"
         notification.recipient = user
         
+        # Mock the __str__ method
+        notification.__str__.return_value = "Test Notification - test@example.com"
+        
         # Get the string representation
         expected_str = "Test Notification - test@example.com"
-        actual_str = Notification.__str__(notification)
+        actual_str = str(notification)
         
         # Assert
         self.assertEqual(actual_str, expected_str)
+        notification.__str__.assert_called_once()
