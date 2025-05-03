@@ -1,163 +1,162 @@
-import Layout from "@/components/core/Layout";
-import { useProfile, useUpdateProfile, useCreateProfile, useProfileChoices } from '@/api/profile';
-import { useState, useEffect } from "react";
 import { useAuth } from "@/components/auth/AuthProvider";
-import { toast } from 'sonner';
-import api from "@/api/apiClient";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Badge } from "@/components/ui/badge";
-import { Spinner } from "@/components/ui/spinner";
-import { Search, Filter, User } from "lucide-react";
-import PageHeader from "@/components/core/PageHeader";
-import ProfileCard from "@/components/profile/ProfileCard";
-import ProfileRow from "@/components/profile/ProfileRow";
+import FeaturedProfileCard from "@/components/profile/FeaturedProfileCard.tsx";
+import Layout from "@/components/core/Layout.tsx";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar.tsx";
+import { nameToAvatarFallback } from "@/lib/utils.ts";
+import profileConfig from "@/components/profile/ProfileStyling.tsx";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs.tsx";
+import { FileText, UserPen, Contact } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button.tsx";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card.tsx";
 
-type ProfileFormData = {
-  gender?: string;
-  hobbies?: string;
-  bio?: string;
-  website_url?: string;
-  github_url?: string;
-  linkedin_url?: string;
-};
-
-type RowItem = {
-  id: number;
-  label: string;
-  key: keyof ProfileFormData;
-  value: string;
-  options?: [string, string][];
-  inputType?: 'select' | 'input' | 'textarea';
+// Mock function to simulate API call (replace with actual API call)
+const fetchPosts = async () => {
+  // Replace this with the actual backend API endpoint
+  return [
+    { id: 1, title: "Post 1", content: "This is the first post", author: "James Franklin", avatar: "/placeholder.svg" },
+    { id: 2, title: "Post 2", content: "This is the second post", author: "James Franklin", avatar: "/placeholder.svg" },
+    { id: 3, title: "Post 3", content: "This is the third post", author: "James Franklin", avatar: "/placeholder.svg" },
+    // Add more posts
+  ];
 };
 
 export default function ProfilePage() {
-  const { user, isLoading: authLoading } = useAuth();
-  const { data: profileChoices } = useProfileChoices();
-  const { data: profile, isLoading: profileLoading, error } = useProfile({ enabled: !!user && !authLoading });
-  const [formData, setFormData] = useState<ProfileFormData>({});
-  const [dirtyFields, setDirtyFields] = useState<Set<keyof ProfileFormData>>(new Set());
-
-  const isLoading = authLoading || profileLoading;
+  const { user } = useAuth();
+  const [posts, setPosts] = useState<any[]>([]); // Store posts from backend
 
   useEffect(() => {
-    if (user && !authLoading) {
-      api.get('/profile/')
-        .then(response => setFormData(response.data))
-        .catch(error => {
-          toast.error("Failed to load profile");
-          console.error(error);
-        });
-    }
-  }, [user, authLoading]);
+    // Fetch posts from the backend (simulated here with fetchPosts function)
+    const getPosts = async () => {
+      const postsData = await fetchPosts();
+      setPosts(postsData);
+    };
 
-  const handleChange = (key: keyof ProfileFormData, value: string) => {
-    setFormData(prev => ({ ...prev, [key]: value }));
-    setDirtyFields(prev => new Set(prev).add(key));
+    getPosts();
+  }, []);
+
+  const profile = {
+    first_name: user?.first_name ?? "User",
+    avatar_url: "",
   };
 
-  const handleSave = async () => {
-    if (!user?.id) return;
-
-    try {
-      const changes = Array.from(dirtyFields).reduce((acc, key) => {
-        acc[key] = formData[key];
-        return acc;
-      }, {} as Record<string, any>);
-
-      if (Object.keys(changes).length === 0) {
-        toast.info("No changes to save");
-        return;
-      }
-
-      await api.patch('/profile/', changes);
-      toast.success("Profile updated successfully!");
-      setDirtyFields(new Set());
-    } catch (error) {
-      toast.error("Failed to update profile");
-      console.error(error);
-    }
-  };
-
-  const rows: RowItem[] = [
-    { id: 1, label: "Gender", key: "gender", value: formData.gender || "", options: profileChoices ? Object.entries(profileChoices.gender_choices) : [], inputType: 'select' },
-    { id: 2, label: "Hobbies", key: "hobbies", value: formData.hobbies || "", options: profileChoices ? Object.entries(profileChoices.hobby_choices) : [], inputType: 'select' },
-    { id: 3, label: "Bio", key: "bio", value: formData.bio || "", inputType: 'textarea' },
-    { id: 4, label: "Website", key: "website_url", value: formData.website_url || "", inputType: 'input' },
-    { id: 5, label: "GitHub", key: "github_url", value: formData.github_url || "", inputType: 'input' },
-    { id: 6, label: "LinkedIn", key: "linkedin_url", value: formData.linkedin_url || "", inputType: 'input' },
-  ];
-
-  const hasChanges = dirtyFields.size > 0;
-
-  if (isLoading) {
-    return (
-      <Layout>
-        <main className="container px-4 py-6 mx-auto">
-          <PageHeader
-            title="Profile"
-            description="Update your basic information and links"
-          />
-          <Spinner className="mt-8" />
-        </main>
-      </Layout>
-    );
-  }
+  const style = profileConfig["Default"];
 
   return (
     <Layout>
-      <main className="container px-4 py-6 mx-auto space-y-10">
-        {/* Page header */}
-        <PageHeader
-          title={`Welcome, ${user?.first_name ?? user?.subject ?? user?.email ?? "User"}`}
-          description="Update your profile details and social links."
-        />
+      {/* Profile Banner */}
+      <div className={`relative h-48 md:h-64 bg-gradient-to-r ${style.bannerGradient}`}>
+        <div className="absolute inset-0 flex items-center justify-center opacity-20">
+          {style.icon}
+        </div>
+        <div className="absolute bottom-0 left-0 w-full">
+          <div className="container px-4 mx-auto">
+            <div className="relative -bottom-12 md:-bottom-8 flex items-center gap-4">
+              <Avatar className="w-24 h-24 md:w-32 md:h-32 border-4 border-white shadow-lg">
+                <AvatarImage src={profile.avatar_url} alt={profile.first_name} />
+                <AvatarFallback className={`${style.avatarBg} text-white text-2xl`}>
+                  {nameToAvatarFallback(profile.first_name)}
+                </AvatarFallback>
+              </Avatar>
+              <h1 className="text-3xl font-bold text-white drop-shadow-md mb-1 md:mb-2">
+                {profile.first_name}
+              </h1>
+            </div>
+          </div>
+        </div>
+      </div>
 
-        {/* Profile Card Preview */}
-        <div className="mb-8">
-          <h2 className="text-xl font-semibold mb-4">Your Profile Preview</h2>
-          <ProfileCard
-            profile={{
-              first_name: user?.first_name ?? "User",
-              gender: formData.gender || "",
-              hobbies: formData.hobbies || "",
-              bio: formData.bio || "",
-              website_url: formData.website_url || "",
-              github_url: formData.github_url || "",
-              linkedin_url: formData.linkedin_url || "",
-            }}
-            onEdit={() => window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' })}
-          />
+      <main className="container px-4 py-6 mx-auto mt-12 space-y-6">
+        <FeaturedProfileCard
+          profile={profile}
+          onEdit={() => window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" })}
+        />
+      </main>
+
+      <div className="relative container px-4 mx-auto -mt-20">
+        <div className="absolute right-0 top-0 w-64">
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-base">Contact</CardTitle>
+            </CardHeader>
+            <CardContent className="text-sm space-y-1">
+              <p><strong>Email:</strong> user@example.com</p>
+              <p><strong>Phone:</strong> +44 123 456 789</p>
+              <p><strong>Location:</strong> Bristol, UK</p>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+
+      {/* Tabs for Posts, Edit Profile, Friends */}
+      <Tabs defaultValue="posts" className="mb-8 mt-16">
+        <div className="container px-4 mx-auto mb-4">
+          <TabsList className="w-full md:w-auto grid grid-cols-3 md:inline-flex h-auto p-0 bg-transparent gap-2 justify-center">
+            <TabsTrigger
+              value="posts"
+              className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-md"
+            >
+              <FileText className="w-4 h-4 mr-2" />
+              Posts
+            </TabsTrigger>
+            <TabsTrigger
+              value="edit"
+              className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-md"
+            >
+              <UserPen className="w-4 h-4 mr-2" />
+              Edit Profile
+            </TabsTrigger>
+            <TabsTrigger
+              value="friends"
+              className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-md"
+            >
+              <Contact className="w-4 h-4 mr-2" />
+              Friends
+            </TabsTrigger>
+          </TabsList>
         </div>
 
-        {/* Editable Fields */}
-        <div className="mb-8 space-y-6">
-          <h2 className="text-xl font-semibold">Edit Your Information</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {rows.map(row => (
-              <ProfileRow
-                key={row.id}
-                row={row}
-                onChange={handleChange}
-                options={row.options}
-                inputType={row.inputType}
-                isDirty={dirtyFields.has(row.key)}
-              />
+        {/* Tabs Content */}
+        <TabsContent value="posts" className="mt-6">
+        <div className="container px-4 mx-auto space-y-4 mt-20">
+            <h2 className="text-xl font-semibold mb-4">Your Posts</h2>
+            {posts.map((post) => (
+              <Card key={post.id}>
+                <CardHeader>
+                  <div className="flex items-center gap-2">
+                    <Avatar className="w-8 h-8">
+                      <AvatarImage src={post.avatar} alt={post.author} />
+                      <AvatarFallback>{nameToAvatarFallback(post.author)}</AvatarFallback>
+                    </Avatar>
+                    <div>
+                      <span className="font-medium">{post.author}</span>
+                      <p className="text-xs text-muted-foreground">3h ago</p>
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <h3 className="text-lg font-semibold mb-2">{post.title}</h3>
+                  <p className="text-muted-foreground">{post.content}</p>
+                </CardContent>
+                <CardFooter className="flex justify-between">
+                  <div className="flex items-center gap-4">
+                    <Button variant="ghost" size="sm" className="flex items-center gap-1 h-8 px-2"></Button>
+                    <Button variant="ghost" size="sm" className="flex items-center gap-1 h-8 px-2"></Button>
+                  </div>
+                  <Button size="sm">View Post</Button>
+                </CardFooter>
+              </Card>
             ))}
           </div>
-          <div className="flex justify-end pt-4">
-            <Button
-              onClick={handleSave}
-              disabled={!hasChanges}
-              className={hasChanges ? "bg-black hover:bg-neutral-800" : "bg-gray-400 cursor-not-allowed"}
-            >
-              Save Changes
-            </Button>
-          </div>
-        </div>
-
-      </main>
+        </TabsContent>
+      </Tabs>
     </Layout>
   );
 }

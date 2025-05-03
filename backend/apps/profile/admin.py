@@ -4,18 +4,18 @@ from apps.profile.models import Profile
 
 @admin.register(Profile)
 class ProfileAdmin(admin.ModelAdmin):
-    list_display = ("user_email", "gender_display", "hobbies_display", "bio_preview")
+    list_display = ("user_email", "gender_display", "pronouns", "hobbies_display", "course", "year_of_study", "phone_number")
 
-    search_fields = ("user__email", "user__first_name", "user__last_name", "bio")
+    search_fields = ("user__email", "user__first_name", "user__last_name")
 
-    list_filter = ("gender",)
+    list_filter = ("gender", "pronouns", "course", "year_of_study")
 
     fieldsets = (
         ("User Link", {"fields": ("user",), "description": "Connected user account"}),
         (
             "Personal Information",
             {
-                "fields": ("gender", "hobbies", "bio"),
+                "fields": ("gender", "pronouns", "year_of_study", "course", "hobbies", "phone_number", "date_of_birth"),
             },
         ),
         (
@@ -43,10 +43,13 @@ class ProfileAdmin(admin.ModelAdmin):
 
     hobbies_display.short_description = "Hobbies"
 
-    def bio_preview(self, obj):
-        return obj.bio[:50] + "..." if obj.bio else ""
+    def course_display(self, obj):
+        return obj.get_course_display()
+    course_display.short_description = "Course"
 
-    bio_preview.short_description = "Bio Preview"
+    def year_of_study_display(self, obj):
+        return obj.get_year_of_study_display()
+    year_of_study_display.short_description = "Year"
 
     def has_add_permission(self, request):
         return True

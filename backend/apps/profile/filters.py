@@ -6,20 +6,14 @@ from django.db.models import Q
 
 class ProfileFilter(django_filters.FilterSet):
     gender = django_filters.ChoiceFilter(choices=Profile.GENDER_CHOICES)
+    pronouns = django_filters.ChoiceFilter(choices=Profile.PRONOUN_CHOICES)
     hobbies = django_filters.ChoiceFilter(choices=Profile.HOBBY_CHOICES)
-    has_bio = django_filters.BooleanFilter(method="filter_has_bio")
+    course = django_filters.ChoiceFilter(choices=Profile.COURSE_CHOICES)
+    year_of_study = django_filters.ChoiceFilter(choices=Profile.YEAR_CHOICES)
 
     class Meta:
         model = Profile
-        fields = ["gender", "hobbies"]
-
-    def filter_has_bio(self, queryset, name, value):
-        if value:
-            # Has bio: not empty and not null
-            return queryset.exclude(Q(bio__exact="") | Q(bio__isnull=True))
-        else:
-            # No bio: empty or null
-            return queryset.filter(Q(bio__exact="") | Q(bio__isnull=True))
+        fields = ["gender", "pronouns", "hobbies", "course", "year_of_study"]
 
 
 class ProfileListAPI(generics.ListAPIView):

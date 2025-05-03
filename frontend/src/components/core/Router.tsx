@@ -8,7 +8,7 @@ import CommunityCreatePage from "@/pages/communities/CommunityCreate.Page.tsx";
 import FeedPage from "@/pages/Feed.page.tsx";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute.tsx";
 import ProfilePage from "@/pages/profile/profile.page"; 
-import ProfileCreatePage from "@/pages/profile/ProfileCreatePage"; 
+//import ProfileCreatePage from "@/pages/profile/ProfileCreatePage"; 
 import TermsOfServicePage from "@/pages/legal/TermsOfService.page.tsx";
 
 const router = createBrowserRouter([
@@ -62,7 +62,7 @@ const router = createBrowserRouter([
     path: "*",
     element: <NotFoundPage />,
   },
-
+/*
   {
     path: "/profile/create",
     element: <ProtectedRoute />,
@@ -73,8 +73,7 @@ const router = createBrowserRouter([
       },
     ],
   },
-
-  
+   */ // 
   {
     path: "/profile",
     element: <ProtectedRoute />,
@@ -86,7 +85,7 @@ const router = createBrowserRouter([
     ],
   },
 
-]);
+]); 
 
 export function Router() {
   return <RouterProvider router={router} />;

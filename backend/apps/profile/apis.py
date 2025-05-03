@@ -20,9 +20,12 @@ class ProfileSerializer(serializers.ModelSerializer):
             "first_name",
             "last_name",
             "gender",
+            "pronouns",
             "hobbies",
-            "bio",
-            "website_url",
+            "course",
+            "year_of_study",
+            "phone_number",
+            "date_of_birth",
             "github_url",
             "linkedin_url",
         ]
@@ -75,12 +78,13 @@ class ProfileCreateView(ApiAuthMixin, APIView):
     
 class ProfileChoicesView(APIView):
     def get(self, request):
-        gender_choices = dict(Profile.GENDER_CHOICES)
-        hobby_choices = dict(Profile.HOBBY_CHOICES)
         return Response(
             {
-                "gender_choices": gender_choices,
-                "hobby_choices": hobby_choices
+                "gender_choices": dict(Profile.GENDER_CHOICES),
+                "hobby_choices": dict(Profile.HOBBY_CHOICES),
+                "pronoun_choices": dict(Profile.PRONOUN_CHOICES),
+                "course_choices": dict(Profile.COURSE_CHOICES),
+                "year_choices": dict(Profile.YEAR_CHOICES),
             },
             status=status.HTTP_200_OK
         )
