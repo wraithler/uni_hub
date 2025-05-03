@@ -15,6 +15,7 @@ from apps.core.exceptions import ApplicationError
 from apps.emails.models import Email
 from apps.emails.tasks import email_send as email_send_task
 from apps.users.models import BaseUser
+from apps.notifications.models import Notification
 
 logger = get_task_logger(__name__)
 
@@ -98,4 +99,29 @@ def verification_email_create(user: BaseUser) -> Email:
     transaction.on_commit(
         (lambda email_id: lambda: email_send_task.delay(email_id))(email.id)
     )
+    return email
+
+
+def send_notification_email(notification: Notification) -> Email:
+    """
+    Send a notification via email using the notification template.
+    """
+    # Render the email template
+    html = render_to_string(
+        "emails/notifications-email.html",
+        {"notification": notification}
+    )
+    
+    # Create email record
+    email = Email.objects.create(
+        to=notification.recipient.email,
+        subject=notification.title,
+        html=html,
+        plain_text=notification.message,
+        status=Email.Status.SENDING,
+    )
+    
+    # Send email asynchronously
+    email_send_task.delay(email.id)
+    
     return email
