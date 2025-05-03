@@ -1,3 +1,5 @@
+from django.apps import AppConfig
+
 class NotificationsConfig(AppConfig):
     default_auto_field = "django.db.models.BigAutoField"
     name = "apps.notifications"
@@ -5,4 +7,4 @@ class NotificationsConfig(AppConfig):
     
     def ready(self):
         """Connect signals when the app is ready."""
-        import apps.notifications.signals  
+        import apps.notifications.signals
