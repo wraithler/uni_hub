@@ -3,7 +3,7 @@ import { CircleCheck, UserCircle } from "lucide-react";
 import FeedCard from "@/components/feed/FeedCard.tsx";
 import React from "react";
 import EventCard from "@/components/events/EventCard.tsx";
-import { useAuth } from "@/components/auth/AuthProvider.tsx";
+import { useAuth } from "@/components/auth/SessionAuthProvider";
 import { useFeed } from "@/api/feed/useFeed.ts";
 import { FeedItem } from "@/api/feed/feedTypes.ts";
 import { FeedFilters } from "@/components/feed/FilteredFeed.tsx";

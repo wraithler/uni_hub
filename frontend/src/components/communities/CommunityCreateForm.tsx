@@ -49,7 +49,7 @@ import {
 import {Navigate, useNavigate} from "react-router-dom";
 import FeaturedCommunityCard from "@/components/communities/FeaturedCommunityCard.tsx";
 import {CommunityCard} from "@/components/communities/CommunityCard.tsx";
-import {useAuth} from "@/components/auth/AuthProvider.tsx";
+import {useAuth} from "@/components/auth/SessionAuthProvider.tsx";
 import {useCommunityCreate} from "@/api/communities/useCommunityCreate.ts";
 import {RadioGroup, RadioGroupItem} from "@/components/ui/radio-group.tsx";
 import {toast} from "sonner";

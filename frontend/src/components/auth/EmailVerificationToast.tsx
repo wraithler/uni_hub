@@ -1,4 +1,4 @@
-import { useAuth } from "@/components/auth/AuthProvider.tsx";
+import { useAuth } from "@/components/auth/SessionAuthProvider";
 import { useEffect, useRef } from "react";
 import { toast } from "sonner";
 

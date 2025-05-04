@@ -37,8 +37,6 @@ THIRD_PARTY_APPS = [
     "django_filters",
     "corsheaders",
     "django_extensions",
-    "rest_framework_simplejwt",
-    "rest_framework_simplejwt.token_blacklist",
     "storages",
 ]
 
@@ -60,7 +58,7 @@ MIDDLEWARE = [
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
-    # "django.middleware.csrf.CsrfViewMiddleware",
+    "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
@@ -134,9 +132,9 @@ STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 REST_FRAMEWORK = {
     "DEFAULT_FILTER_BACKENDS": ("django_filters.rest_framework.DjangoFilterBackend",),
-    "DEFAULT_AUTHENTICATION_CLASSES": (
-        "rest_framework_simplejwt.authentication.JWTAuthentication",
-    ),
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        'rest_framework.authentication.SessionAuthentication',
+    ],
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
     'EXCEPTION_HANDLER': "apps.errors.exception_handler.hacksoft_proposed_exception_handler"
 }
@@ -152,7 +150,6 @@ FIXTURE_DIRS = [os.path.join(BASE_DIR, "config", "fixtures")]
 from config.settings.celery import *  # noqa
 from config.settings.cors import *  # noqa
 from config.settings.emails import *  # noqa
-from config.settings.jwt import *  # noqa
 from config.settings.storage import *  # noqa
 from config.settings.sentry import *  # noqa
 from config.settings.sessions import *  # noqa

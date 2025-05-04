@@ -1,4 +1,4 @@
-import { useAuth } from "../auth/AuthProvider";
+import { useAuth } from "../auth/SessionAuthProvider";
 import { Button } from "../ui/button";
 import {
   DropdownMenu,

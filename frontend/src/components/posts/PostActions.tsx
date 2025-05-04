@@ -10,7 +10,7 @@ import { Trash2, MessageCircleWarning, MoreHorizontal } from "lucide-react";
 import ActionConfirmationDialog from "@/components/common/ActionConfirmationDialog";
 import { usePostDelete } from "@/api/posts/usePostDelete";
 import { Post } from "@/api/posts/postTypes.ts";
-import { useAuth } from "@/components/auth/AuthProvider.tsx";
+import { useAuth } from "@/components/auth/SessionAuthProvider";
 import { FeedItem } from "@/api/feed/feedTypes.ts";
 
 type PostActionsProps = {

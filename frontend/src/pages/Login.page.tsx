@@ -18,7 +18,7 @@ import { Button } from "../components/ui/button.tsx";
 import { LoginForm } from "@/components/auth/LoginForm.tsx";
 import { RegisterForm } from "@/components/auth/RegisterForm.tsx";
 import { Link, Navigate } from "react-router-dom";
-import { useAuth } from "@/components/auth/AuthProvider.tsx";
+import { useAuth } from "@/components/auth/SessionAuthProvider";
 
 export default function LoginPage() {
   const { user } = useAuth();
