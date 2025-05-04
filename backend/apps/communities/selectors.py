@@ -2,6 +2,7 @@ from datetime import timedelta
 from typing import Optional
 
 from django.db.models import QuerySet
+from django.http import Http404
 
 from apps.common.services import calculate_growth, counts_by_delta
 from apps.common.utils import get_object

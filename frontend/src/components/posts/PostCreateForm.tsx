@@ -21,7 +21,7 @@ import {
   FormMessage,
 } from "@/components/ui/form.tsx";
 import { useState } from "react";
-import { useAuth } from "@/components/auth/AuthProvider.tsx";
+import { useAuth } from "@/components/auth/SessionAuthProvider";
 import FileUpload from "@/components/files/FileUpload.tsx";
 import { toast } from "sonner";
 import axios from "axios";
@@ -51,20 +51,22 @@ export default function PostCreateForm() {
     if (error) {
       if (axios.isAxiosError(error)) {
         if (error.response?.data.extra?.reason) {
-          toast.error(
-            "Your post was flagged to be potential spam. If you think this is a mistake, contact support.",
-          );
-        } else {
-          toast.error(
-            "An error occurred while creating your post. Please try again.",
-          );
+          if (error.response.data.extra.reason === "spam") {
+            toast.error(
+              "Your post was flagged to be potential spam. If you think this is a mistake, contact support.",
+            );
+            setIsLoading(false);
+            return;
+          }
         }
-        setIsLoading(false);
       }
-      return;
+      toast.error(
+        "An error occurred while creating your post. Please try again.",
+      );
+    } else {
+      form.reset({ content: "" });
     }
 
-    form.reset({ content: "" });
     setIsLoading(false);
   };
 
