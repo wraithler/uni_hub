@@ -1,8 +1,16 @@
-import React, {ComponentType, createContext, FC, ReactNode, useContext, useEffect, useState} from "react";
+import React, {
+  ComponentType,
+  createContext,
+  FC,
+  ReactNode,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import { UserMe } from "@/api/users/userTypes.ts";
 import api from "@/api/apiClient.ts";
 import axios from "axios";
-import {Spinner} from "@/components/ui/spinner.tsx";
+import { Spinner } from "@/components/ui/spinner.tsx";
 
 type AuthResponseType = {
   success: boolean;
@@ -24,6 +32,8 @@ type SessionAuthContextType = {
   logout: () => Promise<AuthResponseType>;
   checkAuthStatus: () => Promise<void>;
   requestPasswordReset: (email: string) => Promise<AuthResponseType>;
+  sendVerificationEmail: () => Promise<void>;
+  verifyEmail: (uid: string, token: string) => Promise<void>;
 };
 
 const SessionAuthContext = createContext<SessionAuthContextType | null>(null);
@@ -152,6 +162,14 @@ export const SessionAuthProvider: React.FC<SessionAuthProviderProps> = ({
     }
   };
 
+  const sendVerificationEmail = async () => {
+    await api.get("/users/send-email-verification/");
+  };
+
+  const verifyEmail = async (uid: string, token: string) => {
+    await api.post("/users/verify-email/", { uid, token });
+  };
+
   const value: SessionAuthContextType = {
     user,
     loading,
@@ -162,9 +180,15 @@ export const SessionAuthProvider: React.FC<SessionAuthProviderProps> = ({
     logout,
     checkAuthStatus,
     requestPasswordReset,
+    sendVerificationEmail,
+    verifyEmail
   };
 
-  return <SessionAuthContext.Provider value={value}>{children}</SessionAuthContext.Provider>;
+  return (
+    <SessionAuthContext.Provider value={value}>
+      {children}
+    </SessionAuthContext.Provider>
+  );
 };
 
 export const useAuth = (): SessionAuthContextType => {
@@ -180,7 +204,7 @@ export function withAuth<P extends object>(Component: ComponentType<P>): FC<P> {
     const { isAuthenticated, loading } = useAuth();
 
     if (loading) {
-      return <Spinner />
+      return <Spinner />;
     }
 
     if (!isAuthenticated) {
@@ -188,6 +212,6 @@ export function withAuth<P extends object>(Component: ComponentType<P>): FC<P> {
       return null;
     }
 
-    return <Component {...props} />
+    return <Component {...props} />;
   };
 }
