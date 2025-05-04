@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button.tsx";
 import { Calendar, Home, MessageSquare, Users } from "lucide-react";
-import { useAuth } from "@/components/auth/AuthProvider.tsx";
+import { useAuth } from "@/components/auth/SessionAuthProvider";
 import { Link } from "react-router-dom";
 import AdminHeader from "@/components/core/AdminHeader.tsx";
 import UserDropdownMenu from "@/components/users/UserDropDownMenu.tsx";

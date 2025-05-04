@@ -1,4 +1,4 @@
-import { useAuth } from "@/components/auth/AuthProvider.tsx";
+import { useAuth } from "@/components/auth/SessionAuthProvider";
 import { Button } from "@/components/ui/button.tsx";
 import { Badge } from "../ui/badge.tsx";
 import { Shield } from "lucide-react";

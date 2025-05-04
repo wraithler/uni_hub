@@ -21,7 +21,7 @@ import {
   FormMessage,
 } from "@/components/ui/form.tsx";
 import { useState } from "react";
-import { useAuth } from "@/components/auth/AuthProvider.tsx";
+import { useAuth } from "@/components/auth/SessionAuthProvider";
 import FileUpload from "@/components/files/FileUpload.tsx";
 import { toast } from "sonner";
 import axios from "axios";

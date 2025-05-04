@@ -14,7 +14,7 @@ import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button.tsx";
 import { useState } from "react";
 import { Checkbox } from "@/components/ui/checkbox.tsx";
-import { useAuth } from "@/components/auth/AuthProvider.tsx";
+import { useAuth } from "@/components/auth/SessionAuthProvider";
 import { useNavigate } from "react-router-dom";
 
 const FormSchema = z

@@ -60,28 +60,9 @@ else:
 
 
 class AuthAPIView(APIView):
-    authentication_classes: Sequence[Type[BaseAuthentication]] = [
-        CsrfExemptedSessionAuthentication,
-        SessionAsHeaderAuthentication,
-        JWTAuthentication,
-    ]
-    permission_classes: PermissionClassesType = (IsAuthenticated,)
+    pass
+    # authentication_classes: Sequence[Type[BaseAuthentication]] = [
+    #     SessionAsHeaderAuthentication
+    # ]
+    # permission_classes: PermissionClassesType = (IsAuthenticated,)
 
-
-class SearchMixin(ListAPIView):
-    filter_backends = [DjangoFilterBackend, SearchFilter]
-    search_fields = []  # To be overridden in the child class
-
-    def get_queryset(self):
-        queryset = super().get_queryset()
-        search_query = self.request.query_params.get("search", None)
-
-        if search_query and self.search_fields:
-            query_filter = Q()
-
-            for field in self.search_fields:
-                query_filter |= Q(**{f"{field}__icontains": search_query})
-
-            queryset = queryset.filter(query_filter)
-
-        return queryset
