@@ -11,7 +11,6 @@ import TermsOfServicePage from "@/pages/legal/TermsOfService.page.tsx";
 import SendVerificationEmailPage from "@/pages/email-verification/SendVerificationEmail.page.tsx";
 import VerifyEmailPage from "@/pages/email-verification/VerifyEmail.page.tsx";
 import CommunityDashboardPage from "@/pages/communities/dashboard/CommunityDashboard.page.tsx";
-import PostPage from "@/pages/posts/Post.page.tsx";
 
 const router = createBrowserRouter([
   {
@@ -57,16 +56,6 @@ const router = createBrowserRouter([
       {
         path: "",
         element: <FeedPage />,
-      },
-    ],
-  },
-  {
-    path: "/posts/:id",
-    element: <ProtectedRoute />,
-    children: [
-      {
-        path: "",
-        element: <PostPage />,
       },
     ],
   },
