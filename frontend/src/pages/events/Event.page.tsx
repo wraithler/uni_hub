@@ -21,7 +21,7 @@ import { Button } from "@/components/ui/button";
 
 export default function EventPage() {
   const { id } = useParams();
-  const { data: event } = useEventDetail({ id: Number(id) });
+  const { data: event } = useEventDetail(Number(id));
 
   if (!event) return null;
 

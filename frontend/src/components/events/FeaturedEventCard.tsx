@@ -25,16 +25,17 @@ export default function FeaturedEventCard({ event }: FeaturedEventCardProps) {
         <CardDescription>{event.description}</CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="flex items-center text-sm text-muted-foreground gap-4 mb-3">
-          <div className="flex items-center gap-1">
-            <Calendar className="w-4 h-4" />
-            <span>{new Date(event.starts_at).toLocaleDateString()}</span>
-          </div>
-          <div className="flex items-center gap-1">
-            <MapPin className="w-4 h-4" />
-            <span>{event.location}</span>
-          </div>
+      <div className="flex flex-col text-sm text-muted-foreground gap-2 mb-3">
+        <div className="flex items-center gap-1">
+          <Calendar className="w-4 h-4" />
+          <span>{new Date(event.starts_at).toLocaleDateString()}</span>
         </div>
+        <div className="flex items-center gap-1">
+          <MapPin className="w-4 h-4" />
+          <span>{event.location}</span>
+        </div>
+      </div>
+
         {event.is_virtual_event && (
           <Badge variant="outline" className="text-xs">
             Virtual Event
