@@ -9,8 +9,12 @@ import {
 import { Calendar, Clock, MapPin } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar.tsx";
 import { Button } from "@/components/ui/button.tsx";
+import { Event } from "@/api/events/eventTypes.ts";
+import { formatTimestampRange } from "@/api";
 
 export default function EventUpcomingCard({ event }: { event: Event }) {
+  const { date, time } = formatTimestampRange(event.starts_at, event.ends_at);
+
   return (
     <Card className="overflow-hidden">
       <div className={`h-2 ${event.color}`}></div>
@@ -19,11 +23,11 @@ export default function EventUpcomingCard({ event }: { event: Event }) {
         <CardDescription>
           <div className="flex items-center gap-1 mt-2">
             <Calendar className="h-4 w-4 text-muted-foreground" />
-            <span>{event.starts_at}</span>
+            <span>{date}</span>
           </div>
           <div className="flex items-center gap-1 mt-1">
             <Clock className="h-4 w-4 text-muted-foreground" />
-            <span>{event.ends_at}</span>
+            <span>{time}</span>
           </div>
           <div className="flex items-center gap-1 mt-1">
             <MapPin className="h-4 w-4 text-muted-foreground" />

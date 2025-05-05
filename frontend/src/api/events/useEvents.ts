@@ -10,7 +10,7 @@ export function useEvents(params?: EventsQueryParameters) {
   };
 
   return useQuery({
-    queryKey: eventQueryKeys.all,
+    queryKey: [eventQueryKeys.all, params],
     queryFn: getEventsFn,
   });
 }

@@ -4,28 +4,28 @@ import { z } from "zod";
 import { useState } from "react";
 import {
   Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
-  CardDescription,
-  CardContent,
-  CardFooter,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
   Form,
+  FormControl,
   FormField,
   FormItem,
   FormLabel,
-  FormControl,
   FormMessage,
 } from "@/components/ui/form";
 import { ChevronRight } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
-import { useAuth } from "@/components/auth/AuthProvider";
+import { useAuth } from "@/components/auth/SessionAuthProvider";
 import { Navigate } from "react-router-dom";
 import { useEventCreate } from "@/api/events/useEventCreate";
-import FeaturedEventCard from "./FeaturedEventCard";
+import EventFeaturedCard from "./EventFeaturedCard.tsx";
 import CommunitiesCombobox from "@/components/communities/CommunitiesCombobox";
 
 const BasicInfoSchema = z.object({
@@ -272,7 +272,7 @@ export default function EventCreateForm() {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <FeaturedEventCard
+                <EventFeaturedCard
                   event={{
                     id: 0,
                     title: form.getValues("basic.title"),

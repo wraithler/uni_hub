@@ -16,7 +16,7 @@ interface FeaturedEventCardProps {
   event: Event;
 }
 
-export default function FeaturedEventCard({ event }: FeaturedEventCardProps) {
+export default function EventFeaturedCard({ event }: FeaturedEventCardProps) {
   return (
     <Card className="overflow-hidden flex flex-col">
       <div className="relative h-32 bg-gradient-to-r from-sky-500 to-blue-600" />

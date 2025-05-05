@@ -46,6 +46,8 @@ class EventListApi(APIView):
         id = serializers.IntegerField(required=False)
         name = serializers.CharField(required=False)
         description = serializers.CharField(required=False)
+        upcoming = serializers.BooleanField()
+        past = serializers.BooleanField()
 
     class OutputSerializer(serializers.ModelSerializer):
         class Meta:
