@@ -1,6 +1,6 @@
 import { PaginationResponse } from "@/api";
 import { User } from "@/api/users/userTypes.ts";
-import {Growth} from "@/api/commonTypes.ts";
+import { Growth } from "@/api/commonTypes.ts";
 
 type CommunityCategory = {
   id: number;
@@ -18,7 +18,7 @@ type Community = {
   contact_email: string;
   guidelines: string[];
   created_by?: User;
-  privacy?: string;
+  privacy?: "public" | "private" | "restricted" | string;
 
   // Images
   avatar_url?: string;
@@ -30,6 +30,9 @@ type Community = {
 
   // Per user
   is_member?: boolean;
+  is_admin?: boolean;
+  is_moderator?: boolean;
+  has_requested_to_join?: boolean;
 };
 
 type CommunityList = PaginationResponse & {
@@ -45,6 +48,6 @@ type CommunityDashboard = {
 
   member_growth: Growth[];
   engagement: any;
-}
+};
 
 export type { CommunityCategory, Community, CommunityList, CommunityDashboard };

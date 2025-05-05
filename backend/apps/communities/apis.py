@@ -2,7 +2,7 @@ from functools import partial
 
 from django.core.exceptions import PermissionDenied
 from django.http import Http404
-from rest_framework import serializers
+from rest_framework import serializers, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -14,7 +14,8 @@ from apps.communities.selectors import (
     community_list,
     community_dashboard_get,
 )
-from apps.communities.services import community_create, community_update, community_join
+from apps.communities.services import community_create, community_update, community_join, community_leave, \
+    community_join_request_create
 from apps.events.apis import EventListApi
 from apps.events.selectors import event_list
 
@@ -29,6 +30,10 @@ class CommunityDetailApi(APIView):
         member_count = serializers.SerializerMethodField()
         post_count = serializers.SerializerMethodField()
         is_member = serializers.SerializerMethodField()
+        has_requested_to_join = serializers.SerializerMethodField()
+        privacy = serializers.CharField()
+        is_moderator = serializers.SerializerMethodField()
+        is_admin = serializers.SerializerMethodField()
 
         def get_member_count(self, obj):
             return obj.memberships.count()
@@ -44,6 +49,15 @@ class CommunityDetailApi(APIView):
 
         def get_is_member(self, obj):
             return obj.is_member(self.context.get("request").user)
+
+        def get_has_requested_to_join(self, obj):
+            return obj.has_requested_to_join(self.context.get("request").user)
+
+        def get_is_moderator(self, obj):
+            return obj.is_moderator(self.context.get("request").user)
+
+        def get_is_admin(self, obj):
+            return obj.is_admin(self.context.get("request").user)
 
     def get(self, request, community_id):
         community = community_get(community_id)
@@ -189,7 +203,35 @@ class CommunityJoinApi(APIView):
 
         community_join(community=community, user=user)
 
-        return Response()
+        data = CommunityDetailApi.OutputSerializer(community, context={"request": request}).data
+        return Response(data=data, status=status.HTTP_200_OK)
+
+
+class CommunityLeaveApi(APIView):
+    def post(self, request, community_id):
+        community = community_get(community_id)
+
+        if community is None:
+            raise Http404
+
+        user = request.user
+
+        community_leave(community=community, user=user)
+
+        data = CommunityDetailApi.OutputSerializer(community, context={"request": request}).data
+        return Response(data=data, status=status.HTTP_200_OK)
+
+
+class CommunityRequestJoinApi(APIView):
+    def post(self, request, community_id):
+        community = community_get(community_id)
+
+        if community is None:
+            raise Http404
+
+        community_join_request_create(community=community, user=request.user)
+
+        return Response(status=status.HTTP_200_OK)
 
 
 class CommunityDashboardDetailApi(AuthAPIView):

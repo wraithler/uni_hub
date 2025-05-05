@@ -23,7 +23,7 @@ interface FeaturedCommunityCardProps {
   community: Community;
 }
 
-export default function FeaturedCommunityCard({
+export default function CommunityFeaturedCard({
   community,
 }: FeaturedCommunityCardProps) {
   const config = categoryConfig[community.category];

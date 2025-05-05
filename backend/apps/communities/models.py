@@ -77,6 +77,9 @@ class Community(BaseModel):
             .exists()
         )
 
+    def has_requested_to_join(self, user):
+        return self.join_requests.filter(user=user).exists()
+
 
 class CommunityMembership(BaseModel):
     id = models.AutoField(primary_key=True)

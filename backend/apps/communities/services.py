@@ -8,7 +8,7 @@ from apps.communities.models import (
     Community,
     CommunityInvitation,
     CommunityCategory,
-    CommunityGuidelines,
+    CommunityGuidelines, CommunityJoinRequest,
 )
 from apps.communities.selectors import community_category_list
 from apps.core.exceptions import ApplicationError
@@ -138,6 +138,14 @@ def community_join(*, community: Community, user: BaseUser) -> Community:
 
 
 @transaction.atomic
+def community_leave(*, community: Community, user: BaseUser):
+    if not community.is_member(user):
+        raise ApplicationError("User is not a member of this community")
+
+    community.memberships.filter(user=user).delete()
+
+
+@transaction.atomic
 def community_invitation_create(
     *, community: Community, user: BaseUser
 ) -> CommunityInvitation:
@@ -164,3 +172,16 @@ def community_tag_create(*, name: str) -> CommunityTag:
     tag = CommunityTag.objects.create(name=name)
 
     return tag
+
+
+@transaction.atomic
+def community_join_request_create(*, community: Community, user: BaseUser):
+    if community.is_member(user):
+        raise ApplicationError("User is already a member of this community")
+
+    if not community.privacy == "restricted":
+        raise ApplicationError("Community must be restricted")
+
+    community_join_request = CommunityJoinRequest.objects.create(community=community, user=user)
+
+    return community_join_request

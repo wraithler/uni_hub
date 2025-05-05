@@ -10,7 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select.tsx";
-import FeaturedCommunityCard from "@/components/communities/FeaturedCommunityCard.tsx";
+import CommunityFeaturedCard from "@/components/communities/CommunityFeaturedCard.tsx";
 import { CommunityCard } from "@/components/communities/CommunityCard.tsx";
 import Layout from "@/components/core/Layout.tsx";
 import PageHeader from "@/components/core/PageHeader.tsx";
@@ -92,7 +92,7 @@ export default function CommunitiesPage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {featuredCommunities.results.length > 0 ? (
               featuredCommunities.results.map((community: Community) => (
-                <FeaturedCommunityCard
+                <CommunityFeaturedCard
                   key={community.id}
                   community={community}
                 />

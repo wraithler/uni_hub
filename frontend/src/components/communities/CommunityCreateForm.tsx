@@ -47,7 +47,7 @@ import {
   AvatarImage,
 } from "@/components/ui/avatar.tsx";
 import { Navigate, useNavigate } from "react-router-dom";
-import FeaturedCommunityCard from "@/components/communities/FeaturedCommunityCard.tsx";
+import CommunityFeaturedCard from "@/components/communities/CommunityFeaturedCard.tsx";
 import { CommunityCard } from "@/components/communities/CommunityCard.tsx";
 import { useAuth } from "@/components/auth/SessionAuthProvider.tsx";
 import { useCommunityCreate } from "@/api/communities/useCommunityCreate.ts";
@@ -717,7 +717,7 @@ export default function CommunityCreateForm() {
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <FeaturedCommunityCard
+                  <CommunityFeaturedCard
                     community={{
                       id: 0,
                       name: form.getValues("basicInfo.name"),

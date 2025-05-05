@@ -1,4 +1,6 @@
 from django.http import Http404
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_protect
 from rest_framework import serializers, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -75,6 +77,7 @@ class EventListApi(APIView):
         )
 
 
+@method_decorator(csrf_protect, name="dispatch")
 class EventCreateApi(APIView):
     class InputSerializer(serializers.Serializer):
         name = serializers.CharField()
