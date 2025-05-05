@@ -19,11 +19,11 @@ from apps.events.services import (
 class EventDetailApi(APIView):
     class OutputSerializer(serializers.Serializer):
         id = serializers.IntegerField()
-        name = serializers.CharField()
+        title = serializers.CharField()
         description = serializers.CharField()
         starts_at = serializers.DateTimeField()
         ends_at = serializers.DateTimeField()
-        community = serializers.IntegerField()
+        # community = CommunityDetailApi.OutputSerializer()
         location = serializers.CharField()
         is_virtual_event = serializers.BooleanField()
         virtual_link = serializers.URLField()

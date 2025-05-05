@@ -4,6 +4,7 @@ from apps.friends.apis import (
     FriendRequestSendApi,
     FriendRequestListApi,
     FriendRequestRespondApi,
+    FriendListApi, 
 )
 
 urlpatterns = [
@@ -14,4 +15,5 @@ urlpatterns = [
         FriendRequestRespondApi.as_view(),
         name="respond-request",
     ),
+    path("friends/", FriendListApi.as_view(), name="friend-list"),  # 👈 New route
 ]
