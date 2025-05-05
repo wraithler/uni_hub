@@ -17,45 +17,49 @@ import {
   UserPen,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { NotificationBell } from "@/api/notifications/components";
 
 export default function UserDropdownMenu() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant="ghost">
-          <UserCircle className="w-4 h-4" />
-          <span>
-            {user?.first_name} {user?.last_name}
-          </span>
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-56">
-        <DropdownMenuLabel>My Account</DropdownMenuLabel>
-        <DropdownMenuSeparator />
-        <DropdownMenuGroup>
-          <DropdownMenuItem onClick={() => navigate("/profile")}>
-            <UserPen />
-            Profile
+    <div className="flex items-center gap-2">
+      <NotificationBell />
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="ghost">
+            <UserCircle className="w-4 h-4" />
+            <span>
+              {user?.first_name} {user?.last_name}
+            </span>
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent className="w-56">
+          <DropdownMenuLabel>My Account</DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          <DropdownMenuGroup>
+            <DropdownMenuItem onClick={() => navigate("/profile")}>
+              <UserPen />
+              Profile
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => navigate("/settings")}>
+              <Settings />
+              Settings
+            </DropdownMenuItem>
+          </DropdownMenuGroup>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem onClick={() => navigate("/support")}>
+            <MessageSquare />
+            Support
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => navigate("/settings")}>
-            <Settings />
-            Settings
+          <DropdownMenuSeparator />
+          <DropdownMenuItem onClick={logout}>
+            <LogOut />
+            Log out
           </DropdownMenuItem>
-        </DropdownMenuGroup>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={() => navigate("/support")}>
-          <MessageSquare />
-          Support
-        </DropdownMenuItem>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={logout}>
-          <LogOut />
-          Log out
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </div>
   );
 }
