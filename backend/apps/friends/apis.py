@@ -9,7 +9,7 @@ from apps.friends.services import (
     friend_request_accept,
     friend_request_decline,
 )
-from apps.friends.selectors import get_sent_friend_requests
+from apps.friends.selectors import get_sent_friend_requests, user_friend_list
 
 
 class FriendRequestSendApi(APIView):
@@ -42,7 +42,6 @@ class FriendRequestListApi(APIView):
 
     def get(self, request):
         friend_requests = get_sent_friend_requests(user_id=request.user.id)
-
         data = self.OutputSerializer(friend_requests, many=True).data
         return Response(data)
 
@@ -68,3 +67,16 @@ class FriendRequestRespondApi(APIView):
         else:
             friend_request_decline(request=friend_request)
             return Response({"status": "declined"})
+
+
+class FriendListApi(APIView):
+    class OutputSerializer(serializers.Serializer):
+        id = serializers.IntegerField(source="friend.id")
+        first_name = serializers.CharField(source="friend.first_name")
+        last_name = serializers.CharField(source="friend.last_name")
+        avatar_url = serializers.CharField(source="friend.avatar_url", allow_null=True)
+
+    def get(self, request):
+        friends = user_friend_list(user_id=request.user.id)
+        data = self.OutputSerializer(friends, many=True).data
+        return Response(data)
