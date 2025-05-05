@@ -32,19 +32,6 @@ export default function EventPage() {
           title={event.title}
           description={event.description}
         />
-
-        <div className="mb-8">
-          <div className="relative h-32 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-md" />
-          <div className="-mt-10 ml-6">
-            <Avatar className="w-20 h-20 border-4 border-white">
-              <AvatarImage src={event.avatar_url || undefined} alt={event.title} />
-              <AvatarFallback className="text-xl">
-                {nameToAvatarFallback(event.title)}
-              </AvatarFallback>
-            </Avatar>
-          </div>
-        </div>
-
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
           <div className="flex gap-2 flex-wrap items-center">
             {event.is_virtual_event && (
