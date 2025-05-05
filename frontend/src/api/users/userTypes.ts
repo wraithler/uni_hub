@@ -5,6 +5,7 @@ type User = {
   last_name: string;
   subject: string;
   avatar?: string;
+  bio?: string;
 };
 
 type UserStats = {

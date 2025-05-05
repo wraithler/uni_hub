@@ -13,7 +13,6 @@ import {
   Info,
   MapPin,
   MessageSquare,
-  Search,
   Users,
 } from "lucide-react";
 import PostListContainer from "@/components/posts/display/PostListContainer.tsx";
@@ -21,19 +20,12 @@ import { Button } from "@/components/ui/button.tsx";
 import {
   Card,
   CardContent,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card.tsx";
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "@/components/ui/avatar.tsx";
-import { Input } from "@/components/ui/input.tsx";
-import { Badge } from "@/components/ui/badge.tsx";
 import { Community } from "@/api/communities/communityTypes.ts";
 import EventListContainer from "@/components/events/EventListContainer.tsx";
+import UserListContainer from "@/components/users/display/UserListContainer.tsx";
 
 export default function CommunityContent({
   community,
@@ -92,105 +84,7 @@ export default function CommunityContent({
 
           {/* Members Tab */}
           <TabsContent value="members" className="mt-6">
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-xl font-semibold">Community Members</h2>
-              <div className="relative">
-                <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                <Input
-                  placeholder="Search members..."
-                  className="pl-9 w-[250px]"
-                />
-              </div>
-            </div>
-
-            <div className="mb-8">
-              <h3 className="text-lg font-semibold mb-4">Leadership Team</h3>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {[
-                  {
-                    name: "Emily Chen",
-                    role: "President",
-                    avatar: "/placeholder.svg",
-                    bio: "Computer Science senior specializing in AI and machine learning.",
-                  },
-                  {
-                    name: "Michael Rodriguez",
-                    role: "Vice President",
-                    avatar: "/placeholder.svg",
-                    bio: "Software Engineering junior with a passion for web development.",
-                  },
-                  {
-                    name: "Sarah Johnson",
-                    role: "Events Coordinator",
-                    avatar: "/placeholder.svg",
-                    bio: "Computer Science sophomore focusing on cybersecurity.",
-                  },
-                ].map((member, index) => (
-                  <Card key={index}>
-                    <CardHeader className="text-center pb-2">
-                      <Avatar className="w-20 h-20 mx-auto">
-                        <AvatarImage src={member.avatar} alt={member.name} />
-                        <AvatarFallback>
-                          {member.name
-                            .split(" ")
-                            .map((n) => n[0])
-                            .join("")}
-                        </AvatarFallback>
-                      </Avatar>
-                      <CardTitle className="mt-2 text-lg">
-                        {member.name}
-                      </CardTitle>
-                      <Badge variant="outline" className="mx-auto mt-1">
-                        {member.role}
-                      </Badge>
-                    </CardHeader>
-                    <CardContent className="text-center">
-                      <p className="text-sm text-muted-foreground">
-                        {member.bio}
-                      </p>
-                    </CardContent>
-                    <CardFooter className="justify-center">
-                      <Button variant="outline" size="sm">
-                        View Profile
-                      </Button>
-                    </CardFooter>
-                  </Card>
-                ))}
-              </div>
-            </div>
-
-            <div>
-              <h3 className="text-lg font-semibold mb-4">Active Members</h3>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                {Array.from({ length: 12 }).map((_, index) => (
-                  <Card key={index} className="overflow-hidden">
-                    <CardHeader className="p-4 pb-2">
-                      <div className="flex items-center gap-3">
-                        <Avatar>
-                          <AvatarImage src="/placeholder.svg" alt="Member" />
-                          <AvatarFallback>M{index + 1}</AvatarFallback>
-                        </Avatar>
-                        <div>
-                          <p className="font-medium text-sm">Member Name</p>
-                          <p className="text-xs text-muted-foreground">
-                            Joined Jan 2024
-                          </p>
-                        </div>
-                      </div>
-                    </CardHeader>
-                    <CardFooter className="p-4 pt-0">
-                      <Button variant="ghost" size="sm" className="w-full">
-                        View Profile
-                      </Button>
-                    </CardFooter>
-                  </Card>
-                ))}
-              </div>
-
-              <div className="flex justify-center mt-8">
-                <Button variant="outline">View All 324 Members</Button>
-              </div>
-            </div>
+            <UserListContainer/>
           </TabsContent>
 
           {/* About Tab */}

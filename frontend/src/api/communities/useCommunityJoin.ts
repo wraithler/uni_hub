@@ -1,5 +1,4 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useNavigate } from "react-router-dom";
 import { Community } from "@/api/communities/communityTypes.ts";
 import api from "@/api/apiClient.ts";
 import { communityQueryKeys } from "@/api/communities/communityQueryKeys.ts";
@@ -8,7 +7,6 @@ import { TSFix } from "@/api";
 
 export function useCommunityJoin() {
   const queryClient = useQueryClient();
-  const navigate = useNavigate();
 
   const joinCommunityFn = async (community: Community) => {
     const response = await api.post(`/communities/${community.id}/join/`);
@@ -21,14 +19,7 @@ export function useCommunityJoin() {
       await queryClient.cancelQueries({ queryKey: communityQueryKeys.all });
     },
     onSuccess: (data: Community) => {
-      toast.success(`You joined ${data.name}!`, {
-        action: {
-          label: "View Community",
-          onClick: () => {
-            navigate(`/communities/${data.id}`);
-          },
-        },
-      });
+      toast.success(`You joined ${data.name}!`);
     },
     onError: (_err, _newCommunity, context?: TSFix) => {
       queryClient.setQueryData(

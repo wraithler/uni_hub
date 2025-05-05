@@ -62,7 +62,13 @@ class EventListApi(APIView):
                 "location",
                 "is_virtual_event",
                 "virtual_link",
+                "attendees"
             )
+
+        attendees = serializers.SerializerMethodField()
+
+        def get_attendees(self, obj):
+            return obj.attendees.all().count()
 
     def get(self, request):
         filters_serializer = self.FilterSerializer(data=request.query_params)

@@ -63,7 +63,10 @@ export default function PostListContainer({
         ))
       ) : (
         <>
-          <PostCard variant="pinned" post={pinnedPost} />
+          {pinnedPost && pinnedPost.results.length > 0 && (
+            <PostCard variant="pinned" post={pinnedPost} />
+          )}
+
           <PostList posts={posts.results} variant={viewMode} />
           {pagination && <PaginationBox pagination={pagination} />}
         </>
