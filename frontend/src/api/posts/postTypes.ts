@@ -1,13 +1,29 @@
+import { PaginationResponse } from "@/api";
+import { User } from "@/api/users/userTypes.ts";
 import { Community } from "@/api/communities/communityTypes.ts";
-import { UserMe } from "@/api/users/userTypes.ts";
 
 type Post = {
+  // Basic parameters
   id?: number;
   content: string;
-  community?: Community | number;
-  created_by?: UserMe; // TODO: Change from UserMe to generic
-
-  // TODO: Add likes/comments
+  created_at?: string;
+  updated_at?: string;
+  created_by?: User;
+  community?: Community;
+  
+  // Visibility
+  visibility?: 'public' | 'members';
+  
+  // Counts
+  like_count?: number;
+  comment_count?: number;
+  
+  // Per user
+  has_liked?: boolean;
 };
 
-export type { Post };
+type PostList = PaginationResponse & {
+  results: Post[];
+};
+
+export type { Post, PostList };

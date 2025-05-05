@@ -30,11 +30,14 @@ export function usePaginatedQuery<TParams>({
 }: UsePaginatedQueryProps<TParams>) {
   const [offset, setOffset] = useState(initialOffset);
 
-  const queryParams = {
-    ...params,
-    limit,
-    offset,
-  };
+  const queryParams = useMemo(
+    () => ({
+      ...params,
+      limit,
+      offset,
+    }),
+    [params, limit, offset],
+  );
 
   const { data, ...rest } = useQuery({
     queryKey: [...queryKey, queryParams],

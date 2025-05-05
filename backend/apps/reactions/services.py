@@ -85,7 +85,9 @@ def like_create(*, obj: Comment | Post, user: BaseUser) -> Like:
 def like_delete(*, obj: Comment | Post, user: BaseUser) -> None:
     content_type = ContentType.objects.get_for_model(obj.__class__)
 
-    like = Like.objects.filter(user=user, content_type=content_type, object_id=obj.id).first()
+    like = Like.objects.filter(
+        user=user, content_type=content_type, object_id=obj.id
+    ).first()
 
     if not like:
         raise ApplicationError("Like does not exist")

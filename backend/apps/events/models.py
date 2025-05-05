@@ -17,7 +17,9 @@ class Event(BaseModel):
     ends_at = models.DateTimeField()
     location = models.CharField(max_length=255)  # TODO: Move to an address model
     created_by = models.ForeignKey("users.BaseUser", on_delete=models.CASCADE)
-    community = models.ForeignKey("communities.Community", on_delete=models.CASCADE)
+    community = models.ForeignKey(
+        "communities.Community", on_delete=models.CASCADE, related_name="events"
+    )
     is_virtual_event = models.BooleanField(default=False)
     virtual_link = models.URLField(blank=True, null=True)
 
@@ -49,26 +51,30 @@ class Event(BaseModel):
 
 class EventAttendee(BaseModel):
     id = models.AutoField(primary_key=True)
-    event = models.ForeignKey("events.Event", on_delete=models.CASCADE, related_name="attendees")
+    event = models.ForeignKey(
+        "events.Event", on_delete=models.CASCADE, related_name="attendees"
+    )
     user = models.ForeignKey("users.BaseUser", on_delete=models.CASCADE)
 
 
 class EventTicket(BaseModel):
     id = models.AutoField(primary_key=True)
-    event = models.ForeignKey("events.Event", on_delete=models.CASCADE, related_name="tickets")
+    event = models.ForeignKey(
+        "events.Event", on_delete=models.CASCADE, related_name="tickets"
+    )
     user = models.ForeignKey("users.BaseUser", on_delete=models.CASCADE)
     ticket_id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
-    qr_code = models.ImageField(upload_to='qr_codes/', blank=True, null=True)
+    qr_code = models.ImageField(upload_to="qr_codes/", blank=True, null=True)
     used = models.BooleanField(default=False)
 
     class Meta:
-        unique_together = ('event', 'user')
+        unique_together = ("event", "user")
 
     def generate_qr_code(self):
         qr = qrcode.make(str(self.ticket_id))
         buffer = BytesIO()
         qr.save(buffer)
-        filename = f'{self.ticket_id}.png'
+        filename = f"{self.ticket_id}.png"
         self.qr_code.save(filename, File(buffer), save=False)
 
     def save(self, *args, **kwargs):

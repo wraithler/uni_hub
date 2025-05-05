@@ -10,6 +10,7 @@ class CommunitySerializer(serializers.Serializer):
     id = serializers.IntegerField()
     name = serializers.CharField()
 
+
 class FeedListApi(AuthAPIView):
     class Pagination(LimitOffsetPagination):
         default_limit = 10
@@ -57,5 +58,5 @@ class FeedListApi(AuthAPIView):
             serializer_class=self.FeedItemSerializer,
             queryset=feed,
             request=request,
-            view=self
+            view=self,
         )

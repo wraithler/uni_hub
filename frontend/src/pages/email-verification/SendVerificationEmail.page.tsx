@@ -14,7 +14,7 @@ import {
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert.tsx";
 import { Link } from "react-router-dom";
 import Layout from "@/components/core/Layout.tsx";
-import { useAuth } from "@/components/auth/AuthProvider.tsx";
+import { useAuth } from "@/components/auth/SessionAuthProvider";
 
 export default function SendVerificationEmailPage() {
   const { sendVerificationEmail } = useAuth();

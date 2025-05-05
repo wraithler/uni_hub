@@ -1,14 +1,15 @@
 import django_filters
 from django.db.models import Q, Count
-
 from apps.communities.models import Community, CommunityTag, CommunityInvitation
 
 
 class CommunityFilter(django_filters.FilterSet):
-    category_name = django_filters.CharFilter(field_name='category__name', lookup_expr='icontains')
-    my = django_filters.BooleanFilter(method='filter_my')
-    name = django_filters.CharFilter(method='filter_name_or_tag')
-    sort_by = django_filters.CharFilter(method='filter_sort_by')
+    category_name = django_filters.CharFilter(
+        field_name="category__name", lookup_expr="icontains"
+    )
+    my = django_filters.BooleanFilter(method="filter_my")
+    name = django_filters.CharFilter(method="filter_name_or_tag")
+    sort_by = django_filters.CharFilter(method="filter_sort_by")
 
     class Meta:
         model = Community
@@ -16,7 +17,7 @@ class CommunityFilter(django_filters.FilterSet):
 
     def filter_my(self, queryset, name, value):
         if value:
-            return queryset.filter(memberships__id=self.request.user.id)
+            return queryset.filter(memberships__user=self.request.user)
         return queryset
 
     def filter_name_or_tag(self, queryset, name, value):
@@ -35,6 +36,17 @@ class CommunityFilter(django_filters.FilterSet):
 
         if value == "alphabetical":
             return queryset.order_by("name")
+
+        return queryset
+
+    def filter_queryset(self, queryset):
+        queryset = super(CommunityFilter, self).filter_queryset(queryset)
+
+        queryset = queryset.filter(
+            Q(privacy="public")
+            | Q(privacy="restricted")
+            | (Q(privacy="private") & Q(memberships__user=self.request.user))
+        )
 
         return queryset
 

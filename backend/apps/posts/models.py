@@ -8,18 +8,18 @@ from apps.users.models import BaseModel
 class Post(BaseModel):
     id = models.AutoField(primary_key=True)
     content = models.TextField()
-    created_by = models.ForeignKey("users.BaseUser", on_delete=models.CASCADE, related_name="posts")
+    created_by = models.ForeignKey(
+        "users.BaseUser", on_delete=models.CASCADE, related_name="posts"
+    )
     community = models.ForeignKey(
         Community, on_delete=models.CASCADE, related_name="posts"
     )
     likes = GenericRelation("reactions.Like", related_query_name="likes")
+    pinned = models.BooleanField(default=False)
 
-    VISIBILITY_CHOICES = [
-        ('public', 'Public'),
-        ('members', 'Members Only')
-    ]
+    VISIBILITY_CHOICES = [("public", "Public"), ("members", "Members Only")]
     visibility = models.CharField(
-        max_length=10, choices=VISIBILITY_CHOICES, default='public'
+        max_length=10, choices=VISIBILITY_CHOICES, default="public"
     )
 
     class Meta:

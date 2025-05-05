@@ -13,6 +13,7 @@ import { ProtectedRoute } from "@/components/auth/ProtectedRoute.tsx";
 import TermsOfServicePage from "@/pages/legal/TermsOfService.page.tsx";
 import SendVerificationEmailPage from "@/pages/email-verification/SendVerificationEmail.page.tsx";
 import VerifyEmailPage from "@/pages/email-verification/VerifyEmail.page.tsx";
+import CommunityDashboardPage from "@/pages/communities/dashboard/CommunityDashboard.page.tsx";
 
 const router = createBrowserRouter([
   {
@@ -35,6 +36,10 @@ const router = createBrowserRouter([
         path: ":id",
         element: <CommunityPage />,
       },
+      {
+        path: "/communities/:id/dashboard",
+        element: <CommunityDashboardPage/>
+      }
     ],
   },
   {

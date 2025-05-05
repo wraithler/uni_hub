@@ -1,6 +1,7 @@
-import { useAuth } from "@/components/auth/AuthProvider.tsx";
 import { Navigate, Outlet } from "react-router-dom";
 import React from "react";
+import { Spinner } from "@/components/ui/spinner.tsx";
+import { useAuth } from "@/components/auth/SessionAuthProvider.tsx";
 
 interface ProtectedRouteProps {
   allowedRoles?: string[];
@@ -11,14 +12,14 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   allowedRoles,
   requireEmailVerification,
 }) => {
-  const { isAuthenticated, user, isLoading } = useAuth();
+  const { isAuthenticated, loading, user } = useAuth();
 
-  if (isLoading) {
-    return <div>Loading...</div>;
+  if (loading) {
+    return <Spinner />;
   }
 
   if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/login" />;
   }
 
   if (allowedRoles && user && !allowedRoles.includes(user.role)) {

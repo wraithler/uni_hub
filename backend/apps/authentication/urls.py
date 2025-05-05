@@ -1,22 +1,13 @@
-from django.urls import include, path
-from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+from django.urls import path
 
 from apps.authentication.apis import (
-    UserMeApi,
+    UserMeApi, UserCSRFCookieApi, UserLoginApi, UserRegisterApi, UserLogoutApi,
 )
 
 urlpatterns = [
-    path(
-        "token/",
-        include(
-            (
-                [
-                    path("", TokenObtainPairView.as_view(), name="token-obtain-pair"),
-                    path("refresh/", TokenRefreshView.as_view(), name="token-refresh"),
-                ],
-                "token",
-            )
-        ),
-    ),
+    path("get-csrf-token/", UserCSRFCookieApi.as_view(), name="get-csrf-token"),
+    path("login/", UserLoginApi.as_view(), name="login"),
+    path("register/", UserRegisterApi.as_view(), name="register"),
+    path("logout/", UserLogoutApi.as_view(), name="logout"),
     path("me/", UserMeApi.as_view(), name="me"),
 ]
