@@ -5,7 +5,7 @@ import { CommentsQueryParameters, LikesQueryParameters } from "./reactionQueryPa
 
 export function useComments(params: CommentsQueryParameters) {
   const getCommentsFn = async () => {
-    const response = await api.get("/comments/", {
+    const response = await api.get("/reactions/comments/", {
       params,
     });
     return response.data;
@@ -20,7 +20,7 @@ export function useComments(params: CommentsQueryParameters) {
 
 export function useLikes(params: LikesQueryParameters) {
   const getLikesFn = async () => {
-    const response = await api.get("/likes/", {
+    const response = await api.get("/reactions/likes/", {
       params,
     });
     return response.data;

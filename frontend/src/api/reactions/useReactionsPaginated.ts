@@ -5,7 +5,7 @@ import { usePaginatedQuery } from "@/lib/tanstackExtension.ts";
 
 export function useCommentsPaginated(params: CommentsQueryParameters) {
   const getCommentsPaginatedFn = async () => {
-    const response = await api.get("/comments/", { params });
+    const response = await api.get("/reactions/comments/", { params });
     return response.data;
   };
 

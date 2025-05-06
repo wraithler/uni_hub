@@ -1,3 +1,5 @@
+from functools import partial
+
 from django.http import Http404
 from rest_framework import serializers
 from rest_framework.response import Response
@@ -49,6 +51,18 @@ class PostListApi(APIView):
         created_at = serializers.DateTimeField()
         created_by = UserDetailApi.OutputSerializer()
         community_id = serializers.IntegerField()
+        like_count = serializers.SerializerMethodField()
+        comment_count = serializers.SerializerMethodField()
+        has_liked = serializers.SerializerMethodField()
+
+        def get_like_count(self, obj):
+            return obj.likes.count()
+
+        def get_comment_count(self, obj):
+            return obj.comments.count()
+
+        def get_has_liked(self, obj):
+            return obj.likes.filter(user=self.context.get("request").user).exists()
 
     def get(self, request):
         filters_serializer = self.FilterSerializer(data=request.query_params)
@@ -56,7 +70,9 @@ class PostListApi(APIView):
         posts = post_list(filters=filters_serializer.validated_data)
         return get_paginated_response(
             pagination_class=self.Pagination,
-            serializer_class=self.OutputSerializer,
+            serializer_class=partial(
+                self.OutputSerializer, context={"request": request}
+            ),
             queryset=posts,
             request=request,
             view=self,

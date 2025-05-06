@@ -11,7 +11,8 @@ export function useCommentCreate() {
   const navigate = useNavigate();
 
   const createCommentFn = async (newComment: Partial<Comment>) => {
-    const response = await api.post("/comments/", newComment);
+    console.log(newComment);
+    const response = await api.post("/reactions/comments/create/", newComment);
     return response.data;
   };
 
@@ -25,7 +26,7 @@ export function useCommentCreate() {
         action: {
           label: "View Comment",
           onClick: () => {
-            navigate(`/posts/${data.post.id}`);
+            navigate(`/posts/${data.post_id}`);
           },
         },
       });
@@ -46,7 +47,7 @@ export function useLikeCreate() {
   const queryClient = useQueryClient();
 
   const createLikeFn = async (newLike: Partial<Like>) => {
-    const response = await api.post("/likes/", newLike);
+    const response = await api.post("/reactions/likes/create/", newLike);
     return response.data;
   };
 
@@ -54,9 +55,6 @@ export function useLikeCreate() {
     mutationFn: createLikeFn,
     onMutate: async () => {
       await queryClient.cancelQueries({ queryKey: likeQueryKeys.all });
-    },
-    onSuccess: () => {
-      toast.success("You liked!");
     },
     onError: (_err, _newLike, context: TSFix) => {
       queryClient.setQueryData(

@@ -16,7 +16,7 @@ type Comment = {
   created_at: string;
   updated_at: string;
   created_by: User;
-  post: Post;
+  post_id: number;
   
   // Counts
   like_count?: number;

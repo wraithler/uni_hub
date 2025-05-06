@@ -1,9 +1,9 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { useCommentCreate } from "@/api/reactions/useReactionCreate";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { nameToAvatarFallback } from "@/lib/utils";
-import { useUser } from "@/api/users/useUser"; 
+import { useAuth } from "@/components/auth/SessionAuthProvider.tsx";
 
 type CommentFormProps = {
   postId: number;
@@ -11,41 +11,50 @@ type CommentFormProps = {
   onCommentAdded?: () => void;
 };
 
-export default function CommentForm({ 
-  postId, 
+export default function CommentForm({
+  postId,
   variant = "compact",
-  onCommentAdded
+  onCommentAdded,
 }: CommentFormProps) {
   const [content, setContent] = useState("");
   const createComment = useCommentCreate();
-  const { user } = useUser();
+  const { user } = useAuth();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!content.trim()) return;
 
-    // Ensure we're using the same format for the API call across all components
-    createComment.mutate({
-      content: content.trim(),
-      post: postId, // Using just the ID as this appears to be the correct format
-    }, {
-      onSuccess: () => {
-        setContent("");
-        if (onCommentAdded) {
-          onCommentAdded();
+    createComment.mutate(
+      {
+        content: content.trim(),
+        post_id: postId,
+      },
+      {
+        onSuccess: () => {
+          setContent("");
+          if (onCommentAdded) {
+            onCommentAdded();
+          }
         }
-      }
-    });
+      },
+    );
   };
 
   const isCompact = variant === "compact";
 
   return (
-    <form onSubmit={handleSubmit} className={`flex items-start gap-2 ${isCompact ? 'mt-2' : 'mt-4'}`}>
-      <Avatar className={`${isCompact ? 'w-8 h-8' : 'w-10 h-10'} hidden sm:block`}>
+    <form
+      onSubmit={handleSubmit}
+      className={`flex items-start gap-2 ${isCompact ? "mt-2" : "mt-4"}`}
+    >
+      <Avatar
+        className={`${isCompact ? "w-8 h-8" : "w-10 h-10"} hidden sm:block`}
+      >
         <AvatarFallback>
-          {user ? nameToAvatarFallback(`${user.first_name} ${user.last_name}`) : "?"}
+          {user
+            ? nameToAvatarFallback(`${user.first_name} ${user.last_name}`)
+            : "?"}
         </AvatarFallback>
       </Avatar>
       <div className="flex-1 relative">

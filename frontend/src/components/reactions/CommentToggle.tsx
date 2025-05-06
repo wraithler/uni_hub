@@ -2,7 +2,7 @@ import { useState } from "react";
 import { MessageSquare } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import CommentSection from "@/components/reactions/commentSection";
+import CommentSection from "@/components/reactions/CommentSection";
 
 type CommentToggleProps = {
   postId: number;

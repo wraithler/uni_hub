@@ -9,7 +9,7 @@ type UseCommentDetailProps = {
 
 export function useCommentDetail({ id }: UseCommentDetailProps) {
   const getCommentFn = async () => {
-    const response = await api.get(`/comments/${id}/`);
+    const response = await api.get(`/reactions/comments/${id}/`);
     return response.data as Comment;
   };
 
@@ -25,7 +25,7 @@ type UseLikeDetailProps = {
 
 export function useLikeDetail({ id }: UseLikeDetailProps) {
   const getLikeFn = async () => {
-    const response = await api.get(`/likes/${id}/`);
+    const response = await api.get(`/reactions/likes/${id}/`);
     return response.data as Like;
   };
 
@@ -42,7 +42,7 @@ type UseHasLikedProps = {
 
 export function useHasLiked({ content_type, object_id }: UseHasLikedProps) {
   const getHasLikedFn = async () => {
-    const response = await api.get(`/likes/check/`, {
+    const response = await api.get(`/reactions/likes/check/`, {
       params: {
         content_type,
         object_id,

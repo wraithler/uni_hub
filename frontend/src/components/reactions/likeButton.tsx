@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useLikeCreate } from "@/api/reactions/useReactionCreate";
 import { useUnlikeContent } from "@/api/reactions/useReactionDelete";
-import { useHasLiked } from "@/api/reactions/useReactionDetail";
 import { Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -21,11 +20,11 @@ export default function LikeButton({
   initialLiked = false,
   initialCount = 0,
   showCount = false,
-  size = "md"
+  size = "md",
 }: LikeButtonProps) {
   const [isLiked, setIsLiked] = useState(initialLiked);
   const [likeCount, setLikeCount] = useState(initialCount);
-  
+
   const createLike = useLikeCreate();
   const unlikeContent = useUnlikeContent();
 
@@ -38,13 +37,13 @@ export default function LikeButton({
         },
         {
           onSuccess: () => {
-            setLikeCount(prev => Math.max(0, prev - 1));
+            setLikeCount((prev) => Math.max(0, prev - 1));
           },
           onError: (error) => {
             console.error("Error unliking:", error);
-            setIsLiked(true); 
-          }
-        }
+            setIsLiked(true);
+          },
+        },
       );
       setIsLiked(false);
     } else {
@@ -55,13 +54,13 @@ export default function LikeButton({
         },
         {
           onSuccess: () => {
-            setLikeCount(prev => prev + 1);
+            setLikeCount((prev) => prev + 1);
           },
           onError: (error) => {
             console.error("Error liking:", error);
-            setIsLiked(false); 
-          }
-        }
+            setIsLiked(false);
+          },
+        },
       );
       setIsLiked(true);
     }
@@ -77,9 +76,9 @@ export default function LikeButton({
       size="sm"
       disabled={createLike.isPending || unlikeContent.isPending}
       className={cn(
-        "flex items-center gap-1", 
+        "flex items-center gap-1",
         buttonSize,
-        isLiked ? "text-red-500" : "text-muted-foreground"
+        isLiked ? "text-red-500" : "text-muted-foreground",
       )}
       aria-label={isLiked ? "Unlike" : "Like"}
     >

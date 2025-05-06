@@ -9,7 +9,6 @@ class CommentFilter(django_filters.FilterSet):
             "id",
             "content",
             "created_by",
-            "post__title",
             "post__community__name",
             "created_at",
         )

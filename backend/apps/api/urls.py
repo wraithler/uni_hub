@@ -12,4 +12,5 @@ urlpatterns = [
     path("profile/", include(("apps.profile.urls", "profile"))),
     path("posts/", include(("apps.posts.urls", "posts"))),
     path("files/", include(("apps.files.urls", "files"))),
+    path("reactions/", include(("apps.reactions.urls", "reactions"))),
 ]

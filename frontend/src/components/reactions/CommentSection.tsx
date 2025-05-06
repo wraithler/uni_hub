@@ -1,9 +1,9 @@
 import { Comment } from "@/api/reactions/reactionTypes";
 import { useCommentsPaginated } from "@/api/reactions/useReactionsPaginated";
-import CommentForm from "@/components/reactions/commentForm";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { nameToAvatarFallback } from "@/lib/utils";
+import CommentForm from "@/components/reactions/CommentForm.tsx";
 
 type CommentSectionProps = {
   postId: number;
@@ -14,16 +14,13 @@ export default function CommentSection({ postId, onCommentAdded }: CommentSectio
   const {
     data,
     isLoading,
-    fetchNextPage,
-    hasNextPage,
+    pagination,
     refetch
   } = useCommentsPaginated({
     post_id: postId,
     limit: 5,
     sort_by: "newest",
   });
-
-  const comments = data?.pages.flatMap((page) => page.results) || [];
 
   const handleCommentAdded = () => {
     refetch();
@@ -52,21 +49,21 @@ export default function CommentSection({ postId, onCommentAdded }: CommentSectio
       
       {isLoading ? (
         <div className="text-center text-sm text-muted-foreground py-3">Loading comments...</div>
-      ) : comments.length > 0 ? (
+      ) : data.results.length > 0 ? (
         <div className="mt-3 space-y-3">
-          {comments.map((comment) => (
+          {data.results.map((comment: Comment) => (
             <div key={comment.id} className="flex gap-2">
               <Avatar className="w-8 h-8">
                 <AvatarFallback>
                   {nameToAvatarFallback(
-                    `${comment.created_by.first_name} ${comment.created_by.last_name}`
+                    `${comment.created_by?.first_name} ${comment.created_by?.last_name}`
                   )}
                 </AvatarFallback>
               </Avatar>
               <div className="flex-1">
                 <div className="bg-muted rounded-lg p-2">
                   <div className="font-medium text-sm">
-                    {comment.created_by.first_name} {comment.created_by.last_name}
+                    {comment.created_by?.first_name} {comment.created_by?.last_name}
                   </div>
                   <p className="text-sm">{comment.content}</p>
                 </div>
@@ -79,9 +76,9 @@ export default function CommentSection({ postId, onCommentAdded }: CommentSectio
             </div>
           ))}
           
-          {hasNextPage && (
+          {pagination && pagination.hasNextPage && (
             <Button 
-              onClick={() => fetchNextPage()} 
+              onClick={() => pagination.nextPage()}
               variant="ghost"
               size="sm"
               className="text-sm text-blue-500 hover:text-blue-700 mt-2"

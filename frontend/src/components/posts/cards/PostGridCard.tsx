@@ -9,8 +9,8 @@ import {
 import { AvatarFallback } from "@/components/ui/avatar.tsx";
 import { Button } from "@/components/ui/button";
 import { nameToAvatarFallback } from "@/lib/utils.ts";
-import LikeButton from "@/components/reactions/LikeButton";
-import CommentToggle from "@/components/reactions/commentToggle";
+import LikeButton from "@/components/reactions/likeButton";
+import CommentToggle from "@/components/reactions/CommentToggle.tsx";
 
 type PostGridCardProps = {
   post: Post;
@@ -28,12 +28,12 @@ export default function PostGridCard({ post, onView }: PostGridCardProps) {
           <Avatar className="w-6 h-6">
             <AvatarFallback>
               {nameToAvatarFallback(
-                `${post.created_by.first_name} ${post.created_by.last_name}`,
+                `${post.created_by?.first_name} ${post.created_by?.last_name}`,
               )}
             </AvatarFallback>
           </Avatar>
           <span className="text-sm font-medium">
-            {post.created_by.first_name} {post.created_by.last_name}
+            {post.created_by?.first_name} {post.created_by?.last_name}
           </span>
           <span className="text-xs text-muted-foreground ml-auto">{timeAgo}</span>
         </div>

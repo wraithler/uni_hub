@@ -8,7 +8,7 @@ export function useCommentDelete() {
   const queryClient = useQueryClient();
 
   const deleteCommentFn = async (commentId: number) => {
-    const response = await api.delete(`/comments/${commentId}/delete/`);
+    const response = await api.delete(`/reactions/comments/${commentId}/delete/`);
     return response.data;
   };
 
@@ -33,7 +33,7 @@ export function useLikeDelete() {
   const queryClient = useQueryClient();
 
   const deleteLikeFn = async (likeId: number) => {
-    const response = await api.delete(`/likes/${likeId}/delete/`);
+    const response = await api.delete(`/reactions/likes/${likeId}/delete/`);
     return response.data;
   };
 
@@ -58,7 +58,7 @@ export function useUnlikeContent() {
   const queryClient = useQueryClient();
 
   const unlikeContentFn = async ({ contentType, objectId }: { contentType: string; objectId: number }) => {
-    const response = await api.post(`/unlike/`, {
+    const response = await api.post(`/reactions/unlike/`, {
       content_type: contentType,
       object_id: objectId,
     });
@@ -69,9 +69,6 @@ export function useUnlikeContent() {
     mutationFn: unlikeContentFn,
     onMutate: async () => {
       await queryClient.cancelQueries({ queryKey: likeQueryKeys.all });
-    },
-    onSuccess: async () => {
-      toast.success("Unliked successfully!");
     },
     onError: (_err, _data, context: TSFix) => {
       queryClient.setQueryData(likeQueryKeys.all, context.previousLikes);
