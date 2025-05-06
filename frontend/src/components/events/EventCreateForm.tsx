@@ -27,6 +27,7 @@ import { Navigate } from "react-router-dom";
 import { useEventCreate } from "@/api/events/useEventCreate";
 import FeaturedEventCard from "./FeaturedEventCard";
 import CommunitiesCombobox from "@/components/communities/CommunitiesCombobox";
+import { Checkbox } from "@/components/ui/checkbox";
 
 const BasicInfoSchema = z.object({
   title: z.string().min(3, "Title must be at least 3 characters"),
@@ -36,9 +37,33 @@ const BasicInfoSchema = z.object({
 });
 
 const LocationSchema = z.object({
-  location: z.string().min(3),
+  location: z.string().optional(),
   is_virtual_event: z.boolean(),
-  virtual_link: z.string().url().optional(),
+  virtual_link: z.string().optional(),
+}).superRefine((data, ctx) => {
+  if (!data.is_virtual_event && (!data.location || data.location.trim().length < 3)) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: "Location is required for in-person events (min 3 characters)",
+      path: ["location"]
+    });
+  }
+
+  if (data.is_virtual_event) {
+    if (!data.virtual_link || data.virtual_link.trim() === "") {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Virtual link is required for virtual events",
+        path: ["virtual_link"]
+      });
+    } else if (data.virtual_link && !data.virtual_link.startsWith("http")) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Please enter a valid URL (starting with http:// or https://)",
+        path: ["virtual_link"]
+      });
+    }
+  }
 });
 
 const CommunitySchema = z.object({
@@ -79,10 +104,20 @@ export default function EventCreateForm() {
   if (!user) return <Navigate to="/login" />;
 
   const nextStep = async () => {
-    const valid = await form.trigger(
-      Object.keys(fullSchema.shape)[step - 1] as never,
-    );
-    if (valid) setStep((s) => s + 1);
+    try {
+      const currentSection = Object.keys(fullSchema.shape)[step - 1] as "basic" | "location" | "community";
+
+      const valid = await form.trigger(currentSection);
+      
+      if (valid) {
+        setStep((s) => s + 1);
+      } else {
+        const errors = form.formState.errors;
+        console.log(`Validation failed for ${currentSection}:`, errors);
+      }
+    } catch (error) {
+      console.error("Error during form validation:", error);
+    }
   };
 
   const prevStep = () => setStep((s) => s - 1);
@@ -94,7 +129,7 @@ export default function EventCreateForm() {
           <Card>
             <CardHeader>
               <CardTitle>Event Details</CardTitle>
-              <CardDescription>Start with your event’s basics.</CardDescription>
+              <CardDescription>Start with your event's basics.</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <FormField
@@ -167,37 +202,42 @@ export default function EventCreateForm() {
             <CardContent className="space-y-4">
               <FormField
                 control={form.control}
-                name="location.location"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Location</FormLabel>
-                    <FormControl>
-                      <Input
-                        {...field}
-                        placeholder="123 Main St or Building A"
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
                 name="location.is_virtual_event"
                 render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Is this a virtual event?</FormLabel>
+                  <FormItem className="flex flex-row items-start space-x-3 space-y-0 py-4">
                     <FormControl>
-                      <Input
-                        type="checkbox"
+                      <Checkbox
                         checked={field.value}
-                        onChange={(e) => field.onChange(e.target.checked)}
+                        onCheckedChange={field.onChange}
                       />
                     </FormControl>
+                    <div className="space-y-1 leading-none">
+                      <FormLabel>This is a virtual event</FormLabel>
+                    </div>
                     <FormMessage />
                   </FormItem>
                 )}
               />
+              
+              {!form.watch("location.is_virtual_event") && (
+                <FormField
+                  control={form.control}
+                  name="location.location"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Physical Location</FormLabel>
+                      <FormControl>
+                        <Input
+                          {...field}
+                          placeholder="123 Main St or Building A"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              )}
+              
               {form.watch("location.is_virtual_event") && (
                 <FormField
                   control={form.control}
@@ -206,7 +246,21 @@ export default function EventCreateForm() {
                     <FormItem>
                       <FormLabel>Virtual Link</FormLabel>
                       <FormControl>
-                        <Input {...field} placeholder="https://example.com" />
+                        <Input 
+                          {...field} 
+                          placeholder="https://example.com" 
+                          type="url"
+                          onChange={(e) => {
+                            let value = e.target.value;
+                            if (value && value.trim() !== "" && !value.match(/^https?:\/\//)) {
+                              if (!value.startsWith("http")) {
+                                form.setValue("location.virtual_link", `https://${value}`);
+                              }
+                            } else {
+                              field.onChange(e);
+                            }
+                          }}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -279,12 +333,14 @@ export default function EventCreateForm() {
                     description: form.getValues("basic.description"),
                     starts_at: form.getValues("basic.starts_at"),
                     ends_at: form.getValues("basic.ends_at"),
-                    location: form.getValues("location.location"),
+                    location: form.getValues("location.location") || "Virtual Event",
                     is_virtual_event: form.getValues(
                       "location.is_virtual_event",
                     ),
                     virtual_link: form.getValues("location.virtual_link"),
                     community: form.getValues("community.community"),
+                    attendees: 0,
+                    timestamp: new Date().toISOString(),
                   }}
                 />
               </CardContent>
@@ -294,18 +350,22 @@ export default function EventCreateForm() {
                 </Button>
                 <Button
                   type="submit"
-                  onClick={form.handleSubmit((data) =>
-                    createEvent.mutate({
+                  onClick={form.handleSubmit((data) => {
+                    const eventData = {
                       title: data.basic.title,
                       description: data.basic.description,
                       starts_at: data.basic.starts_at,
                       ends_at: data.basic.ends_at,
-                      location: data.location.location,
+                      location: data.location.is_virtual_event ? "Virtual Event" : data.location.location || "",
                       is_virtual_event: data.location.is_virtual_event,
-                      virtual_link: data.location.virtual_link,
+                      virtual_link: data.location.is_virtual_event ? data.location.virtual_link : undefined,
                       community: data.community.community,
-                    }),
-                  )}
+                      attendees: 0,
+                      timestamp: new Date().toISOString(),
+                    };
+                    console.log("Submitting event:", eventData);
+                    createEvent.mutate(eventData);
+                  })}
                 >
                   Create Event
                 </Button>
