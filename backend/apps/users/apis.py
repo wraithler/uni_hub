@@ -40,12 +40,14 @@ class UserListApi(APIView):
         default_limit = 1
 
     class FilterSerializer(serializers.Serializer):
-        id = serializers.IntegerField(required=False)
+        community_id = serializers.IntegerField(required=False)
+        name = serializers.CharField(required=False)
+        is_staff = serializers.BooleanField(required=False)
 
     class OutputSerializer(serializers.ModelSerializer):
         class Meta:
             model = BaseUser
-            fields = ("id", "email")
+            fields = ("id", "email", "first_name", "last_name", "bio")
 
     def get(self, request):
         filters_serializer = self.FilterSerializer(data=request.query_params)

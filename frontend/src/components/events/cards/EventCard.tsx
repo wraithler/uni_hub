@@ -11,6 +11,7 @@ import { Badge } from "@/components/ui/badge.tsx";
 import { Button } from "@/components/ui/button.tsx";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar.tsx";
 import { FeedItem } from "@/api/feed/feedTypes.ts";
+import { Event } from "@/api/events/eventTypes.ts";
 
 export default function EventCard({
   id,
@@ -20,7 +21,7 @@ export default function EventCard({
   description,
   attendees,
   location,
-}: FeedItem) {
+}: FeedItem | Event) {
   return (
     <Card key={id}>
       <div className="h-2 bg-blue-500"></div>
@@ -56,14 +57,14 @@ export default function EventCard({
         <div className="flex items-center gap-2">
           <Avatar className="w-6 h-6">
             <AvatarFallback>
-              {`${created_by.first_name} ${created_by.last_name}`.substring(
+              {`${created_by && created_by.first_name} ${created_by && created_by.last_name}`.substring(
                 0,
                 2,
               )}
             </AvatarFallback>
           </Avatar>
           <span className="text-xs text-muted-foreground">
-            {created_by.first_name} {created_by.last_name}
+            {created_by && created_by.first_name} {created_by && created_by.last_name}
           </span>
         </div>
         <Button variant="outline">RSVP</Button>

@@ -1,5 +1,5 @@
-import UserMeCard from "@/components/users/UserMeCard.tsx";
-import UserCommunitiesCard from "@/components/users/UserCommunitiesCard.tsx";
+import UserMeCard from "@/components/users/cards/UserMeCard.tsx";
+import UserCommunitiesCard from "@/components/users/cards/UserCommunitiesCard.tsx";
 
 export default function FeedSideBar() {
   return (

@@ -5,14 +5,14 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "../ui/card.tsx";
+} from "../../ui/card.tsx";
 import { MessageSquare, User } from "lucide-react";
 import {
   Avatar,
   AvatarFallback,
   AvatarImage,
 } from "@/components/ui/avatar.tsx";
-import { Button } from "../ui/button.tsx";
+import { Button } from "../../ui/button.tsx";
 import { nameToAvatarFallback } from "@/lib/utils.ts";
 import { Badge } from "@/components/ui/badge.tsx";
 import { Link } from "react-router-dom";
@@ -23,7 +23,7 @@ interface FeaturedCommunityCardProps {
   community: Community;
 }
 
-export default function FeaturedCommunityCard({
+export default function CommunityFeaturedCard({
   community,
 }: FeaturedCommunityCardProps) {
   const config = categoryConfig[community.category];

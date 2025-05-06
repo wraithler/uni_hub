@@ -3,9 +3,12 @@ import LoginPage from "@/pages/Login.page.tsx";
 import LandingPage from "@/pages/Landing.page.tsx";
 import CommunitiesPage from "@/pages/communities/Communities.page.tsx";
 import CommunityPage from "@/pages/communities/Community.page.tsx";
-import NotFoundPage from "@/pages/NotFound.page.tsx";
 import CommunityCreatePage from "@/pages/communities/CommunityCreate.Page.tsx";
+import EventsPage from "@/pages/events/Events.page.tsx";
+import EventPage from "@/pages/events/Event.page.tsx";
+import EventCreatePage from "@/pages/events/EventCreate.Page.tsx";
 import FeedPage from "@/pages/Feed.page.tsx";
+import NotFoundPage from "@/pages/NotFound.page.tsx";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute.tsx";
 import TermsOfServicePage from "@/pages/legal/TermsOfService.page.tsx";
 import SendVerificationEmailPage from "@/pages/email-verification/SendVerificationEmail.page.tsx";
@@ -30,7 +33,7 @@ const router = createBrowserRouter([
         element: <CommunitiesPage />,
       },
       {
-        path: "/communities/:id",
+        path: ":id",
         element: <CommunityPage />,
       },
       {
@@ -46,6 +49,30 @@ const router = createBrowserRouter([
       {
         path: "",
         element: <CommunityCreatePage />,
+      },
+    ],
+  },
+  {
+    path: "/events",
+    element: <ProtectedRoute />,
+    children: [
+      {
+        path: "",
+        element: <EventsPage />,
+      },
+      {
+        path: ":id",
+        element: <EventPage />,
+      },
+    ],
+  },
+  {
+    path: "/events/create",
+    element: <ProtectedRoute requireEmailVerification={true} />,
+    children: [
+      {
+        path: "",
+        element: <EventCreatePage />,
       },
     ],
   },

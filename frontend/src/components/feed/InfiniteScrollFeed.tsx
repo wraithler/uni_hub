@@ -2,7 +2,7 @@ import InfiniteScroll from "react-infinite-scroll-component";
 import { CircleCheck, UserCircle } from "lucide-react";
 import FeedCard from "@/components/feed/FeedCard.tsx";
 import React from "react";
-import EventCard from "@/components/events/EventCard.tsx";
+import EventCard from "@/components/events/cards/EventCard.tsx";
 import { useAuth } from "@/components/auth/SessionAuthProvider";
 import { useFeed } from "@/api/feed/useFeed.ts";
 import { FeedItem } from "@/api/feed/feedTypes.ts";
