@@ -25,14 +25,10 @@ api.defaults.xsrfCookieName = "csrftoken";
 
 api.interceptors.request.use(
   (config) => {
-    console.log("Interceptor triggered");
     const csrfToken = getCSRFToken();
-
-    console.log(csrfToken);
 
     if (csrfToken) {
       config.headers["X-CSRFToken"] = csrfToken;
-      console.log(csrfToken);
     }
     return config;
   },
