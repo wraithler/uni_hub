@@ -8,10 +8,19 @@ import {
 } from "@/components/ui/card";
 import { AvatarFallback } from "@/components/ui/avatar.tsx";
 import { Button } from "@/components/ui/button";
-import { Heart, MessageSquare } from "lucide-react";
 import { nameToAvatarFallback } from "@/lib/utils.ts";
+import LikeButton from "@/components/reactions/LikeButton";
+import CommentToggle from "@/components/reactions/commentToggle";
 
-export default function PostGridCard({ post }: { post: Post }) {
+type PostGridCardProps = {
+  post: Post;
+  onView?: () => void;
+};
+
+export default function PostGridCard({ post, onView }: PostGridCardProps) {
+  // Use static "3h ago" for now until date-fns is installed
+  const timeAgo = "3h ago";
+
   return (
     <Card>
       <CardHeader className="pb-2">
@@ -26,7 +35,7 @@ export default function PostGridCard({ post }: { post: Post }) {
           <span className="text-sm font-medium">
             {post.created_by.first_name} {post.created_by.last_name}
           </span>
-          <span className="text-xs text-muted-foreground ml-auto">3h ago</span>
+          <span className="text-xs text-muted-foreground ml-auto">{timeAgo}</span>
         </div>
         <CardDescription className="line-clamp-2">
           {post.content}
@@ -34,24 +43,25 @@ export default function PostGridCard({ post }: { post: Post }) {
       </CardHeader>
       <CardFooter className="flex justify-between">
         <div className="flex items-center gap-2">
-          <Button
-            variant="ghost"
+          <LikeButton
+            contentType="post"
+            objectId={post.id || 0}
+            initialLiked={post.has_liked}
+            initialCount={post.like_count || 0}
+            showCount={true}
             size="sm"
-            className="flex items-center gap-1 h-8 px-2"
-          >
-            <Heart className="w-4 h-4" />
-            <span>{post.like_count}</span>
-          </Button>
-          <Button
-            variant="ghost"
+          />
+          <CommentToggle
+            postId={post.id || 0}
+            commentCount={post.comment_count || 0}
             size="sm"
-            className="flex items-center gap-1 h-8 px-2"
-          >
-            <MessageSquare className="w-4 h-4" />
-            <span>{post.comment_count}</span>
-          </Button>
+          />
         </div>
-        <Button size="sm" variant="outline">
+        <Button 
+          size="sm" 
+          variant="outline"
+          onClick={onView}
+        >
           View
         </Button>
       </CardFooter>
