@@ -88,6 +88,16 @@ const router = createBrowserRouter([
     ],
   },
   {
+    path: "/friends-test",
+    element: <ProtectedRoute />,
+    children: [
+      {
+        path: "",
+        element: <FriendsTestPage />,
+      },
+    ],
+  },  
+  {
     path: "/verification-email",
     element: <ProtectedRoute />,
     children: [
@@ -98,17 +108,7 @@ const router = createBrowserRouter([
       {
         path: "/verification-email/verify/:uid/:token",
         element: <VerifyEmailPage />,
-      },
-      {
-        path: "/friends-test",
-        element: <ProtectedRoute />,
-        children: [
-          {
-            path: "",
-            element: <FriendsTestPage />,
-          },
-        ],
-      },      
+      },    
     ],
   },
   {
