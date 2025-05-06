@@ -47,7 +47,7 @@ import {
   AvatarImage,
 } from "@/components/ui/avatar.tsx";
 import { Navigate, useNavigate } from "react-router-dom";
-import CommunityFeaturedCard from "@/components/communities/CommunityFeaturedCard.tsx";
+import CommunityFeaturedCard from "@/components/communities/cards/CommunityFeaturedCard.tsx";
 import { CommunityCard } from "@/components/communities/CommunityCard.tsx";
 import { useAuth } from "@/components/auth/SessionAuthProvider.tsx";
 import { useCommunityCreate } from "@/api/communities/useCommunityCreate.ts";

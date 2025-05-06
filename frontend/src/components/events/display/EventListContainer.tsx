@@ -1,9 +1,9 @@
 import { Community } from "@/api/communities/communityTypes.ts";
 import { Button } from "@/components/ui/button.tsx";
 import { Calendar } from "lucide-react";
-import EventUpcomingList from "@/components/events/EventUpcomingList.tsx";
+import EventUpcomingList from "@/components/events/display/EventUpcomingList.tsx";
 import { useEvents } from "@/api/events/useEvents.ts";
-import EventPastList from "@/components/events/EventPastList.tsx";
+import EventPastList from "@/components/events/display/EventPastList.tsx";
 
 export default function EventListContainer({
   community,

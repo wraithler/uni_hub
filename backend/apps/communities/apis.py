@@ -34,6 +34,9 @@ class CommunityDetailApi(APIView):
         privacy = serializers.CharField()
         is_moderator = serializers.SerializerMethodField()
         is_admin = serializers.SerializerMethodField()
+        guidelines = serializers.SerializerMethodField()
+        about = serializers.CharField()
+        contact_email = serializers.EmailField()
 
         def get_member_count(self, obj):
             return obj.memberships.count()
@@ -58,6 +61,9 @@ class CommunityDetailApi(APIView):
 
         def get_is_admin(self, obj):
             return obj.is_admin(self.context.get("request").user)
+
+        def get_guidelines(self, obj):
+            return [guideline.content for guideline in obj.guidelines.all()]
 
     def get(self, request, community_id):
         community = community_get(community_id)

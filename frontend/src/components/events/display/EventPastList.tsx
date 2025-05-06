@@ -1,6 +1,6 @@
 import { Event } from "@/api/events/eventTypes.ts";
-import EventPastCard from "@/components/events/EventPastCard.tsx";
-import EventsListEmpty from "@/components/events/EventsListEmpty.tsx";
+import EventPastCard from "@/components/events/cards/EventPastCard.tsx";
+import EventsListEmpty from "@/components/events/display/EventsListEmpty.tsx";
 
 export default function EventPastList({ events }: { events: Event[] }) {
   return (

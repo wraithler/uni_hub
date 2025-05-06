@@ -5,11 +5,11 @@ import {
   CardDescription,
   CardContent,
   CardFooter,
-} from "@/components/ui/card";
+} from "@/components/ui/card.tsx";
 import { Calendar, MapPin } from "lucide-react";
-import { Event } from "@/api/events/eventTypes";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { Event } from "@/api/events/eventTypes.ts";
+import { Badge } from "@/components/ui/badge.tsx";
+import { Button } from "@/components/ui/button.tsx";
 import { Link } from "react-router-dom";
 
 interface FeaturedEventCardProps {

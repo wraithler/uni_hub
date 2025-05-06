@@ -37,6 +37,7 @@ class Community(BaseModel):
     created_by = models.ForeignKey("users.BaseUser", on_delete=models.CASCADE)
     is_featured = models.BooleanField(default=False)
     about = models.TextField(blank=True, null=True)
+    contact_email = models.EmailField(blank=True, null=True)
     avatar = models.ForeignKey(
         "files.File",
         on_delete=models.SET_NULL,

@@ -1,6 +1,6 @@
 import { Event } from "@/api/events/eventTypes.ts";
-import EventUpcomingCard from "@/components/events/EventUpcomingCard.tsx";
-import EventsListEmpty from "@/components/events/EventsListEmpty.tsx";
+import EventUpcomingCard from "@/components/events/cards/EventUpcomingCard.tsx";
+import EventsListEmpty from "@/components/events/display/EventsListEmpty.tsx";
 
 export default function EventUpcomingList({ events }: { events: Event[] }) {
   return (

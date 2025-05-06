@@ -10,8 +10,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import EventFeaturedCard from "@/components/events/EventFeaturedCard.tsx";
-import EventCard from "@/components/events/EventCard";
+import EventFeaturedCard from "@/components/events/cards/EventFeaturedCard.tsx";
+import EventCard from "@/components/events/cards/EventCard.tsx";
 import Layout from "@/components/core/Layout";
 import PageHeader from "@/components/core/PageHeader";
 import { Link } from "react-router-dom";

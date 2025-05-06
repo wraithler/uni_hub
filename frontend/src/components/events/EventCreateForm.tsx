@@ -25,7 +25,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useAuth } from "@/components/auth/SessionAuthProvider";
 import { Navigate } from "react-router-dom";
 import { useEventCreate } from "@/api/events/useEventCreate";
-import EventFeaturedCard from "./EventFeaturedCard.tsx";
+import EventFeaturedCard from "./cards/EventFeaturedCard.tsx";
 import CommunitiesCombobox from "@/components/communities/CommunitiesCombobox";
 
 const BasicInfoSchema = z.object({
