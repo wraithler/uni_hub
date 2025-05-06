@@ -14,6 +14,7 @@ import TermsOfServicePage from "@/pages/legal/TermsOfService.page.tsx";
 import SendVerificationEmailPage from "@/pages/email-verification/SendVerificationEmail.page.tsx";
 import VerifyEmailPage from "@/pages/email-verification/VerifyEmail.page.tsx";
 import CommunityDashboardPage from "@/pages/communities/dashboard/CommunityDashboard.page.tsx";
+import FriendsTestPage from "@/pages/friends/FriendsTest.page";
 
 const router = createBrowserRouter([
   {
@@ -98,6 +99,16 @@ const router = createBrowserRouter([
         path: "/verification-email/verify/:uid/:token",
         element: <VerifyEmailPage />,
       },
+      {
+        path: "/friends-test",
+        element: <ProtectedRoute />,
+        children: [
+          {
+            path: "",
+            element: <FriendsTestPage />,
+          },
+        ],
+      },      
     ],
   },
   {
@@ -112,6 +123,7 @@ const router = createBrowserRouter([
     path: "*",
     element: <NotFoundPage />,
   },
+  
 ]);
 
 export function Router() {

@@ -22,7 +22,7 @@ import {
 } from "@/components/ui/form";
 import { ChevronRight } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
-import { useAuth } from "@/components/auth/AuthProvider";
+import { useAuth } from "@/components/auth/SessionAuthProvider";
 import { Navigate } from "react-router-dom";
 import { useEventCreate } from "@/api/events/useEventCreate";
 import FeaturedEventCard from "./FeaturedEventCard";
