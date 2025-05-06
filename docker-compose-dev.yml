@@ -1,0 +1,129 @@
+services:
+  frontend:
+    container_name: frontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    ports:
+      - "${REACT_PORT}:${REACT_PORT}"
+    depends_on:
+      - backend
+    networks:
+      - app-network
+    volumes:
+      - ./frontend:/app
+      - node_modules:/app/node_modules
+    restart: unless-stopped
+    env_file: .env
+
+  backend:
+    container_name: backend
+    build:
+      context: ./backend
+    ports:
+      - "${DJANGO_PORT}:${DJANGO_PORT}"
+    depends_on:
+      - database
+      - mailhog
+      - redis
+      - spam-detection
+    networks:
+      - app-network
+    volumes:
+      - ./backend:/app
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      - SPAM_SERVICE_URL=http://spam-detection:8000
+
+  database:
+    container_name: postgres
+    image: postgres:15.10-alpine
+    ports:
+      - "${POSTGRES_PORT}:${POSTGRES_PORT}"
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_NAME}
+    networks:
+      - app-network
+    volumes:
+      - postgres-data-dev:/var/lib/postgresql/data
+
+  mailhog:
+    image: mailhog/mailhog
+    ports:
+      - "${MAILHOG_UI_PORT}:${MAILHOG_UI_PORT}"
+      - "${MAILHOG_SMTP_PORT}:${MAILHOG_SMTP_PORT}"
+    networks:
+      - app-network
+    restart: unless-stopped
+
+  redis:
+    image: redis
+    ports:
+      - "${REDIS_PORT}:${REDIS_PORT}"
+    restart: unless-stopped
+    networks:
+      - app-network
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  
+  celery:
+    build:
+      context: ./backend
+    command: celery -A apps.tasks worker --loglevel=debug --without-gossip --without-mingle --without-heartbeat
+    depends_on:
+      - backend
+      - redis
+      - database
+    networks:
+      - app-network
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      - SPAM_SERVICE_URL=https://your-spam-api.local
+
+  celery_beat:
+    build:
+      context: ./backend
+    command: celery -A apps.tasks beat --loglevel=debug --scheduler django_celery_beat.schedulers:DatabaseScheduler
+    depends_on:
+      - backend
+      - redis
+      - celery
+      - database
+    networks:
+      - app-network
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      - SPAM_SERVICE_URL=http://spam-detection:8000  
+
+  spam-detection:
+    platform: linux/amd64  
+    container_name: spam-detection
+    build: ./services/spam-detection
+    ports:
+      - "8001:8000"
+    environment:
+      - SPAM_SERVICE_URL=http://spam-detection:8000
+    networks:
+      - app-network
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - capabilities: [ gpu ]
+    # runtime: nvidia
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  postgres-data-dev:
+  node_modules:

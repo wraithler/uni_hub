@@ -1,0 +1,110 @@
+services:
+  frontend:
+    container_name: frontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.prod
+    ports:
+      - "${REACT_PORT}:${REACT_PORT}"
+    depends_on:
+      - backend
+    networks:
+      - app-network
+    restart: unless-stopped
+    environment:
+      REACT_APP_BACKEND_URL: ${DJANGO_BASE_BACKEND_URL}
+    env_file:
+      - .env
+
+  backend:
+    container_name: backend
+    build:
+      context: ./backend
+    ports:
+      - "${DJANGO_PORT}:${DJANGO_PORT}"
+    depends_on:
+      - database
+      - redis
+    networks:
+      - app-network
+    restart: unless-stopped
+    env_file:
+      - .env
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:${DJANGO_PORT}/health/ || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  database:
+    container_name: database
+    image: postgres:15.10-alpine
+    ports:
+      - "${POSTGRES_PORT}:${POSTGRES_PORT}"
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_NAME}
+    networks:
+      - app-network
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+  mailhog:
+    image: mailhog/mailhog
+    ports:
+      - "${MAILHOG_UI_PORT}:${MAILHOG_UI_PORT}"
+      - "${MAILHOG_SMTP_PORT}:${MAILHOG_SMTP_PORT}"
+    networks:
+      - app-network
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "${REDIS_PORT}:${REDIS_PORT}"
+    networks:
+      - app-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  celery:
+    build:
+      context: ./backend
+    command: celery -A apps.tasks worker --loglevel=info --without-gossip --without-mingle --without-heartbeat
+    depends_on:
+      - backend
+      - redis
+      - database
+    networks:
+      - app-network
+    restart: unless-stopped
+    env_file:
+      - .env
+
+  celery_beat:
+    build:
+      context: ./backend
+    command: celery -A apps.tasks beat --loglevel=info --scheduler django_celery_beat.schedulers:DatabaseScheduler --without-gossip --without-mingle --without-heartbeat
+    depends_on:
+      - backend
+      - redis
+      - celery
+      - database
+    networks:
+      - app-network
+    restart: unless-stopped
+    env_file:
+      - .env
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  postgres-data:

@@ -3,12 +3,12 @@ from rest_framework import status, serializers
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from apps.api.mixins import ApiAuthMixin
+from apps.api.mixins import AuthAPIView
 from apps.files.models import File
 from apps.files.services import FileStandardUploadService, FileDirectUploadService
 
 
-class FileStandardUploadApi(ApiAuthMixin, APIView):
+class FileStandardUploadApi(AuthAPIView, APIView):
     def post(self, request):
         service = FileStandardUploadService(
             user=request.user, _file=request.FILES["file"]
@@ -18,7 +18,7 @@ class FileStandardUploadApi(ApiAuthMixin, APIView):
         return Response(data={"id": file.id}, status=status.HTTP_201_CREATED)
 
 
-class FileDirectUploadStartApi(ApiAuthMixin, APIView):
+class FileDirectUploadStartApi(AuthAPIView, APIView):
     class InputSerializer(serializers.Serializer):
         file_name = serializers.CharField()
         file_type = serializers.CharField()
@@ -33,7 +33,7 @@ class FileDirectUploadStartApi(ApiAuthMixin, APIView):
         return Response(data=presigned_data)
 
 
-class FileDirectUploadLocalApi(ApiAuthMixin, APIView):
+class FileDirectUploadLocalApi(AuthAPIView, APIView):
     def post(self, request, file_id):
         file = get_object_or_404(File, id=file_id)
         _file = request.FILES["file"]
@@ -44,7 +44,7 @@ class FileDirectUploadLocalApi(ApiAuthMixin, APIView):
         return Response({"id": file.id})
 
 
-class FileDirectUploadFinishApi(ApiAuthMixin, APIView):
+class FileDirectUploadFinishApi(AuthAPIView, APIView):
     class InputSerializer(serializers.Serializer):
         file_id = serializers.CharField()
 

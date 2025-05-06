@@ -1,6 +1,3 @@
-// import { JSX } from "react";
-// import { Code, PenTool, User } from "lucide-react"; 
-
 type ProfileStyleConfig = {
   bannerGradient: string;
   avatarBg: string;

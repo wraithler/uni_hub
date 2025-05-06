@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button.tsx";
-import {Calendar, Home, MessageSquare, Users} from "lucide-react";
+import { Calendar, Home, MessageSquare, Users } from "lucide-react";
 import { useAuth } from "@/components/auth/AuthProvider.tsx";
 import { Link } from "react-router-dom";
 import AdminHeader from "@/components/core/AdminHeader.tsx";
@@ -58,12 +58,12 @@ const tabs = {
 
 export default function Header({ landing }: HeaderProps) {
   const headerTabs = landing ? tabs.landing : tabs.application;
-  const { user} = useAuth();
+  const { user } = useAuth();
 
   return (
     <>
       {/* Desktop Header */}
-      {user?.is_admin && <AdminHeader />}
+      {user?.is_superuser && <AdminHeader />}
       <header className="border-b bg-white sticky top-0 z-10">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
           <div className="flex items-center gap-2">
@@ -85,7 +85,7 @@ export default function Header({ landing }: HeaderProps) {
           </nav>
 
           {user ? (
-            <UserDropdownMenu/>
+            <UserDropdownMenu />
           ) : (
             <div className="flex items-center gap-3">
               <Button variant="ghost" asChild>

@@ -4,18 +4,18 @@ from apps.profile.models import Profile
 
 @admin.register(Profile)
 class ProfileAdmin(admin.ModelAdmin):
-    list_display = ("user_email", "gender_display", "pronouns", "hobbies_display", "course", "year_of_study", "phone_number")
+    list_display = ("user_email", "gender_display", "student_number", "hobbies_display", "course", "year_of_study", "phone_number")
 
     search_fields = ("user__email", "user__first_name", "user__last_name")
 
-    list_filter = ("gender", "pronouns", "course", "year_of_study")
+    list_filter = ("gender", "course", "year_of_study")
 
     fieldsets = (
         ("User Link", {"fields": ("user",), "description": "Connected user account"}),
         (
             "Personal Information",
             {
-                "fields": ("gender", "pronouns", "year_of_study", "course", "hobbies", "phone_number", "date_of_birth"),
+                "fields": ("gender", "student_number", "year_of_study", "course", "hobbies", "phone_number",),
             },
         ),
         (

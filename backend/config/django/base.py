@@ -38,6 +38,7 @@ THIRD_PARTY_APPS = [
     "corsheaders",
     "django_extensions",
     "rest_framework_simplejwt",
+    "rest_framework_simplejwt.token_blacklist",
     "storages",
 ]
 
@@ -113,7 +114,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 AUTH_USER_MODEL = "users.BaseUser"
 
 # Internationalization
@@ -133,12 +133,12 @@ STATIC_URL = "/static/"
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 REST_FRAMEWORK = {
-    "EXCEPTION_HANDLER": "apps.api.exception_handlers.drf_default_with_modifications_exception_handler",
     "DEFAULT_FILTER_BACKENDS": ("django_filters.rest_framework.DjangoFilterBackend",),
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework_simplejwt.authentication.JWTAuthentication",
     ),
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+    'EXCEPTION_HANDLER': "apps.errors.exception_handler.hacksoft_proposed_exception_handler"
 }
 
 APP_DOMAIN = env("APP_DOMAIN", default="http://localhost:3001")

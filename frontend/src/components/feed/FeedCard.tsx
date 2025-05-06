@@ -1,4 +1,3 @@
-import { FeedItem } from "@/hooks/useFeed.ts";
 import {
   Card,
   CardContent,
@@ -9,8 +8,9 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar.tsx";
 import { Button } from "@/components/ui/button.tsx";
 import { Heart, MessageSquare } from "lucide-react";
 import PostActions from "@/components/posts/PostActions.tsx";
+import { FeedItem } from "@/api/feed/feedTypes.ts";
 
-export default function PostCard(item: FeedItem) {
+export default function FeedCard(item: FeedItem) {
   return (
     <Card key={item.id}>
       <CardHeader className="p-4 pb-0">

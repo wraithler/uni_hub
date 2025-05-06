@@ -48,15 +48,6 @@ class Profile(models.Model):
         ("DS", "Data Science"),
     ]
 
-    PRONOUN_CHOICES = [
-        ("HE/HIM", "He/Him"),
-        ("SHE/HER", "She/Her"),
-        ("THEY/THEM", "They/Them"),
-        ("ASK", "Prefer to be asked"),
-        ("NA", "Prefer not to say"),
-    ]
-
-
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="profile")
 
     gender = models.CharField(max_length=2, choices=GENDER_CHOICES, blank=True)
@@ -68,9 +59,8 @@ class Profile(models.Model):
     course = models.CharField(max_length=30, choices=COURSE_CHOICES, blank=True)
 
     phone_number = models.CharField(max_length=15, blank=True)
-    date_of_birth = models.DateField(null=True, blank=True)
-    pronouns = models.CharField(max_length=20, choices=PRONOUN_CHOICES, blank=True)
-
+    student_number = models.CharField(max_length=15, blank=True)
+    
     github_url = models.URLField(blank=True)
     linkedin_url = models.URLField(blank=True)
 

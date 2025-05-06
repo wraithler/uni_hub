@@ -15,7 +15,7 @@ import { Button } from "@/components/ui/button.tsx";
 import { User } from "lucide-react";
 import { nameToAvatarFallback } from "@/lib/utils.ts";
 import { ProfileFormData } from "@/api/profile/profileTypes.ts";
-import profileConfig from "./ProfileStyling.tsx"; // optional
+import profileConfig from "./ProfileStyling.tsx"; 
 
 interface ProfileCardProps {
   profile: ProfileFormData;
@@ -45,16 +45,30 @@ export function ProfileCard({ profile, onEdit }: ProfileCardProps) {
       </CardHeader>
 
       <CardContent>
-        <p className="text-sm text-muted-foreground line-clamp-2 mb-3">
-          {profile.bio || "No bio available"}
-        </p>
+        <div className="space-y-1 text-xs text-muted-foreground mb-3">
+          {profile.course && (
+            <div>
+              <strong>Course:</strong> {profile.course}
+            </div>
+          )}
+          {profile.year_of_study && (
+            <div>
+              <strong>Year:</strong> {profile.year_of_study}
+            </div>
+          )}
+          {profile.phone_number && (
+            <div>
+              <strong>Phone:</strong> {profile.phone_number}
+            </div>
+          )}
+          {profile.student_number && (
+            <div>
+              <strong>Student Number:</strong> {profile.student_number}
+            </div>
+          )}
+        </div>
 
         <div className="flex flex-col gap-1 text-xs text-muted-foreground">
-          {profile.website_url && (
-            <span>
-              <strong>Website:</strong> {profile.website_url}
-            </span>
-          )}
           {profile.github_url && (
             <span>
               <strong>GitHub:</strong> {profile.github_url}

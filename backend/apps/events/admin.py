@@ -51,6 +51,7 @@ class EventAdmin(admin.ModelAdmin):
         except ValidationError as exc:
             self.message_user(request, str(exc), messages.ERROR)
 
+
 @admin.register(EventTicket)
 class EventTicketAdmin(admin.ModelAdmin):
     list_display = ("event", "user", "ticket_id", "created_at")

@@ -2,6 +2,7 @@ from django.http import Http404
 from rest_framework import serializers
 from rest_framework.response import Response
 from rest_framework.views import APIView
+
 from apps.api.pagination import LimitOffsetPagination, get_paginated_response
 from apps.communities.apis import CommunityDetailApi
 from apps.posts.selectors import (
@@ -39,12 +40,14 @@ class PostListApi(APIView):
         content = serializers.CharField(required=False)
         created_by = serializers.IntegerField(required=False)
         community__name = serializers.CharField(required=False)
+        pinned = serializers.BooleanField(required=False)
+        community__id = serializers.IntegerField(required=False)
 
     class OutputSerializer(serializers.Serializer):
         id = serializers.IntegerField()
         content = serializers.CharField()
         created_at = serializers.DateTimeField()
-        created_by_id = serializers.IntegerField()
+        created_by = UserDetailApi.OutputSerializer()
         community_id = serializers.IntegerField()
 
     def get(self, request):
@@ -68,8 +71,10 @@ class PostCreateApi(APIView):
     def post(self, request):
         serializer = self.InputSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
+
         post = post_create(created_by=request.user, **serializer.validated_data)
-        data = PostDetailApi.OutputSerializer(post).data
+
+        data = PostDetailApi.OutputSerializer(post, context={"request": request}).data
         return Response(data)
 
 

@@ -12,21 +12,31 @@ import {
 } from "@/components/ui/card.tsx";
 import { Button } from "@/components/ui/button.tsx";
 import { Input } from "@/components/ui/input.tsx";
-import { Textarea } from "@/components/ui/textarea.tsx";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form.tsx";
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "@/components/ui/select.tsx";
 import { ChevronRight, Loader2 } from "lucide-react";
 import { useAuth } from "@/components/auth/AuthProvider.tsx";
-import { Navigate } from "react-router-dom";
-import ProfileCard from "@/components/profile/ProfileCard.tsx";
+import { Navigate, useNavigate } from "react-router-dom";
+import { ProfileCard } from "@/components/profile/ProfileCard.tsx";
+import api from "@/api/apiClient";
+import { useProfileChoices } from "@/api/profile";
 
 const BasicInfoSchema = z.object({
   gender: z.string().optional(),
   hobbies: z.string().optional(),
-  bio: z.string().max(300, "Bio must be at most 300 characters").optional(),
+  year_of_study: z.string().optional(),
+  course: z.string().optional(),
+  phone_number: z.string().optional(),
+  student_number: z.string().optional(),
 });
 
 const SocialLinksSchema = z.object({
-  website_url: z.string().url("Must be a valid URL").optional(),
   github_url: z.string().url("Must be a valid GitHub URL").optional(),
   linkedin_url: z.string().url("Must be a valid LinkedIn URL").optional(),
 });
@@ -40,6 +50,8 @@ export default function ProfileCreateForm() {
   const [step, setStep] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const { user } = useAuth();
+  const navigate = useNavigate();
+  const { data: profileChoices } = useProfileChoices();
 
   const form = useForm<z.infer<typeof multiStepSchema>>({
     resolver: zodResolver(multiStepSchema),
@@ -47,10 +59,12 @@ export default function ProfileCreateForm() {
       basicInfo: {
         gender: "",
         hobbies: "",
-        bio: "",
+        year_of_study: "",
+        course: "",
+        phone_number: "",
+        student_number: "",
       },
       socialLinks: {
-        website_url: "",
         github_url: "",
         linkedin_url: "",
       },
@@ -75,10 +89,19 @@ export default function ProfileCreateForm() {
   };
 
   const onSubmit = async (data: z.infer<typeof multiStepSchema>) => {
+    const payload = {
+      ...data.basicInfo,
+      ...data.socialLinks,
+    };
+    console.log("payload:", payload);
     setIsLoading(true);
     try {
-      console.log("Submitted Profile:", data);
-      // here you would call your API (e.g. api.post("/profile", data))
+      const res = await api.post("/profile/create/", payload);
+      const newProfileId = res.data.id;
+      navigate(`/profile/${newProfileId}`);
+    } catch (err: any) {
+      console.error("API payload:", payload);
+      console.error("API error response:", err.response?.data);
     } finally {
       setIsLoading(false);
     }
@@ -121,7 +144,16 @@ export default function ProfileCreateForm() {
                     <FormItem>
                       <FormLabel>Gender</FormLabel>
                       <FormControl>
-                        <Input placeholder="Gender" {...field} />
+                        <Select {...field} onValueChange={field.onChange}>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select gender" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {profileChoices?.gender_choices && Object.entries(profileChoices.gender_choices).map(([value, label]) => (
+                              <SelectItem key={value} value={value}>{label}</SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -134,7 +166,16 @@ export default function ProfileCreateForm() {
                     <FormItem>
                       <FormLabel>Hobbies</FormLabel>
                       <FormControl>
-                        <Input placeholder="Hobbies" {...field} />
+                        <Select {...field} onValueChange={field.onChange}>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select hobbies" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {profileChoices?.hobby_choices && Object.entries(profileChoices.hobby_choices).map(([value, label]) => (
+                              <SelectItem key={value} value={value}>{label}</SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -142,12 +183,69 @@ export default function ProfileCreateForm() {
                 />
                 <FormField
                   control={form.control}
-                  name="basicInfo.bio"
+                  name="basicInfo.year_of_study"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Bio</FormLabel>
+                      <FormLabel>Year of Study</FormLabel>
                       <FormControl>
-                        <Textarea placeholder="Tell us a little about yourself" {...field} />
+                        <Select {...field} onValueChange={field.onChange}>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select year" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {profileChoices?.year_choices && Object.entries(profileChoices.year_choices).map(([value, label]) => (
+                              <SelectItem key={value} value={value}>{label}</SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="basicInfo.course"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Course</FormLabel>
+                      <FormControl>
+                        <Select {...field} onValueChange={field.onChange}>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select course" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {profileChoices?.course_choices && Object.entries(profileChoices.course_choices).map(([value, label]) => (
+                              <SelectItem key={value} value={value}>{label}</SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="basicInfo.phone_number"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Phone Number</FormLabel>
+                      <FormControl>
+                        <Input placeholder="+447..." {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="basicInfo.student_number"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Student Number</FormLabel>
+                      <FormControl>
+                        <Input placeholder="e.g. 12345678" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -165,24 +263,7 @@ export default function ProfileCreateForm() {
 
           {step === 2 && (
             <Card>
-              <CardHeader>
-                <CardTitle>Social Links</CardTitle>
-                <CardDescription>Share your profiles or personal website.</CardDescription>
-              </CardHeader>
               <CardContent className="space-y-4">
-                <FormField
-                  control={form.control}
-                  name="socialLinks.website_url"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Website URL</FormLabel>
-                      <FormControl>
-                        <Input placeholder="https://yourwebsite.com" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
                 <FormField
                   control={form.control}
                   name="socialLinks.github_url"
@@ -232,11 +313,14 @@ export default function ProfileCreateForm() {
                 <CardContent>
                   <ProfileCard
                     profile={{
-                      first_name: user?.first_name ?? "User",
+                      first_name: user?.first_name || "User",
+                      last_name: user?.last_name || "",
                       gender: form.getValues("basicInfo.gender") || "",
                       hobbies: form.getValues("basicInfo.hobbies") || "",
-                      bio: form.getValues("basicInfo.bio") || "",
-                      website_url: form.getValues("socialLinks.website_url") || "",
+                      year_of_study: form.getValues("basicInfo.year_of_study") || "",
+                      course: form.getValues("basicInfo.course") || "",
+                      phone_number: form.getValues("basicInfo.phone_number") || "",
+                      student_number: form.getValues("basicInfo.student_number") || "",
                       github_url: form.getValues("socialLinks.github_url") || "",
                       linkedin_url: form.getValues("socialLinks.linkedin_url") || "",
                     }}

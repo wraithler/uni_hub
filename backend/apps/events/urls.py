@@ -14,6 +14,12 @@ urlpatterns = [
     path("create/", EventCreateApi.as_view(), name="create"),
     path("<int:event_id>/", EventDetailApi.as_view(), name="detail"),
     path("<int:event_id>/update/", EventUpdateApi.as_view(), name="update"),
-    path("<int:event_id>/ticket/", EventTicketCreateApi.as_view(), name="generate-ticket"),
-    path("tickets/<int:ticket_id>/update/", EventTicketUpdateApi.as_view(), name="update-ticket"),
+    path(
+        "<int:event_id>/ticket/", EventTicketCreateApi.as_view(), name="generate-ticket"
+    ),
+    path(
+        "tickets/<int:ticket_id>/update/",
+        EventTicketUpdateApi.as_view(),
+        name="update-ticket",
+    ),
 ]

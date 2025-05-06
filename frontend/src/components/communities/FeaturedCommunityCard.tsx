@@ -26,7 +26,7 @@ interface FeaturedCommunityCardProps {
 export default function FeaturedCommunityCard({
   community,
 }: FeaturedCommunityCardProps) {
-  const config = categoryConfig[community.category_name];
+  const config = categoryConfig[community.category];
 
   return (
     <Card className="overflow-hidden flex flex-col">

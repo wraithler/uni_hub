@@ -9,7 +9,6 @@ from apps.users.services import user_create
 class BaseUserAdmin(admin.ModelAdmin):
     list_display = (
         "email",
-        "is_admin",
         "is_superuser",
         "is_active",
         "created_at",
@@ -18,11 +17,11 @@ class BaseUserAdmin(admin.ModelAdmin):
 
     search_fields = ("email", "username")
 
-    list_filter = ("is_active", "is_admin", "is_superuser")
+    list_filter = ("is_active", "is_superuser")
 
     fieldsets = (
         (None, {"fields": ("email",)}),
-        ("Booleans", {"fields": ("is_active", "is_admin", "is_superuser")}),
+        ("Booleans", {"fields": ("is_active", "is_superuser")}),
         ("Timestamps", {"fields": ("created_at", "updated_at")}),
     )
 

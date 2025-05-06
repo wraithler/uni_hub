@@ -5,10 +5,18 @@ const API_BASE_URL = import.meta.env.VITE_API_URL;
 
 export const getProfile = async (): Promise<ProfileFormData> => {
   const response = await axios.get(`${API_BASE_URL}/profile/`, {
-    withCredentials: true, 
+    withCredentials: true,
   });
   return response.data;
 };
+
+export const getProfileById = async (id: number): Promise<ProfileFormData> => {
+  const response = await axios.get(`${API_BASE_URL}/profile/${id}/`, {
+    withCredentials: true,
+  });
+  return response.data;
+};
+
 
 export const updateProfile = async (data: ProfileFormData): Promise<ProfileFormData> => {
   const response = await axios.patch(`${API_BASE_URL}/profile/`, data, {
@@ -30,4 +38,5 @@ export const getProfileChoices = async () => {
   });
   return response.data;
 };
+
 

@@ -7,6 +7,7 @@ from apps.communities.apis import (
     CommunityUpdateApi,
     CommunityEventsListApi,
     CommunityJoinApi,
+    CommunityDashboardDetailApi,
 )
 
 urlpatterns = [
@@ -16,4 +17,9 @@ urlpatterns = [
     path("<int:community_id>/update/", CommunityUpdateApi.as_view(), name="update"),
     path("<int:community_id>/events/", CommunityEventsListApi.as_view(), name="events"),
     path("<int:community_id>/join/", CommunityJoinApi.as_view(), name="join"),
+    path(
+        "<int:community_id>/dashboard/",
+        CommunityDashboardDetailApi.as_view(),
+        name="dashboard",
+    ),
 ]

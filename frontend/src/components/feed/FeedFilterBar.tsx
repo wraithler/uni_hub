@@ -8,7 +8,10 @@ type FeedFilterBarProps = {
   setFilters: React.Dispatch<React.SetStateAction<FeedFilters>>;
 };
 
-export default function FeedFilterBar({ filters, setFilters }: FeedFilterBarProps) {
+export default function FeedFilterBar({
+  filters,
+  setFilters,
+}: FeedFilterBarProps) {
   const handleShowChange = (newShow: "all" | "post" | "event") => {
     setFilters((prev) => ({ ...prev, show: newShow }));
   };
