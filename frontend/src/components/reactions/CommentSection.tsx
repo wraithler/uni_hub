@@ -2,7 +2,7 @@ import { Comment } from "@/api/reactions/reactionTypes";
 import { useCommentsPaginated } from "@/api/reactions/useReactionsPaginated";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { nameToAvatarFallback } from "@/lib/utils";
+import {nameToAvatarFallback, timeAgo} from "@/lib/utils";
 import CommentForm from "@/components/reactions/CommentForm.tsx";
 
 type CommentSectionProps = {
@@ -27,17 +27,6 @@ export default function CommentSection({ postId, onCommentAdded }: CommentSectio
     if (onCommentAdded) {
       onCommentAdded();
     }
-  };
-
-  const getRelativeTime = (dateString: string) => {
-    const date = new Date(dateString);
-    const now = new Date();
-    const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
-    
-    if (diffInSeconds < 60) return `${diffInSeconds}s ago`;
-    if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)}m ago`;
-    if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)}h ago`;
-    return `${Math.floor(diffInSeconds / 86400)}d ago`;
   };
 
   return (
@@ -65,9 +54,9 @@ export default function CommentSection({ postId, onCommentAdded }: CommentSectio
                   <p className="text-sm">{comment.content}</p>
                 </div>
                 <div className="flex items-center mt-1 text-xs text-muted-foreground">
-                  <Button variant="ghost" size="sm" className="h-6 px-2 text-xs">Like</Button>
-                  <span className="mx-1">·</span>
-                  <span>{comment.created_at ? getRelativeTime(comment.created_at) : '3h ago'}</span>
+                  {comment.created_at && (
+                      <span>{timeAgo(comment.created_at)}</span>
+                  )}
                 </div>
               </div>
             </div>
