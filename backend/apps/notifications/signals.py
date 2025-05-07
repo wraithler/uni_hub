@@ -72,7 +72,7 @@ def handle_event_created(sender, instance, created, **kwargs):
         # Notify community members about new event
         if hasattr(instance, 'community') and instance.community:
             for membership in instance.community.memberships.all():
-                if membership.user != instance.organizer:  # Don't notify the organizer
+                if membership.user != instance.created_by:  # Don't notify the creator
                     notification_create(
                         recipient=membership.user,
                         notification_type='info',
@@ -83,9 +83,9 @@ def handle_event_created(sender, instance, created, **kwargs):
     else:
         # Notify attendees about event updates
         for attendee in instance.attendees.all():
-            if attendee != instance.organizer:  # Don't notify the organizer
+            if attendee.user != instance.created_by:  # Don't notify the creator
                 notification_create(
-                    recipient=attendee,
+                    recipient=attendee.user,
                     notification_type='info',
                     title=f"Event update: {instance.title}",
                     message=f"The event details have been updated",
