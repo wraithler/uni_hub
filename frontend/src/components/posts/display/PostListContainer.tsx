@@ -2,12 +2,13 @@ import { usePostsPaginated } from "@/api/posts/usePostPaginated.ts";
 import { useState } from "react";
 import PostList from "@/components/posts/display/PostList.tsx";
 import { Button } from "@/components/ui/button.tsx";
-import { Grid, List, PenSquare } from "lucide-react";
+import { Grid, List } from "lucide-react";
 import PaginationBox from "@/components/common/PaginationBox.tsx";
 import { Skeleton } from "@/components/ui/skeleton.tsx";
 import { Community } from "@/api/communities/communityTypes.ts";
 import { usePosts } from "@/api/posts/usePosts.ts";
 import PostCard from "@/components/posts/cards/PostCard.tsx";
+import PostCreateDialog from "@/components/posts/PostCreateDialog.tsx";
 
 export default function PostListContainer({
   community,
@@ -50,10 +51,7 @@ export default function PostListContainer({
           >
             <List className="h-4 w-4" />
           </Button>
-          <Button size="sm">
-            <PenSquare className="h-4 w-4 mr-2" />
-            New Post
-          </Button>
+          <PostCreateDialog/>
         </div>
       </div>
 
@@ -64,7 +62,7 @@ export default function PostListContainer({
       ) : (
         <>
           {pinnedPost && pinnedPost.results.length > 0 && (
-            <PostCard variant="pinned" post={pinnedPost} />
+            <PostCard variant="pinned" post={pinnedPost.results[0]} />
           )}
 
           <PostList posts={posts.results} variant={viewMode} />

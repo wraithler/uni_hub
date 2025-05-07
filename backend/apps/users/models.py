@@ -3,6 +3,7 @@ from django.contrib.auth.models import BaseUserManager as _BaseUserManager
 from django.contrib.auth.models import PermissionsMixin
 from django.db import models
 
+from apps import users
 from apps.common.models import BaseModel
 
 
@@ -55,6 +56,11 @@ class BaseUserManager(_BaseUserManager):
         return user
 
 
+class UserInterest(BaseModel):
+    id = models.IntegerField(primary_key=True)
+    user = models.ForeignKey("users.BaseUser", on_delete=models.CASCADE, related_name="interests")
+    name = models.CharField(max_length=255)
+
 class BaseUser(BaseModel, AbstractBaseUser, PermissionsMixin):
     class Meta:
         verbose_name = "User"
@@ -106,3 +112,44 @@ class BaseUser(BaseModel, AbstractBaseUser, PermissionsMixin):
         default=True
     )  # (opposite of suspended for test cases)
     is_superuser = models.BooleanField(default=False)
+
+    def get_post_count(self):
+        return self.posts.count()
+
+    def get_community_count(self):
+        return self.memberships.count()
+
+    def get_friend_count(self):
+        return self.friends.count()
+
+    # Profile Stuff
+    GENDER_CHOICES = [
+        ("M", "Male"),
+        ("F", "Female"),
+        ("NB", "Non-binary"),
+        ("O", "Other"),
+        ("P", "Prefer not to say"),
+    ]
+
+    gender = models.CharField(max_length=2, choices=GENDER_CHOICES, blank=True, null=True)
+
+    website_url = models.URLField(blank=True, null=True)
+    github_url = models.URLField(blank=True, null=True)
+    linkedin_url = models.URLField(blank=True, null=True)
+
+    contact_email = models.EmailField(blank=True, null=True)
+    contact_phone = models.CharField(blank=True, null=True)
+
+    CONTACT_DETAIL_PRIVACY_CHOICES = [
+        ("PRIVATE", "Private"),
+        ("PUBLIC", "Public"),
+        ("MEMBERS", "Members-only"),
+    ]
+
+    contact_detail_privacy = models.CharField(
+        choices=CONTACT_DETAIL_PRIVACY_CHOICES,
+        default="PRIVATE",
+        max_length=10,
+    )
+
+

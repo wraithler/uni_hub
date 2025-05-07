@@ -2,6 +2,7 @@ from django.db import transaction
 
 from apps.common.services import model_update
 from apps.communities.models import Community
+from apps.communities.selectors import community_get
 from apps.core.exceptions import ApplicationError
 from apps.events.models import Event, EventTicket
 from apps.users.models import BaseUser

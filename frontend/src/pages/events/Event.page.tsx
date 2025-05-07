@@ -4,11 +4,6 @@ import Layout from "@/components/core/Layout";
 import PageHeader from "@/components/core/PageHeader";
 import { Badge } from "@/components/ui/badge";
 import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "@/components/ui/avatar";
-import {
   Tabs,
   TabsContent,
   TabsList,
@@ -16,14 +11,16 @@ import {
 } from "@/components/ui/tabs";
 import { Card, CardContent } from "@/components/ui/card";
 import { Calendar, Clock, MapPin } from "lucide-react";
-import { formatDate, nameToAvatarFallback } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { formatTimestampRange } from "@/api";
 
 export default function EventPage() {
   const { id } = useParams();
   const { data: event } = useEventDetail(Number(id));
 
   if (!event) return null;
+
+  const { date, time } = formatTimestampRange(event.starts_at, event.ends_at);
 
   return (
     <Layout>
@@ -39,9 +36,9 @@ export default function EventPage() {
             )}
             <div className="flex items-center text-sm text-muted-foreground gap-2">
               <Calendar className="w-4 h-4" />
-              <span>{formatDate(event.starts_at)}</span>
+              <span>{date}</span>
               <Clock className="w-4 h-4" />
-              <span>{formatDate(event.ends_at)}</span>
+              <span>{time}</span>
               <MapPin className="w-4 h-4" />
               <span>{event.location}</span>
             </div>

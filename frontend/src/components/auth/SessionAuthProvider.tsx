@@ -7,7 +7,7 @@ import React, {
   useEffect,
   useState,
 } from "react";
-import { UserMe } from "@/api/users/userTypes.ts";
+import {User, UserMe} from "@/api/users/userTypes.ts";
 import api from "@/api/apiClient.ts";
 import axios from "axios";
 import { Spinner } from "@/components/ui/spinner.tsx";
@@ -18,7 +18,7 @@ type AuthResponseType = {
 };
 
 type SessionAuthContextType = {
-  user: UserMe | null;
+  user: User | null;
   loading: boolean;
   error: string | null;
   isAuthenticated: boolean;

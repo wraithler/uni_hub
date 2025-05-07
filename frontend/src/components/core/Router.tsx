@@ -14,6 +14,8 @@ import TermsOfServicePage from "@/pages/legal/TermsOfService.page.tsx";
 import SendVerificationEmailPage from "@/pages/email-verification/SendVerificationEmail.page.tsx";
 import VerifyEmailPage from "@/pages/email-verification/VerifyEmail.page.tsx";
 import CommunityDashboardPage from "@/pages/communities/dashboard/CommunityDashboard.page.tsx";
+import ProfilePage from "@/pages/profiles/Profile.page.tsx";
+import ProfileOtherPage from "@/pages/profiles/ProfileOtherPage.page.tsx";
 import FriendsTestPage from "@/pages/friends/FriendsTest.page";
 
 const router = createBrowserRouter([
@@ -39,8 +41,8 @@ const router = createBrowserRouter([
       },
       {
         path: "/communities/:id/dashboard",
-        element: <CommunityDashboardPage/>
-      }
+        element: <CommunityDashboardPage />,
+      },
     ],
   },
   {
@@ -110,6 +112,14 @@ const router = createBrowserRouter([
         element: <VerifyEmailPage />,
       },    
     ],
+  },
+  {
+    path: "/profile",
+    element: <ProfilePage />,
+  },
+  {
+    path: "/profile/:id",
+    element: <ProfileOtherPage />,
   },
   {
     path: "/verify-email",
