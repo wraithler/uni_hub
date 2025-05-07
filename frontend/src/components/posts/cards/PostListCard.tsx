@@ -8,52 +8,118 @@ import {
 } from "@/components/ui/card";
 import { AvatarFallback } from "@/components/ui/avatar.tsx";
 import { Button } from "@/components/ui/button";
-import { Heart, MessageSquare } from "lucide-react";
 import { nameToAvatarFallback } from "@/lib/utils.ts";
+import LikeButton from "@/components/reactions/likeButton";
+import { MessageSquare } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { useState } from "react";
+import CommentSection from "@/components/reactions/CommentSection";
 
-export default function PostListCard({ post }: { post: Post }) {
+type PostListCardProps = {
+  post: Post;
+  onView?: () => void;
+};
+
+export default function PostListCard({ post, onView }: PostListCardProps) {
+  const [commentsOpen, setCommentsOpen] = useState(false);
+  const [commentCount, setCommentCount] = useState(post.comment_count || 0);
+  
+  // Use static "3h ago" for now until date-fns is installed
+  const timeAgo = "3h ago";
+
+  const handleCommentAdded = () => {
+    setCommentCount(prev => prev + 1);
+  };
+
   return (
-    <Card>
-      <CardHeader>
-        <div className="flex items-center gap-2">
-          <Avatar className="w-8 h-8">
-            <AvatarImage src="/placeholder.svg" alt="User" />
-            <AvatarFallback>
-              {nameToAvatarFallback(
-                `${post.created_by.first_name} ${post.created_by.last_name}`,
-              )}
-            </AvatarFallback>
-          </Avatar>
-          <div>
-            <span className="font-medium">
-              {post.created_by.first_name} {post.created_by.last_name}
-            </span>
-            <p className="text-xs text-muted-foreground">3h ago</p>
+    <>
+      <Card>
+        <CardHeader>
+          <div className="flex items-center gap-2">
+            <Avatar className="w-8 h-8">
+              <AvatarImage src="/placeholder.svg" alt="User" />
+              <AvatarFallback>
+                {nameToAvatarFallback(
+                  `${post.created_by?.first_name} ${post.created_by?.last_name}`,
+                )}
+              </AvatarFallback>
+            </Avatar>
+            <div>
+              <span className="font-medium">
+                {post.created_by?.first_name} {post.created_by?.last_name}
+              </span>
+              <p className="text-xs text-muted-foreground">{timeAgo}</p>
+            </div>
           </div>
-        </div>
-      </CardHeader>
-      <CardContent>{post.content}</CardContent>
-      <CardFooter className="flex justify-between">
-        <div className="flex items-center gap-4">
-          <Button
-            variant="ghost"
-            size="sm"
-            className="flex items-center gap-1 h-8 px-2"
+        </CardHeader>
+        <CardContent>{post.content}</CardContent>
+        <CardFooter className="flex justify-between">
+          <div className="flex items-center gap-4">
+            <LikeButton
+              contentType="post"
+              objectId={post.id || 0}
+              initialLiked={post.has_liked}
+              initialCount={post.like_count || 0}
+              showCount={true}
+              size="sm"
+            />
+            <Button
+              onClick={() => setCommentsOpen(true)}
+              variant="ghost"
+              size="sm"
+              className="flex items-center gap-1 h-8 px-2 text-muted-foreground"
+              aria-label="Show comments"
+            >
+              <MessageSquare className="w-4 h-4" />
+              <span>{commentCount}</span>
+            </Button>
+          </div>
+          <Button 
+            size="sm" 
+            onClick={onView}
           >
-            <Heart className="w-4 h-4" />
-            <span>{post.like_count}</span>
+            View Post
           </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            className="flex items-center gap-1 h-8 px-2"
-          >
-            <MessageSquare className="w-4 h-4" />
-            <span>{post.comment_count}</span>
-          </Button>
-        </div>
-        <Button size="sm">View Post</Button>
-      </CardFooter>
-    </Card>
+        </CardFooter>
+      </Card>
+
+      <Dialog open={commentsOpen} onOpenChange={setCommentsOpen}>
+        <DialogContent className="sm:max-w-[550px] max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Comments</DialogTitle>
+          </DialogHeader>
+          <div className="mt-2">
+            <div className="flex items-center gap-2 mb-4">
+              <Avatar className="w-8 h-8">
+                <AvatarImage src="/placeholder.svg" alt="User" />
+                <AvatarFallback>
+                  {nameToAvatarFallback(
+                    `${post.created_by?.first_name} ${post.created_by?.last_name}`,
+                  )}
+                </AvatarFallback>
+              </Avatar>
+              <div>
+                <div className="text-sm font-medium">
+                  {post.created_by?.first_name} {post.created_by?.last_name}
+                </div>
+                <div className="text-xs text-muted-foreground">{timeAgo}</div>
+              </div>
+            </div>
+            <p className="text-sm mb-4">{post.content}</p>
+            <div className="border-t pt-4">
+              <CommentSection 
+                postId={post.id || 0} 
+                onCommentAdded={handleCommentAdded} 
+              />
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 }
