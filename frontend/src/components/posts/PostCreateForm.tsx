@@ -25,6 +25,7 @@ import { useAuth } from "@/components/auth/SessionAuthProvider";
 import FileUpload from "@/components/files/FileUpload.tsx";
 import { toast } from "sonner";
 import axios from "axios";
+import PostCarousel from "@/components/posts/PostCarousel.tsx";
 
 const Schema = z.object({
   content: z
@@ -39,6 +40,7 @@ export default function PostCreateForm() {
   const { mutate, error } = usePostCreate();
   const { user } = useAuth();
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [urls, setUrls] = useState<string[]>([]);
 
   const form = useForm<z.infer<typeof Schema>>({
     resolver: zodResolver(Schema),
@@ -101,6 +103,8 @@ export default function PostCreateForm() {
                 )}
               />
             </div>
+            <PostCarousel imageUrls={urls}/>
+
             <div className="flex flex-col sm:flex-row gap-3 mt-3 pt-3 border-t justify-between">
               <FormField
                 control={form.control}
@@ -111,12 +115,12 @@ export default function PostCreateForm() {
                       <FileUpload
                         value={field.value || []}
                         onChange={field.onChange}
+                        setUrls={setUrls}
                       />
                     </FormControl>
                   </FormItem>
                 )}
               />
-              {/*</div>*/}
               <div className="flex flex-col sm:flex-row gap-2 sm:items-center">
                 <FormField
                   control={form.control}

@@ -41,7 +41,7 @@ export function useS3DirectUpload() {
         file_id,
       });
 
-      return { fileId: file_id, url: `${url}/${fields.key}` };
+      return { fileId: file_id, url: `${url}${fields.key}` };
     } catch (err: any) {
       console.error(err);
       setError(err.message || "Upload failed");
