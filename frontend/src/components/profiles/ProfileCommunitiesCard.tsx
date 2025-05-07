@@ -15,9 +15,11 @@ import { nameToAvatarFallback } from "@/lib/utils.ts";
 import { User } from "@/api/users/userTypes.ts";
 import { useCommunities } from "@/api/communities/useCommunities.ts";
 import { Community } from "@/api/communities/communityTypes.ts";
+import { useNavigate } from "react-router-dom";
 
 export default function ProfileCommunitiesCard({ user }: { user: User }) {
   const { data: userCommunities } = useCommunities({ user_id: user.id });
+  const navigate = useNavigate();
 
   return (
     <Card>
@@ -29,14 +31,18 @@ export default function ProfileCommunitiesCard({ user }: { user: User }) {
           userCommunities.results
             .slice(0, 3)
             .map((community: Community, index: number) => (
-              <div key={index} className="flex items-center gap-3">
+              <div
+                key={index}
+                className="flex items-center gap-3 cursor-pointer"
+                onClick={() => navigate(`/communities/${community.id}`)}
+              >
                 <Avatar className="w-10 h-10">
                   <AvatarImage
                     src={community.avatar_url}
                     alt={community.name}
                   />
                   <AvatarFallback
-                    className={`${categoryConfig[community.category].avatarBg} text-white`}
+                    className={`${categoryConfig[community.category as string].avatarBg} text-white`}
                   >
                     {nameToAvatarFallback(community.name)}
                   </AvatarFallback>
