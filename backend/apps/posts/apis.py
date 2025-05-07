@@ -7,6 +7,7 @@ from rest_framework.views import APIView
 
 from apps.api.pagination import LimitOffsetPagination, get_paginated_response
 from apps.communities.apis import CommunityDetailApi
+from apps.posts.models import PostImages
 from apps.posts.selectors import (
     post_get,
     post_list,
@@ -45,6 +46,7 @@ class PostListApi(APIView):
         pinned = serializers.BooleanField(required=False, allow_null=True)
         community__id = serializers.IntegerField(required=False, allow_null=True)
         my = serializers.BooleanField(required=False, allow_null=True)
+        include_community = serializers.BooleanField(required=False, default=False)
 
     class OutputSerializer(serializers.Serializer):
         id = serializers.IntegerField()
@@ -55,6 +57,8 @@ class PostListApi(APIView):
         like_count = serializers.SerializerMethodField()
         comment_count = serializers.SerializerMethodField()
         has_liked = serializers.SerializerMethodField()
+        image_urls = serializers.SerializerMethodField()
+        community = CommunityDetailApi.OutputSerializer()
 
         def get_like_count(self, obj):
             return obj.likes.count()
@@ -64,6 +68,9 @@ class PostListApi(APIView):
 
         def get_has_liked(self, obj):
             return obj.likes.filter(user=self.context.get("request").user).exists()
+
+        def get_image_urls(self, obj):
+            return [f"https://uwe-uni-hub-bucket.s3.amazonaws.com{image.image.url}" for image in obj.images.all()]
 
     def get(self, request):
         filters_serializer = self.FilterSerializer(data=request.query_params)
@@ -84,12 +91,28 @@ class PostCreateApi(APIView):
     class InputSerializer(serializers.Serializer):
         content = serializers.CharField()
         community_id = serializers.IntegerField()
+        media = serializers.ListField(child=serializers.IntegerField(), required=False)
 
     def post(self, request):
         serializer = self.InputSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
+        media = None
+        if serializer.validated_data.get("media"):
+            media = serializer.validated_data.pop("media")
+
         post = post_create(created_by=request.user, **serializer.validated_data)
+
+        if media:
+            PostImages.objects.bulk_create(
+                [
+                    PostImages(
+                        post=post,
+                        image_id=image_id,
+                    )
+                    for image_id in media
+                ]
+            )
 
         data = PostDetailApi.OutputSerializer(post, context={"request": request}).data
         return Response(data)

@@ -16,6 +16,7 @@ type ActionConfirmationDialogProps = {
   button: React.ReactNode;
   trigger: React.ReactNode;
   open: boolean;
+  setOpen: (open: boolean) => void;
 };
 
 export default function ActionConfirmationDialog({
@@ -25,9 +26,10 @@ export default function ActionConfirmationDialog({
   button,
   trigger,
   open,
+  setOpen,
 }: ActionConfirmationDialogProps) {
   return (
-    <Dialog open={open}>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{trigger}</DialogTrigger>
       <DialogContent>
         <DialogHeader>
