@@ -8,4 +8,6 @@ export type CommunitiesQueryParameters = PaginationProps & {
   is_featured?: boolean;
   name?: string;
   sort_by?: CommunitySortOptions;
+  created_by?: number;
+  user_id?: number;
 };

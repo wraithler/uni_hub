@@ -4,6 +4,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from apps.api.pagination import LimitOffsetPagination, get_paginated_response
+from apps.communities.apis import UserSerializer
 from apps.posts.selectors import post_get
 from apps.reactions.selectors import (
     comment_get,
@@ -20,7 +21,7 @@ class CommentDetailApi(APIView):
         id = serializers.IntegerField()
         content = serializers.CharField()
         created_at = serializers.DateTimeField()
-        created_by = serializers.IntegerField(source="created_by.id")
+        created_by = UserSerializer()
         post = serializers.IntegerField(source="post.id")
 
     def get(self, request, comment_id):
@@ -44,7 +45,7 @@ class CommentListApi(APIView):
         id = serializers.IntegerField()
         content = serializers.CharField()
         created_at = serializers.DateTimeField()
-        created_by_id = serializers.IntegerField()
+        created_by = UserSerializer()
         post_id = serializers.IntegerField()
 
     def get(self, request):

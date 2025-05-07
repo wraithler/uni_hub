@@ -10,7 +10,7 @@ import {
   AvatarFallback,
   AvatarImage,
 } from "@/components/ui/avatar.tsx";
-import { nameToAvatarFallback } from "@/lib/utils.ts";
+import {nameToAvatarFallback, timeAgo} from "@/lib/utils.ts";
 import CommentSection from "@/components/reactions/CommentSection.tsx";
 import { MessageSquare } from "lucide-react";
 import { Button } from "@/components/ui/button.tsx";
@@ -48,7 +48,7 @@ export default function CommentDialog({ post }: { post: Post }) {
               <div className="text-sm font-medium">
                 {post.created_by?.first_name} {post.created_by?.last_name}
               </div>
-              <div className="text-xs text-muted-foreground">{timeAgo}</div>
+              <div className="text-xs text-muted-foreground">{timeAgo(post.created_at as string)}</div>
             </div>
           </div>
           <p className="text-sm mb-4">{post.content}</p>

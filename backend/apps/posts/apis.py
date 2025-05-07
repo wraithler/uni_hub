@@ -38,12 +38,13 @@ class PostListApi(APIView):
         default_limit = 1
 
     class FilterSerializer(serializers.Serializer):
-        id = serializers.IntegerField(required=False)
-        content = serializers.CharField(required=False)
-        created_by = serializers.IntegerField(required=False)
-        community__name = serializers.CharField(required=False)
-        pinned = serializers.BooleanField(required=False)
-        community__id = serializers.IntegerField(required=False)
+        id = serializers.IntegerField(required=False, allow_null=True)
+        content = serializers.CharField(required=False, allow_null=True)
+        created_by = serializers.IntegerField(required=False, allow_null=True)
+        community__name = serializers.CharField(required=False, allow_null=True)
+        pinned = serializers.BooleanField(required=False, allow_null=True)
+        community__id = serializers.IntegerField(required=False, allow_null=True)
+        my = serializers.BooleanField(required=False, allow_null=True)
 
     class OutputSerializer(serializers.Serializer):
         id = serializers.IntegerField()
@@ -67,7 +68,7 @@ class PostListApi(APIView):
     def get(self, request):
         filters_serializer = self.FilterSerializer(data=request.query_params)
         filters_serializer.is_valid(raise_exception=True)
-        posts = post_list(filters=filters_serializer.validated_data)
+        posts = post_list(filters=filters_serializer.validated_data, request=request)
         return get_paginated_response(
             pagination_class=self.Pagination,
             serializer_class=partial(

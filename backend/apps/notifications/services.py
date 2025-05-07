@@ -69,7 +69,7 @@ def notification_create(*,
     
     # Create notification
     notification = Notification.objects.create(**notification_data)
-    
+
     # Send email if channel is email
     if channel == 'email':
         send_notification_email(notification)

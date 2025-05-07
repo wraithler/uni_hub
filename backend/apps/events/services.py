@@ -2,6 +2,7 @@ from django.db import transaction
 
 from apps.common.services import model_update
 from apps.communities.models import Community
+from apps.communities.selectors import community_get
 from apps.core.exceptions import ApplicationError
 from apps.events.models import Event, EventTicket
 from apps.users.models import BaseUser
@@ -15,10 +16,13 @@ def event_create(
     date: str,
     location: str,
     created_by: BaseUser,
-    community: Community,
+    community: Community | int,
     is_virtual_event: bool,
     virtual_link: str,
 ):
+    if isinstance(community, int):
+        community = community_get(community_id=community)
+
     if not community.is_member(created_by):
         raise ApplicationError("User is not a member of the community")
 

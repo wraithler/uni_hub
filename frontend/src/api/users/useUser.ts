@@ -1,13 +1,11 @@
-import { useParams } from "react-router-dom";
 import api from "../apiClient.ts";
 import { useQuery } from "@tanstack/react-query";
 import { userQueryKeys } from "./userQueryKeys.ts";
 
-export function useUser() {
-  const { id } = useParams();
-
+export function useUser({ id }: { id: number | undefined}) {
+  const url = `/users/${id !== undefined ? id : ""}`;
   const getUserFn = async () => {
-    const response = await api.get(`/users/${id}`);
+    const response = await api.get(url);
     return response.data;
   };
 

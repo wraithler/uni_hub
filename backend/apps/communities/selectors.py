@@ -1,8 +1,7 @@
 from datetime import timedelta
 from typing import Optional
 
-from django.db.models import QuerySet
-from django.http import Http404
+from django.db.models import QuerySet, Q
 
 from apps.common.services import calculate_growth, counts_by_delta
 from apps.common.utils import get_object
@@ -15,8 +14,9 @@ from apps.communities.models import (
     Community,
     CommunityTag,
     CommunityInvitation,
-    CommunityCategory,
+    CommunityCategory, CommunityJoinRequest,
 )
+from apps.users.models import BaseUser
 
 
 def community_get(community_id) -> Optional[Community]:
@@ -65,12 +65,14 @@ def community_dashboard_get(*, community_id):
     community = community_get(community_id)
 
     total_members = community.memberships.count()
-    pending_requests = community.join_requests.filter(is_accepted=False).count()
+    pending_requests = community.join_requests.filter((Q(is_accepted=False) & Q(is_rejected=False)))
     total_posts = community.posts.count()
     total_events = community.events.count()
+    upcoming_events = community.events.all()[:3]
+    admins = BaseUser.objects.filter(memberships__community=community, memberships__is_admin=True)
+    moderators = BaseUser.objects.filter(memberships__community=community, memberships__is_moderator=True)
 
     member_growth = calculate_growth(community, "memberships", timedelta(days=30), 12)
-
     engagement = counts_by_delta(community, ["posts", "events"])
 
     return {
@@ -80,4 +82,13 @@ def community_dashboard_get(*, community_id):
         "total_events": total_events,
         "member_growth": member_growth,
         "engagement": engagement,
+        "upcoming_events": upcoming_events,
+        "admins": admins,
+        "moderators": moderators,
     }
+
+
+def community_join_request_get(*, join_request_id) -> CommunityJoinRequest:
+    join_request = get_object(CommunityJoinRequest, id=join_request_id)
+
+    return join_request

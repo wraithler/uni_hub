@@ -27,7 +27,6 @@ LOCAL_APPS = [
     "apps.reports.apps.ReportsConfig",
     "apps.reactions.apps.ReactionsConfig",
     "apps.notification_preferences.apps.NotificationPreferencesConfig",
-    "apps.profile.apps.ProfileConfig",
     "apps.notifications.apps.NotificationsConfig",
 ]  # TODO: Add others
 

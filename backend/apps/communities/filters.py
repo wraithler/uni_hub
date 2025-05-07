@@ -10,6 +10,7 @@ class CommunityFilter(django_filters.FilterSet):
     my = django_filters.BooleanFilter(method="filter_my")
     name = django_filters.CharFilter(method="filter_name_or_tag")
     sort_by = django_filters.CharFilter(method="filter_sort_by")
+    user_id = django_filters.CharFilter(method="filter_user_id")
 
     class Meta:
         model = Community
@@ -39,6 +40,11 @@ class CommunityFilter(django_filters.FilterSet):
 
         return queryset
 
+    def filter_user_id(self, queryset, name, value):
+        if value:
+            return queryset.filter(memberships__user_id=value)
+        return queryset
+
     def filter_queryset(self, queryset):
         queryset = super(CommunityFilter, self).filter_queryset(queryset)
 
@@ -46,7 +52,7 @@ class CommunityFilter(django_filters.FilterSet):
             Q(privacy="public")
             | Q(privacy="restricted")
             | (Q(privacy="private") & Q(memberships__user=self.request.user))
-        )
+        ).distinct()
 
         return queryset
 

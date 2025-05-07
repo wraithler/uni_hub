@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button.tsx";
-import { Calendar, Home, MessageSquare, Users } from "lucide-react";
+import { Calendar, Home, Users } from "lucide-react";
 import { useAuth } from "@/components/auth/SessionAuthProvider";
 import { Link } from "react-router-dom";
 import AdminHeader from "@/components/core/AdminHeader.tsx";
@@ -10,28 +10,7 @@ interface HeaderProps {
 }
 
 const tabs = {
-  landing: [
-    {
-      name: "Features",
-      href: "#features",
-      icon: "",
-    },
-    {
-      name: "Communities",
-      href: "#communities",
-      icon: "",
-    },
-    {
-      name: "Testimonials",
-      href: "#testimonials",
-      icon: "",
-    },
-    {
-      name: "FAQ",
-      href: "#faq",
-      icon: "",
-    },
-  ],
+  landing: [],
   application: [
     {
       name: "Home",
@@ -47,11 +26,6 @@ const tabs = {
       name: "Events",
       href: "/events",
       icon: <Calendar className="w-4 h-4" />,
-    },
-    {
-      name: "Support",
-      href: "/support",
-      icon: <MessageSquare className="w-4 h-4" />,
     },
   ],
 };
