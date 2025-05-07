@@ -17,22 +17,19 @@ export default function CommentSection({ postId, onCommentAdded }: CommentSectio
     pagination,
     refetch
   } = useCommentsPaginated({
-    post_id: postId,
+    post_id: postId, 
     limit: 5,
     sort_by: "newest",
   });
 
   const handleCommentAdded = () => {
     refetch();
-    // Call the parent's onCommentAdded callback if provided
     if (onCommentAdded) {
       onCommentAdded();
     }
   };
 
-  // Function to format time as a placeholder for formatDistanceToNow
   const getRelativeTime = (dateString: string) => {
-    // Simple implementation just to get it working
     const date = new Date(dateString);
     const now = new Date();
     const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
@@ -49,7 +46,7 @@ export default function CommentSection({ postId, onCommentAdded }: CommentSectio
       
       {isLoading ? (
         <div className="text-center text-sm text-muted-foreground py-3">Loading comments...</div>
-      ) : data.results.length > 0 ? (
+      ) : data?.results?.length > 0 ? (
         <div className="mt-3 space-y-3">
           {data.results.map((comment: Comment) => (
             <div key={comment.id} className="flex gap-2">
