@@ -8,8 +8,9 @@ import {
 } from "@/components/ui/card";
 import { AvatarFallback } from "@/components/ui/avatar.tsx";
 import { Button } from "@/components/ui/button";
-import { Heart, MessageSquare } from "lucide-react";
-import {nameToAvatarFallback, timeAgo} from "@/lib/utils.ts";
+import { Heart } from "lucide-react";
+import { nameToAvatarFallback, timeAgo } from "@/lib/utils.ts";
+import CommentDialog from "@/components/reactions/CommentDialog.tsx";
 
 export default function PostGridCard({ post }: { post: Post }) {
   return (
@@ -26,7 +27,9 @@ export default function PostGridCard({ post }: { post: Post }) {
           <span className="text-sm font-medium">
             {post.created_by?.first_name} {post.created_by?.last_name}
           </span>
-          <span className="text-xs text-muted-foreground ml-auto">{timeAgo(post.created_at as string)}</span>
+          <span className="text-xs text-muted-foreground ml-auto">
+            {timeAgo(post.created_at as string)}
+          </span>
         </div>
         <CardDescription className="line-clamp-2">
           {post.content}
@@ -42,14 +45,7 @@ export default function PostGridCard({ post }: { post: Post }) {
             <Heart className="w-4 h-4" />
             <span>{post.like_count}</span>
           </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            className="flex items-center gap-1 h-8 px-2"
-          >
-            <MessageSquare className="w-4 h-4" />
-            <span>{post.comment_count}</span>
-          </Button>
+          <CommentDialog post={post} />
         </div>
       </CardFooter>
     </Card>

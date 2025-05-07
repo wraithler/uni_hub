@@ -4,6 +4,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from apps.api.pagination import LimitOffsetPagination, get_paginated_response
+from apps.communities.apis import UserSerializer
 from apps.posts.selectors import post_get
 from apps.reactions.selectors import (
     comment_get,
@@ -11,7 +12,7 @@ from apps.reactions.selectors import (
     comment_list_by_post,
     comment_list_by_user,
 )
-from apps.reactions.services import comment_create, comment_update, comment_delete
+from apps.reactions.services import comment_create, comment_update, comment_delete, like_delete
 from apps.reactions.services import like_create
 
 
@@ -20,7 +21,7 @@ class CommentDetailApi(APIView):
         id = serializers.IntegerField()
         content = serializers.CharField()
         created_at = serializers.DateTimeField()
-        created_by = serializers.IntegerField(source="created_by.id")
+        created_by = UserSerializer()
         post = serializers.IntegerField(source="post.id")
 
     def get(self, request, comment_id):
@@ -44,7 +45,7 @@ class CommentListApi(APIView):
         id = serializers.IntegerField()
         content = serializers.CharField()
         created_at = serializers.DateTimeField()
-        created_by_id = serializers.IntegerField()
+        created_by = UserSerializer()
         post_id = serializers.IntegerField()
 
     def get(self, request):
@@ -129,18 +130,37 @@ class UserCommentsListApi(APIView):
 
 class LikeCreateApi(APIView):
     class InputSerializer(serializers.Serializer):
-        obj_id = serializers.IntegerField()
+        object_id = serializers.IntegerField()
 
     def post(self, request):
         serializer = self.InputSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        post_id = serializer.validated_data["obj_id"]
+        post_id = serializer.validated_data["object_id"]
         post = post_get(post_id)
 
         if post is None:
             raise Http404
 
-        like = like_create(obj=post, created_by=request.user)
+        like_create(obj=post, user=request.user)
 
         return Response(status=status.HTTP_201_CREATED)
+
+
+class UnlikeApi(APIView):
+    class InputSerializer(serializers.Serializer):
+        object_id = serializers.IntegerField()
+
+    def post(self, request):
+        serializer = self.InputSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        post_id = serializer.validated_data["object_id"]
+        post = post_get(post_id)
+
+        if post is None:
+            raise Http404
+
+        like_delete(obj=post, user=request.user)
+
+        return Response(status=status.HTTP_204_NO_CONTENT)
