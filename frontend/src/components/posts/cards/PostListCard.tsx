@@ -9,7 +9,7 @@ import {
 import { AvatarFallback } from "@/components/ui/avatar.tsx";
 import { Button } from "@/components/ui/button";
 import { nameToAvatarFallback } from "@/lib/utils.ts";
-import LikeButton from "@/components/reactions/likeButton";
+import LikeButton from "@/components/reactions/LikeButton.tsx";
 import { MessageSquare } from "lucide-react";
 import {
   Dialog,

@@ -36,7 +36,7 @@ export default function CommentForm({
           if (onCommentAdded) {
             onCommentAdded();
           }
-        }
+        },
       },
     );
   };

@@ -8,7 +8,7 @@ import {
 import { Badge } from "@/components/ui/badge.tsx";
 import { Button } from "@/components/ui/button.tsx";
 import { MessageSquare } from "lucide-react";
-import LikeButton from "@/components/reactions/likeButton";
+import LikeButton from "@/components/reactions/LikeButton.tsx";
 import {
   Dialog,
   DialogContent,
