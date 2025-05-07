@@ -4,13 +4,14 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from apps.api.pagination import LimitOffsetPagination, get_paginated_response
-from apps.reports.models import Report, ReportStatus
-from apps.reports.selectors import report_get, report_list
+from apps.reports.models import Report, ReportStatus, ReportCategory
+from apps.reports.selectors import report_get, report_list, report_category_list
 from apps.reports.services import (
     report_create,
     report_update,
     report_resolve,
     report_attachment_create,
+    get_or_create_default_categories,
 )
 
 
@@ -31,6 +32,9 @@ class ReportDetailApi(APIView):
                 "community",
                 "evidence_links",
                 "resolution_notes",
+                "post", 
+                "created_at",
+                "updated_at",
             )
 
     def get(self, request, report_id):
@@ -54,7 +58,13 @@ class ReportListApi(APIView):
         reported_by = serializers.IntegerField(required=False)
         reported_user = serializers.IntegerField(required=False)
         community = serializers.IntegerField(required=False)
+        post = serializers.IntegerField(required=False) 
         is_my_report = serializers.BooleanField(required=False)
+        sort_by = serializers.ChoiceField(
+            choices=["newest", "oldest", "status"], 
+            required=False, 
+            default="newest"
+        )
 
     class OutputSerializer(serializers.ModelSerializer):
         class Meta:
@@ -66,6 +76,8 @@ class ReportListApi(APIView):
                 "reported_by",
                 "reported_user",
                 "community",
+                "post", 
+                "created_at",
             )
 
     def get(self, request):
@@ -77,7 +89,13 @@ class ReportListApi(APIView):
             validated_data["reported_by"] = request.user.id
             validated_data.pop("is_my_report", None)
 
-        reports = report_list(filters=validated_data, request=request)
+        sort_by = validated_data.pop("sort_by", "newest")
+
+        reports = report_list(
+            filters=validated_data, 
+            request=request,
+            sort_by=sort_by  
+        )
 
         return get_paginated_response(
             pagination_class=self.Pagination,
@@ -92,10 +110,11 @@ class ReportCreateApi(APIView):
     class InputSerializer(serializers.Serializer):
         title = serializers.CharField()
         description = serializers.CharField()
-        category = serializers.IntegerField()
+        category = serializers.IntegerField(required=False, allow_null=True)  
         reported_user = serializers.IntegerField(required=False, allow_null=True)
         community = serializers.IntegerField(required=False, allow_null=True)
         evidence_links = serializers.JSONField(required=False, allow_null=True)
+        post = serializers.IntegerField(required=False, allow_null=True)
 
     def post(self, request):
         serializer = self.InputSerializer(data=request.data)
@@ -103,6 +122,8 @@ class ReportCreateApi(APIView):
 
         validated_data = serializer.validated_data
         validated_data["reported_by"] = request.user
+
+        get_or_create_default_categories()
 
         report = report_create(**validated_data)
 
@@ -183,3 +204,23 @@ class ReportAttachmentUploadApi(APIView):
                 "description": attachment.description,
             }
         )
+
+
+class ReportCategoryListApi(APIView):
+    class OutputSerializer(serializers.ModelSerializer):
+        class Meta:
+            model = ReportCategory
+            fields = (
+                "id",
+                "name",
+                "description",
+                "is_active",
+            )
+
+    def get(self, request):
+
+        get_or_create_default_categories()
+        categories = report_category_list(filters={"is_active": True})
+        data = self.OutputSerializer(categories, many=True).data
+
+        return Response({"results": data})

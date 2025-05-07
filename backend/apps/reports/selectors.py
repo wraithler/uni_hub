@@ -15,10 +15,21 @@ def report_get(report_id) -> Optional[Report]:
     return report
 
 
-def report_list(*, filters=None, request=None) -> QuerySet[Report]:
+def report_list(*, filters=None, request=None, sort_by=None) -> QuerySet[Report]:
     filters = filters or {}
     qs = Report.objects.all()
-    return ReportFilter(filters, qs, request=request).qs
+
+    filtered_qs = ReportFilter(filters, qs, request=request).qs
+
+    if sort_by:
+        if sort_by == "oldest":
+            filtered_qs = filtered_qs.order_by('created_at')
+        elif sort_by == "status":
+            filtered_qs = filtered_qs.order_by('status', '-created_at')
+        elif sort_by == "newest":
+            filtered_qs = filtered_qs.order_by('-created_at')
+    
+    return filtered_qs
 
 
 def report_category_get(report_category_id) -> Optional[ReportCategory]:
