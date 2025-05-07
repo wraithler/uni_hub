@@ -25,7 +25,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useAuth } from "@/components/auth/SessionAuthProvider";
 import { Navigate } from "react-router-dom";
 import { useEventCreate } from "@/api/events/useEventCreate";
-import FeaturedEventCard from "./FeaturedEventCard";
+import EventFeaturedCard from "@/components/events/cards/EventFeaturedCard"
 import CommunitiesCombobox from "@/components/communities/CommunitiesCombobox";
 import { Checkbox } from "@/components/ui/checkbox";
 
@@ -326,7 +326,7 @@ export default function EventCreateForm() {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <FeaturedEventCard
+                <EventFeaturedCard
                   event={{
                     id: 0,
                     title: form.getValues("basic.title"),
@@ -351,6 +351,7 @@ export default function EventCreateForm() {
                 <Button
                   type="submit"
                   onClick={form.handleSubmit((data) => {
+
                     const eventData = {
                       title: data.basic.title,
                       description: data.basic.description,

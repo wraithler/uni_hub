@@ -5,7 +5,7 @@ import {
   AvatarImage,
 } from "@/components/ui/avatar.tsx";
 import { Button } from "@/components/ui/button.tsx";
-import { useAuth } from "@/components/auth/SessionAuthProvider";
+import { useAuth } from "@/components/auth/SessionAuthProvider.tsx";
 import { nameToAvatarFallback } from "@/lib/utils.ts";
 import { Link } from "react-router-dom";
 

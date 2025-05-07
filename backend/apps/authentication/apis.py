@@ -65,7 +65,7 @@ class UserLogoutApi(APIView):
 @method_decorator(ensure_csrf_cookie, name='dispatch')
 class UserCSRFCookieApi(APIView):
     def get(self, request):
-        return Response(status=status.HTTP_200_OK)
+        return Response(data={"detail": "Set CSRF token"}, status=status.HTTP_200_OK)
 
 
 class UserRegisterApi(APIView):

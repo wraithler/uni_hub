@@ -10,8 +10,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import FeaturedEventCard from "@/components/events/FeaturedEventCard";
-import EventCard from "@/components/events/EventCard";
+import EventFeaturedCard from "@/components/events/cards/EventFeaturedCard.tsx";
+import EventCard from "@/components/events/cards/EventCard.tsx";
 import Layout from "@/components/core/Layout";
 import PageHeader from "@/components/core/PageHeader";
 import { Link } from "react-router-dom";
@@ -89,7 +89,7 @@ export default function EventsPage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {featuredEvents.results.length > 0 ? (
               featuredEvents.results.map((event: Event) => (
-                <FeaturedEventCard key={event.id} event={event} />
+                <EventFeaturedCard key={event.id} event={event} />
               ))
             ) : (
               <div className="flex flex-col items-center justify-center py-12 text-center col-span-3">

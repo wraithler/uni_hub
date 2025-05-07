@@ -1,4 +1,6 @@
 from django.http import Http404
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_protect
 from rest_framework import serializers, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -44,6 +46,8 @@ class EventListApi(APIView):
         id = serializers.IntegerField(required=False)
         name = serializers.CharField(required=False)
         description = serializers.CharField(required=False)
+        upcoming = serializers.BooleanField()
+        past = serializers.BooleanField()
 
     class OutputSerializer(serializers.ModelSerializer):
         class Meta:
@@ -58,7 +62,13 @@ class EventListApi(APIView):
                 "location",
                 "is_virtual_event",
                 "virtual_link",
+                "attendees"
             )
+
+        attendees = serializers.SerializerMethodField()
+
+        def get_attendees(self, obj):
+            return obj.attendees.all().count()
 
     def get(self, request):
         filters_serializer = self.FilterSerializer(data=request.query_params)
@@ -75,22 +85,28 @@ class EventListApi(APIView):
         )
 
 
+@method_decorator(csrf_protect, name="dispatch")
 class EventCreateApi(APIView):
     class InputSerializer(serializers.Serializer):
-        name = serializers.CharField()
+        title = serializers.CharField()
         description = serializers.CharField()
         starts_at = serializers.DateTimeField()
         ends_at = serializers.DateTimeField()
         community = serializers.IntegerField()
-        location = serializers.CharField()
+        location = serializers.CharField(required=False)
         is_virtual_event = serializers.BooleanField()
-        virtual_link = serializers.URLField()
+        virtual_link = serializers.URLField(required=False)
 
     def post(self, request):
         serializer = self.InputSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-
-        event = event_create(**serializer.validated_data, created_by=request.user)
+        
+        validated_data = serializer.validated_data.copy()
+ 
+        if 'virtual_link' not in validated_data or validated_data['virtual_link'] is None:
+            validated_data['virtual_link'] = ''
+            
+        event = event_create(**validated_data, created_by=request.user)
 
         data = EventDetailApi.OutputSerializer(event).data
         return Response(data)

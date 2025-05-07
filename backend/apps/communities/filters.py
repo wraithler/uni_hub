@@ -46,7 +46,7 @@ class CommunityFilter(django_filters.FilterSet):
             Q(privacy="public")
             | Q(privacy="restricted")
             | (Q(privacy="private") & Q(memberships__user=self.request.user))
-        )
+        ).distinct()
 
         return queryset
 

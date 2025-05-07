@@ -5,6 +5,8 @@ from apps.communities.models import Community
 from apps.core.exceptions import ApplicationError
 from apps.events.models import Event, EventTicket
 from apps.users.models import BaseUser
+from datetime import datetime
+from apps.communities.selectors import community_get
 
 
 @transaction.atomic
@@ -12,23 +14,28 @@ def event_create(
     *,
     title: str,
     description: str,
-    date: str,
+    starts_at: datetime,
+    ends_at: datetime,
     location: str,
     created_by: BaseUser,
-    community: Community,
+    community: Community | int,
     is_virtual_event: bool,
     virtual_link: str,
 ):
+    if isinstance(community, int):
+        community = community_get(community_id=community)
+
     if not community.is_member(created_by):
         raise ApplicationError("User is not a member of the community")
 
-    if not community.is_moderator(created_by) and not community.is_admin(created_by):
-        raise ApplicationError("User is not a moderator or admin of the community")
+    # if not community.is_moderator(created_by) and not community.is_admin(created_by):
+    #     raise ApplicationError("User is not a moderator or admin of the community")
 
     event = Event.objects.create(
         title=title,
         description=description,
-        date=date,
+        starts_at=starts_at,
+        ends_at=ends_at,
         location=location,
         created_by=created_by,
         community=community,
