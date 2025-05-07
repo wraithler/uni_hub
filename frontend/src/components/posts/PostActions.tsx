@@ -12,6 +12,7 @@ import { usePostDelete } from "@/api/posts/usePostDelete";
 import { Post } from "@/api/posts/postTypes.ts";
 import { useAuth } from "@/components/auth/SessionAuthProvider";
 import { FeedItem } from "@/api/feed/feedTypes.ts";
+import {toast} from "sonner";
 
 type PostActionsProps = {
   post: Post | FeedItem;
@@ -29,9 +30,8 @@ export default function PostActions({ post }: PostActionsProps) {
 
     try {
       deletePost.mutate(post.id);
-      // redirect, toast, or callback here
-    } catch (err) {
-      console.error("Delete failed:", err);
+    } catch {
+      toast.error("Failed to delete post, try again later!");
     } finally {
       setIsDeleting(false);
       setShowDeleteDialog(false);

@@ -5,7 +5,7 @@ import { feedQueryKeys } from "@/api/feed/feedQueryKeys.ts";
 export const useFeed = () => {
   const getFeedFn = async ({ pageParam = 1 }) => {
     const offset = (pageParam - 1) * 10;
-    const response = await api.get("/feed/", { params: { limit: 10, offset } });
+    const response = await api.get("/posts/", { params: { limit: 10, offset } });
     return response.data;
   };
 

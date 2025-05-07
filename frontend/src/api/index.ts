@@ -21,6 +21,16 @@ export interface ApplicationErrorResponse {
   };
 }
 
+export function getOrdinal(n: number): string {
+    if (n > 3 && n < 21) return "th";
+    switch (n % 10) {
+      case 1: return "st";
+      case 2: return "nd";
+      case 3: return "rd";
+      default: return "th";
+    }
+  }
+
 export function formatTimestampRange(start: string, end: string): { date: string; time: string } {
   const startDate = new Date(start);
   const endDate = new Date(end);
@@ -31,19 +41,9 @@ export function formatTimestampRange(start: string, end: string): { date: string
   const dayName = days[startDate.getUTCDay()];
   const dateNum = startDate.getUTCDate();
   const monthName = months[startDate.getUTCMonth()];
+  const year = startDate.getUTCFullYear();
 
-  // Ordinal suffix (1st, 2nd, 3rd, etc.)
-  function getOrdinal(n: number): string {
-    if (n > 3 && n < 21) return "th";
-    switch (n % 10) {
-      case 1: return "st";
-      case 2: return "nd";
-      case 3: return "rd";
-      default: return "th";
-    }
-  }
-
-  const dateString = `${dayName} ${dateNum}${getOrdinal(dateNum)} ${monthName}`;
+  const dateString = `${dayName} ${dateNum}${getOrdinal(dateNum)} ${monthName} ${year}`;
 
   // Format time in HH:MM (24-hour format)
   const pad = (n: number) => n.toString().padStart(2, "0");
