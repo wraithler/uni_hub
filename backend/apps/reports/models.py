@@ -48,6 +48,14 @@ class Report(BaseModel):
         null=True,
     )
 
+    post = models.ForeignKey(
+        "posts.Post",
+        on_delete=models.SET_NULL,
+        related_name="reports",
+        blank=True,
+        null=True,
+    )
+
     category = models.ForeignKey(
         ReportCategory, on_delete=models.PROTECT, related_name="reports"
     )
@@ -75,6 +83,7 @@ class Report(BaseModel):
         indexes = [
             models.Index(fields=["status", "created_at"]),
             models.Index(fields=["reported_by", "status"]),
+            models.Index(fields=["post"]),
         ]
 
     def __str__(self):
