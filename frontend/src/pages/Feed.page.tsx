@@ -1,7 +1,7 @@
 import Layout from "@/components/core/Layout.tsx";
 import FeedSideBar from "@/components/feed/FeedSideBar.tsx";
 import PostCreateForm from "@/components/posts/PostCreateForm.tsx";
-import FilteredFeed from "@/components/feed/FilteredFeed.tsx";
+import {InfiniteScrollFeed} from "@/components/feed/InfiniteScrollFeed.tsx";
 
 export default function FeedPage() {
   return (
@@ -12,7 +12,7 @@ export default function FeedPage() {
 
           <div className="lg:col-span-2 space-y-6">
             <PostCreateForm />
-            <FilteredFeed />
+            <InfiniteScrollFeed/>
           </div>
         </div>
       </main>

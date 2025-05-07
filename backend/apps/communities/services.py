@@ -8,7 +8,7 @@ from apps.communities.models import (
     Community,
     CommunityInvitation,
     CommunityCategory,
-    CommunityGuidelines,
+    CommunityGuidelines, CommunityJoinRequest,
 )
 from apps.communities.selectors import community_category_list
 from apps.core.exceptions import ApplicationError
@@ -18,17 +18,17 @@ from apps.users.models import BaseUser
 
 @transaction.atomic
 def community_create_new(
-    *,
-    name: str,
-    description: str,
-    tags: List[CommunityTag],
-    category: CommunityCategory,
-    created_by: BaseUser,
-    about: str,
-    guidelines: List[CommunityGuidelines],
-    avatar: File,
-    banner: File,
-    contact_email: str,
+        *,
+        name: str,
+        description: str,
+        tags: List[CommunityTag],
+        category: CommunityCategory,
+        created_by: BaseUser,
+        about: str,
+        guidelines: List[CommunityGuidelines],
+        avatar: File,
+        banner: File,
+        contact_email: str,
 ) -> Community:
     community = Community.objects.create(
         name=name,
@@ -56,7 +56,7 @@ def community_category_create(*, name: str) -> CommunityCategory:
 
 @transaction.atomic
 def community_category_update(
-    *, community_category: CommunityCategory, data
+        *, community_category: CommunityCategory, data
 ) -> CommunityCategory:
     non_side_effect_fields: List[str] = ["name"]
 
@@ -79,13 +79,13 @@ def get_or_create_tags(tag_names: List[str]) -> List[CommunityTag]:
 
 @transaction.atomic
 def community_create(
-    *,
-    name: str,
-    description: str,
-    tags: List[CommunityTag | str],
-    created_by: BaseUser,
-    category: CommunityCategory | str,
-    **kwargs,
+        *,
+        name: str,
+        description: str,
+        tags: List[CommunityTag | str],
+        created_by: BaseUser,
+        category: CommunityCategory | str,
+        **kwargs,
 ) -> Community:
     if isinstance(tags[0], str):
         tags = get_or_create_tags(tags)
@@ -108,7 +108,7 @@ def community_create(
 
 @transaction.atomic
 def community_update(*, community: Community, data) -> Community:
-    non_side_effect_fields: List[str] = ["name", "description", "is_featured"]
+    non_side_effect_fields: List[str] = ["name", "description", "is_featured", "about", "privacy", "contact_email"]
 
     community, has_updated = model_update(
         instance=community, fields=non_side_effect_fields, data=data
@@ -138,8 +138,17 @@ def community_join(*, community: Community, user: BaseUser) -> Community:
 
 
 @transaction.atomic
+def community_leave(*, community: Community, user: BaseUser):
+    if not community.is_member(user):
+        raise ApplicationError("User is not a member of this community")
+
+    community.memberships.filter(user=user).delete()
+    community.join_requests.filter(user=user).delete()
+
+
+@transaction.atomic
 def community_invitation_create(
-    *, community: Community, user: BaseUser
+        *, community: Community, user: BaseUser
 ) -> CommunityInvitation:
     invitation = CommunityInvitation.objects.create(community=community, user=user)
 
@@ -148,7 +157,7 @@ def community_invitation_create(
 
 @transaction.atomic
 def community_invitation_update(
-    *, invitation: CommunityInvitation, data
+        *, invitation: CommunityInvitation, data
 ) -> CommunityInvitation:
     non_side_effect_fields: List[str] = ["is_accepted"]
 
@@ -164,3 +173,49 @@ def community_tag_create(*, name: str) -> CommunityTag:
     tag = CommunityTag.objects.create(name=name)
 
     return tag
+
+
+@transaction.atomic
+def community_join_request_create(*, community: Community, user: BaseUser):
+    if community.is_member(user):
+        raise ApplicationError("User is already a member of this community")
+
+    if not community.privacy == "restricted":
+        raise ApplicationError("Community must be restricted")
+
+    community_join_request = CommunityJoinRequest.objects.create(community=community, user=user)
+
+    return community_join_request
+
+
+@transaction.atomic
+def community_join_request_update(*, join_request: CommunityJoinRequest, data) -> CommunityJoinRequest:
+    non_side_effect_fields: List[str] = ["is_accepted", "is_rejected"]
+
+    join_request, has_updated = model_update(instance=join_request, fields=non_side_effect_fields, data=data)
+
+    if join_request.is_accepted:
+        join_request.community.memberships.create(user=join_request.user)
+
+    return join_request
+
+
+@transaction.atomic
+def community_role_update(*, community: Community, user: BaseUser, role: str):
+    if not community.is_member(user):
+        raise ApplicationError("User is not a member of this community")
+
+    if role == "user":
+        model_update(instance=community.memberships.filter(user=user).first(), fields=["is_admin", "is_moderator"],
+                     data={"is_admin": False, "is_moderator": False})
+
+    elif role == "admin":
+        model_update(instance=community.memberships.filter(user=user).first(), fields=["is_admin", "is_moderator"],
+                     data={"is_admin": True, "is_moderator": False})
+
+    elif role == "moderator":
+        model_update(instance=community.memberships.filter(user=user).first(), fields=["is_admin", "is_moderator"],
+                     data={"is_admin": False, "is_moderator": True})
+
+    elif role == "kick":
+        community_leave(community=community, user=user)

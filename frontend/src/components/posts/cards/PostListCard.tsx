@@ -9,7 +9,7 @@ import {
 import { AvatarFallback } from "@/components/ui/avatar.tsx";
 import { Button } from "@/components/ui/button";
 import { Heart, MessageSquare } from "lucide-react";
-import { nameToAvatarFallback } from "@/lib/utils.ts";
+import {nameToAvatarFallback, timeAgo} from "@/lib/utils.ts";
 
 export default function PostListCard({ post }: { post: Post }) {
   return (
@@ -20,15 +20,15 @@ export default function PostListCard({ post }: { post: Post }) {
             <AvatarImage src="/placeholder.svg" alt="User" />
             <AvatarFallback>
               {nameToAvatarFallback(
-                `${post.created_by.first_name} ${post.created_by.last_name}`,
+                `${post.created_by?.first_name} ${post.created_by?.last_name}`,
               )}
             </AvatarFallback>
           </Avatar>
           <div>
             <span className="font-medium">
-              {post.created_by.first_name} {post.created_by.last_name}
+              {post.created_by?.first_name} {post.created_by?.last_name}
             </span>
-            <p className="text-xs text-muted-foreground">3h ago</p>
+            <p className="text-xs text-muted-foreground">{timeAgo(post.created_at as string)}</p>
           </div>
         </div>
       </CardHeader>
@@ -52,7 +52,6 @@ export default function PostListCard({ post }: { post: Post }) {
             <span>{post.comment_count}</span>
           </Button>
         </div>
-        <Button size="sm">View Post</Button>
       </CardFooter>
     </Card>
   );

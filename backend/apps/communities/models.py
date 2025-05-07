@@ -37,17 +37,20 @@ class Community(BaseModel):
     created_by = models.ForeignKey("users.BaseUser", on_delete=models.CASCADE)
     is_featured = models.BooleanField(default=False)
     about = models.TextField(blank=True, null=True)
+    contact_email = models.EmailField(blank=True, null=True)
     avatar = models.ForeignKey(
         "files.File",
         on_delete=models.SET_NULL,
         related_name="community_avatar",
         null=True,
+        blank=True,
     )
     banner = models.ForeignKey(
         "files.File",
         on_delete=models.SET_NULL,
         related_name="community_banner",
         null=True,
+        blank=True,
     )
 
     PRIVACY_OPTIONS = (
@@ -76,6 +79,9 @@ class Community(BaseModel):
             .filter(Q(is_moderator=True) | Q(is_admin=True))
             .exists()
         )
+
+    def has_requested_to_join(self, user):
+        return self.join_requests.filter(user=user).exists()
 
 
 class CommunityMembership(BaseModel):
@@ -127,6 +133,7 @@ class CommunityJoinRequest(BaseModel):
         "users.BaseUser", on_delete=models.CASCADE, related_name="join_requests"
     )
     is_accepted = models.BooleanField(default=False)
+    is_rejected = models.BooleanField(default=False)
 
     class Meta:
         unique_together = ["community", "user"]

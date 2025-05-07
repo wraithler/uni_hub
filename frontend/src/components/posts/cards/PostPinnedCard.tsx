@@ -46,9 +46,6 @@ export default function PostPinnedCard({ post }: { post: Post }) {
             <span>{post.comment_count}</span>
           </Button>
         </div>
-        <Button size="sm" variant="outline">
-          Read More
-        </Button>
       </CardFooter>
     </Card>
   );

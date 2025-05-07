@@ -1,15 +1,13 @@
 import InfiniteScroll from "react-infinite-scroll-component";
 import { CircleCheck, UserCircle } from "lucide-react";
-import FeedCard from "@/components/feed/FeedCard.tsx";
 import React from "react";
-import EventCard from "@/components/events/EventCard.tsx";
 import { useAuth } from "@/components/auth/SessionAuthProvider";
 import { useFeed } from "@/api/feed/useFeed.ts";
-import { FeedItem } from "@/api/feed/feedTypes.ts";
-import { FeedFilters } from "@/components/feed/FilteredFeed.tsx";
 import {Spinner} from "@/components/ui/spinner.tsx";
+import {Post} from "@/api/posts/postTypes.ts";
+import PostListCard from "@/components/posts/cards/PostListCard.tsx";
 
-export const InfiniteScrollFeed = ({ filters }: { filters: FeedFilters }) => {
+export const InfiniteScrollFeed = () => {
   const { data, fetchNextPage } = useFeed();
   const { user } = useAuth();
   return (
@@ -48,17 +46,9 @@ export const InfiniteScrollFeed = ({ filters }: { filters: FeedFilters }) => {
       <div className="space-y-4">
         {data?.pages.map((page, index) => (
           <React.Fragment key={index}>
-            {page.results
-              .filter((item: FeedItem) =>
-                filters.show === "all" ? true : item.type === filters.show,
-              )
-              .map((item: FeedItem) =>
-                item.type === "post" ? (
-                  <FeedCard key={item.id} {...item} />
-                ) : (
-                  <EventCard key={item.id} {...item} />
-                ),
-              )}
+            {page.results.map((item: Post) => (
+              <PostListCard post={item} />
+            ))}
           </React.Fragment>
         ))}
       </div>
