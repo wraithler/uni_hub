@@ -44,15 +44,13 @@ export default function PostCarousel({
             </CarouselItem>
           ))}
         </CarouselContent>
-        {imageUrls.length > 1 && (
-          <div className="flex items-center justify-center gap-2 mt-4">
-            <CarouselPrevious className="relative inset-0 translate-y-0 bg-white/80 hover:bg-white" />
-            <div className="text-xs text-muted-foreground">
-              {imageUrls.length} images
-            </div>
-            <CarouselNext className="relative inset-0 translate-y-0 bg-white/80 hover:bg-white" />
+        <div className="flex items-center justify-center gap-2 mt-4">
+          <CarouselPrevious className="relative inset-0 translate-y-0 bg-white/80 hover:bg-white" />
+          <div className="text-xs text-muted-foreground">
+            {imageUrls.length} image{imageUrls.length > 1 ? "s" : ""}
           </div>
-        )}
+          <CarouselNext className="relative inset-0 translate-y-0 bg-white/80 hover:bg-white" />
+        </div>
       </Carousel>
     </div>
   );

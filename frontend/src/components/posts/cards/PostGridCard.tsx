@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Heart } from "lucide-react";
 import { nameToAvatarFallback, timeAgo } from "@/lib/utils.ts";
 import CommentDialog from "@/components/reactions/CommentDialog.tsx";
+import PostActions from "@/components/posts/PostActions.tsx";
 
 export default function PostGridCard({ post }: { post: Post }) {
   return (
@@ -30,6 +31,7 @@ export default function PostGridCard({ post }: { post: Post }) {
           <span className="text-xs text-muted-foreground ml-auto">
             {timeAgo(post.created_at as string)}
           </span>
+          <PostActions post={post} />
         </div>
         <CardDescription className="line-clamp-2">
           {post.content}

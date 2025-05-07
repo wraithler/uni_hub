@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Heart } from "lucide-react";
 import { nameToAvatarFallback, timeAgo } from "@/lib/utils.ts";
 import CommentDialog from "@/components/reactions/CommentDialog.tsx";
+import PostActions from "@/components/posts/PostActions.tsx";
 
 export default function PostListCard({ post }: { post: Post }) {
   return (
@@ -25,13 +26,16 @@ export default function PostListCard({ post }: { post: Post }) {
               )}
             </AvatarFallback>
           </Avatar>
-          <div>
-            <span className="font-medium">
-              {post.created_by?.first_name} {post.created_by?.last_name}
-            </span>
-            <p className="text-xs text-muted-foreground">
-              {timeAgo(post.created_at as string)}
-            </p>
+          <div className="flex justify-between w-full">
+            <div>
+              <span className="font-medium">
+                {post.created_by?.first_name} {post.created_by?.last_name}
+              </span>
+              <p className="text-xs text-muted-foreground">
+                {timeAgo(post.created_at as string)}
+              </p>
+            </div>
+            <PostActions post={post}/>
           </div>
         </div>
       </CardHeader>
