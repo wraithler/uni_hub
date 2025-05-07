@@ -47,7 +47,7 @@ export const InfiniteScrollFeed = () => {
         {data?.pages.map((page, index) => (
           <React.Fragment key={index}>
             {page.results.map((item: Post) => (
-              <PostListCard post={item} />
+              <PostListCard post={item} key={item.id}/>
             ))}
           </React.Fragment>
         ))}
