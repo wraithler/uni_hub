@@ -1,6 +1,5 @@
 from django.urls import path
 
-
 from apps.reports.apis import (
     ReportDetailApi,
     ReportCreateApi,
