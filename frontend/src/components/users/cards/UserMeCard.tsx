@@ -26,8 +26,8 @@ export default function UserMeCard() {
             <h2 className="font-bold text-lg">
               {user?.first_name} {user?.last_name}
             </h2>
-            {user?.subject ? (
-              <p className="text-muted-foreground">{user.subject}</p>
+            {user?.academic_department ? (
+              <p className="text-muted-foreground">{user.academic_department}</p>
             ) : (
               <Button
                 variant="link"

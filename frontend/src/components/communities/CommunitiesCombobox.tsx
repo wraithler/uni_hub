@@ -59,7 +59,7 @@ export default function CommunitiesCombobox({
                     key={community.id}
                     value={community.name}
                     onSelect={() => {
-                      onChange(community.id);
+                      onChange(community.id as number);
                       setOpen(false);
                     }}
                   >

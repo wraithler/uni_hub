@@ -1,4 +1,5 @@
 import django_filters
+
 from apps.posts.models import Post
 
 
@@ -14,4 +15,12 @@ class PostFilter(django_filters.FilterSet):
             "community__memberships__user",
             "community__id",
             "pinned",
+            "my"
         )
+
+    my = django_filters.BooleanFilter(method="filter_my")
+
+    def filter_my(self, queryset, name, value):
+        if value:
+            return queryset.filter(created_by=self.request.user)
+        return queryset

@@ -10,6 +10,7 @@ class CommunityFilter(django_filters.FilterSet):
     my = django_filters.BooleanFilter(method="filter_my")
     name = django_filters.CharFilter(method="filter_name_or_tag")
     sort_by = django_filters.CharFilter(method="filter_sort_by")
+    user_id = django_filters.CharFilter(method="filter_user_id")
 
     class Meta:
         model = Community
@@ -37,6 +38,11 @@ class CommunityFilter(django_filters.FilterSet):
         if value == "alphabetical":
             return queryset.order_by("name")
 
+        return queryset
+
+    def filter_user_id(self, queryset, name, value):
+        if value:
+            return queryset.filter(memberships__user_id=value)
         return queryset
 
     def filter_queryset(self, queryset):

@@ -23,8 +23,38 @@ class UserDetailApi(APIView):
         email = serializers.EmailField()
         first_name = serializers.CharField()
         last_name = serializers.CharField()
+        bio = serializers.CharField(required=False)
+        academic_department = serializers.CharField(required=False)
+        year_of_study = serializers.IntegerField(required=False)
+        role = serializers.CharField(required=False)
+        gender = serializers.CharField(required=False)
+        website_url = serializers.URLField(required=False)
+        github_url = serializers.URLField(required=False)
+        linkedin_url = serializers.URLField(required=False)
+        posts = serializers.SerializerMethodField()
+        communities = serializers.SerializerMethodField()
+        friends = serializers.SerializerMethodField()
+        created_at = serializers.DateTimeField()
+        interests = serializers.SerializerMethodField()
+        contact_email = serializers.EmailField(required=False)
+        contact_phone = serializers.CharField(required=False)
+
+        def get_posts(self, obj):
+            return obj.posts.all().count()
+
+        def get_communities(self, obj):
+            return obj.memberships.all().count()
+
+        def get_friends(self, obj):
+            return obj.friends.all().count()
+
+        def get_interests(self, obj):
+            return [interest.name for interest in obj.interests.all()]
 
     def get(self, request, user_id):
+        if user_id is None:
+            user_id = request.user.id
+
         user = user_get(user_id)
 
         if user is None:

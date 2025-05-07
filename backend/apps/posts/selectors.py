@@ -12,10 +12,10 @@ def post_get(post_id) -> Optional[Post]:
     return post
 
 
-def post_list(*, filters=None) -> QuerySet[Post]:
+def post_list(*, filters=None, request=None) -> QuerySet[Post]:
     filters = filters or {}
     qs = Post.objects.all()
-    return PostFilter(filters, qs).qs
+    return PostFilter(filters, qs, request=request).qs
 
 
 def post_list_by_community(*, community_id, filters=None) -> QuerySet[Post]:
