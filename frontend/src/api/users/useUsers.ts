@@ -1,9 +1,11 @@
 import api from "../apiClient.ts";
 import { useQuery } from "@tanstack/react-query";
 import { userQueryKeys } from "./userQueryKeys.ts";
+import {PaginationProps} from "@/api";
 
-type UseUsersQueryParams = {
+type UseUsersQueryParams = PaginationProps & {
   community_id: number;
+  name?: string;
 }
 
 export function useUsers(params: UseUsersQueryParams) {

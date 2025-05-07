@@ -8,16 +8,19 @@ from rest_framework.views import APIView
 
 from apps.api.mixins import AuthAPIView
 from apps.api.pagination import LimitOffsetPagination, get_paginated_response
-from apps.communities.models import Community
+from apps.communities.models import Community, CommunityJoinRequest
 from apps.communities.selectors import (
     community_get,
     community_list,
-    community_dashboard_get,
+    community_dashboard_get, community_join_request_get,
 )
 from apps.communities.services import community_create, community_update, community_join, community_leave, \
-    community_join_request_create
-from apps.events.apis import EventListApi
+    community_join_request_create, community_join_request_update, community_role_update
+from apps.core.exceptions import ApplicationError
+from apps.events.apis import EventListApi, EventDetailApi
 from apps.events.selectors import event_list
+from apps.users.models import BaseUser
+from apps.users.selectors import user_get
 
 
 class CommunityDetailApi(APIView):
@@ -165,6 +168,9 @@ class CommunityUpdateApi(APIView):
     class InputSerializer(serializers.Serializer):
         name = serializers.CharField(required=False)
         description = serializers.CharField(required=False)
+        about = serializers.CharField(required=False)
+        contact_email = serializers.EmailField()
+        privacy = serializers.CharField()
 
     def post(self, request, community_id):
         serializer = self.InputSerializer(data=request.data)
@@ -175,9 +181,9 @@ class CommunityUpdateApi(APIView):
         if community is None:
             raise Http404
 
-        community = community_update(community, **serializer.validated_data)
+        community = community_update(community=community, data=serializer.validated_data)
 
-        data = CommunityDetailApi.OutputSerializer(community).data
+        data = CommunityDetailApi.OutputSerializer(community, context={"request": request}).data
 
         return Response(data)
 
@@ -241,14 +247,29 @@ class CommunityRequestJoinApi(APIView):
         return Response(status=status.HTTP_200_OK)
 
 
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = BaseUser
+        fields = ("id", "first_name", "last_name", "academic_department", "year_of_study")
+
+class PendingRequestSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CommunityJoinRequest
+        fields = "__all__"
+
+    user = UserSerializer()
+
 class CommunityDashboardDetailApi(AuthAPIView):
     class OutputSerializer(serializers.Serializer):
         total_members = serializers.IntegerField()
-        pending_requests = serializers.IntegerField()
+        pending_requests = PendingRequestSerializer(many=True)
         total_posts = serializers.IntegerField()
         total_events = serializers.IntegerField()
         member_growth = serializers.JSONField()
         engagement = serializers.JSONField()
+        upcoming_events = EventDetailApi.OutputSerializer(many=True)
+        admins = UserSerializer(many=True)
+        moderators = UserSerializer(many=True)
 
     def get(self, request, community_id):
         community = community_get(community_id)
@@ -263,3 +284,75 @@ class CommunityDashboardDetailApi(AuthAPIView):
         data = self.OutputSerializer(dashboard_data).data
 
         return Response(data)
+
+
+class CommunityJoinRequestRespond(APIView):
+    def post(self, request, join_request_id):
+        join_request = community_join_request_get(join_request_id=join_request_id)
+
+        if join_request is None:
+            raise ApplicationError("Couldn't find join request")
+
+        community = community_get(join_request.community.id)
+        response = request.data.get("response")
+
+        if not community:
+            raise ApplicationError("Couldn't find community")
+
+        if not community.is_moderator(request.user):
+            raise PermissionDenied
+
+        if response is None:
+            raise ApplicationError("Response is None")
+
+        if response == "accept":
+            community_join_request_update(join_request=join_request, data={"is_accepted": True})
+        elif response == "reject":
+            community_join_request_update(join_request=join_request, data={"is_rejected": True})
+        else:
+            raise ApplicationError("Response is invalid")
+
+        return Response(status=status.HTTP_200_OK)
+
+
+class CommunitySetRole(APIView):
+    def post(self, request, community_id):
+        community = community_get(community_id)
+
+        if community is None:
+            raise ApplicationError("Couldn't find community")
+
+        user = request.user
+
+        if not community.is_admin(user):
+            raise PermissionDenied
+
+        user_id = request.data.get("user_id")
+        role = request.data.get("role")
+
+        if not user_id or not role:
+            raise ApplicationError("Couldn't get user or role")
+
+        user = user_get(user_id=user_id)
+
+        if not user:
+            raise ApplicationError("Couldn't get user")
+
+        community_role_update(community=community, user=user, role=role)
+
+        return Response(status=status.HTTP_200_OK)
+
+
+class CommunityDeleteApi(APIView):
+    def post(self, request, community_id):
+        community = community_get(community_id)
+
+        if not community:
+            raise Http404
+
+        if not community.is_admin(request.user):
+            raise PermissionDenied
+
+        community.delete()
+
+        return Response(status=status.HTTP_200_OK)

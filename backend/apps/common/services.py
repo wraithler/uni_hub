@@ -59,24 +59,25 @@ def model_update(
 def counts_by_delta(model, attributes):
     data = []
 
-    for i in range(7):
-        day_start = (timezone.now() - (timedelta(days=1) * i)).replace(hour=0, minute=0, second=0, microsecond=0)
+    for i in reversed(range(7)):  # oldest to newest
+        day_start = (timezone.now() - timedelta(days=i)).replace(hour=0, minute=0, second=0, microsecond=0)
         day_end = day_start + timedelta(days=1)
-        label = day_start.strftime("%A")[:3]
+        label = day_start.strftime("%a")
 
         day_data = {
+            "idx": 6 - i,
             "label": label,
         }
 
         for attr in attributes:
             attr_queryset = getattr(model, attr).all()
             filtered_count = attr_queryset.filter(created_at__gte=day_start, created_at__lt=day_end).count()
-
             day_data[attr] = filtered_count
 
         data.append(day_data)
 
     return data
+
 
 
 def calculate_growth(model, attribute, delta, n_delta):

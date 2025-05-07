@@ -5,4 +5,11 @@ type Growth = {
   month: string;
 };
 
-export type { Growth };
+type Engagement = {
+  idx: number;
+  label: string;
+  posts: number;
+  comments: number;
+}
+
+export type { Growth, Engagement };
