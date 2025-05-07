@@ -38,6 +38,7 @@ class UserDetailApi(APIView):
         interests = serializers.SerializerMethodField()
         contact_email = serializers.EmailField(required=False)
         contact_phone = serializers.CharField(required=False)
+        is_email_verified = serializers.BooleanField(required=False)
 
         def get_posts(self, obj):
             return obj.posts.all().count()

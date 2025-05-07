@@ -23,17 +23,17 @@ export function useCommunityUpdate() {
       await queryClient.cancelQueries({
         queryKey: communityQueryKeys.detail(Number(id)),
       });
-      const previousCommunity = queryClient.getQueryData(
+
+      const previousCommunity = queryClient.getQueryData<Community>(
         communityQueryKeys.detail(Number(id)),
       );
-      queryClient.setQueryData(
-        communityQueryKeys.detail(Number(id)),
-        updatedCommunity,
-      );
-      return {
-        previousCommunity: previousCommunity,
-        updatedCommunity: updatedCommunity,
-      };
+
+      queryClient.setQueryData(communityQueryKeys.detail(Number(id)), {
+        ...previousCommunity,
+        ...updatedCommunity,
+      });
+
+      return { previousCommunity };
     },
     onError: (_err, _updatedCommunity, context?: TSFix) => {
       queryClient.setQueryData(

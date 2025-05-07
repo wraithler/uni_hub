@@ -24,3 +24,8 @@ class PostFilter(django_filters.FilterSet):
         if value:
             return queryset.filter(created_by=self.request.user)
         return queryset
+
+    def filter_queryset(self, queryset):
+        queryset = super(PostFilter, self).filter_queryset(queryset)
+        queryset = queryset.filter(community__memberships__user=self.request.user)
+        return queryset

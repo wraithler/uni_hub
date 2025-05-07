@@ -25,5 +25,4 @@ class BaseUserFilter(django_filters.FilterSet):
     def filter_is_staff(self, queryset, name, value):
         if value is True:
             return queryset.filter(Q(memberships__is_moderator=True) | Q(memberships__is_admin=True))
-        else:
-            return queryset.filter(Q(memberships__is_moderator=False) & Q(memberships__is_admin=False))
+        return queryset
