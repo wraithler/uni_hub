@@ -32,7 +32,7 @@ const Schema = z.object({
     .string()
     .min(10, { message: "Content must contain 10 or more characters" }),
   community_id: z.number(),
-  media: z.array(z.string().url()).optional(),
+  media: z.array(z.number()).optional(),
   // links: z.array(z.string().url()),
 });
 

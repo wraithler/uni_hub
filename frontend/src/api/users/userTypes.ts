@@ -27,6 +27,7 @@ type User = {
   posts: number;
   communities: number;
   friends: number;
+  is_superuser: boolean;
 };
 
 type UserStats = {

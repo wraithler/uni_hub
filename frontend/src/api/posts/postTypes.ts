@@ -20,6 +20,9 @@ type Post = {
   
   // Per user
   has_liked?: boolean;
+
+  media?: number[];
+  image_urls?: string[];
 };
 
 type PostList = PaginationResponse & {

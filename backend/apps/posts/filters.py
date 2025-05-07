@@ -19,6 +19,7 @@ class PostFilter(django_filters.FilterSet):
         )
 
     my = django_filters.BooleanFilter(method="filter_my")
+    include_community = django_filters.BooleanFilter(method="filter_include_community")
 
     def filter_my(self, queryset, name, value):
         if value:
@@ -28,4 +29,9 @@ class PostFilter(django_filters.FilterSet):
     def filter_queryset(self, queryset):
         queryset = super(PostFilter, self).filter_queryset(queryset)
         queryset = queryset.filter(community__memberships__user=self.request.user)
+        return queryset
+
+    def filter_include_community(self, queryset, name, value):
+        if value:
+            return queryset.select_related("community")
         return queryset

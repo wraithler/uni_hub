@@ -12,8 +12,9 @@ import { Heart } from "lucide-react";
 import { nameToAvatarFallback, timeAgo } from "@/lib/utils.ts";
 import CommentDialog from "@/components/reactions/CommentDialog.tsx";
 import PostActions from "@/components/posts/PostActions.tsx";
+import PostCarousel from "@/components/posts/PostCarousel.tsx";
 
-export default function PostListCard({ post }: { post: Post }) {
+export default function PostListCard({ post, showCommunity }: { post: Post, showCommunity?: boolean }) {
   return (
     <Card>
       <CardHeader>
@@ -29,17 +30,20 @@ export default function PostListCard({ post }: { post: Post }) {
           <div className="flex justify-between w-full">
             <div>
               <span className="font-medium">
-                {post.created_by?.first_name} {post.created_by?.last_name}
+                {post.created_by?.first_name} {post.created_by?.last_name} {showCommunity ? `in ${post.community?.name}` : ""}
               </span>
               <p className="text-xs text-muted-foreground">
                 {timeAgo(post.created_at as string)}
               </p>
             </div>
-            <PostActions post={post}/>
+            <PostActions post={post} />
           </div>
         </div>
       </CardHeader>
-      <CardContent>{post.content}</CardContent>
+      <CardContent>
+        {post.content}
+        <PostCarousel imageUrls={post.image_urls || []} />
+      </CardContent>
       <CardFooter className="flex justify-between">
         <div className="flex items-center gap-4">
           <Button

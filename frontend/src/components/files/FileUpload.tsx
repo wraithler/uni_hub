@@ -6,21 +6,21 @@ import { ImageIcon, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
 type FileUploadProps = {
-  value: string[];
-  onChange: (value: string[]) => void;
+  value: number[];
+  onChange: (value: number[]) => void;
   setUrls: (value: (prevUrls: string[]) => string[]) => void;
 };
 
 export default function FileUpload({ onChange, setUrls }: FileUploadProps) {
   const { upload, uploading, error } = useS3DirectUpload();
-  const [fileIds, setFileIds] = useState<string[]>([]);
+  const [fileIds, setFileIds] = useState<number[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files) return;
 
-    const newFileIds: string[] = [];
+    const newFileIds: number[] = [];
 
 
     for (let i = 0; i < files.length; i++) {
