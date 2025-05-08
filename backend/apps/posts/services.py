@@ -24,6 +24,11 @@ def post_create(
             "User must be a member of the community to create a post"
         )
 
+    if community.is_suspended(created_by):
+        raise ApplicationError(
+            "User is suspended from the community and cannot create a post", extra={"reason": "suspended"}
+        )
+
     if spam_client.is_spam(content):
         raise ApplicationError("Spam detected", extra={"reason": "spam"})
 

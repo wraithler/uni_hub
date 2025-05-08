@@ -73,6 +73,9 @@ class Community(BaseModel):
     def is_admin(self, user):
         return self.memberships.filter(user=user, is_admin=True).exists()
 
+    def is_suspended(self, user):
+        return self.memberships.filter(user=user, is_suspended=True).exists()
+
     def is_moderator(self, user):
         return (
             self.memberships.filter(user=user)

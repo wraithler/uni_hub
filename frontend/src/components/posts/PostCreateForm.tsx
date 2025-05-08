@@ -26,6 +26,13 @@ import FileUpload from "@/components/files/FileUpload.tsx";
 import { toast } from "sonner";
 import axios from "axios";
 import PostCarousel from "@/components/posts/PostCarousel.tsx";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select.tsx";
 
 const Schema = z.object({
   content: z
@@ -33,7 +40,7 @@ const Schema = z.object({
     .min(10, { message: "Content must contain 10 or more characters" }),
   community_id: z.number(),
   media: z.array(z.number()).optional(),
-  // links: z.array(z.string().url()),
+  privacy: z.string(),
 });
 
 export default function PostCreateForm() {
@@ -56,6 +63,12 @@ export default function PostCreateForm() {
           if (error.response.data.extra.reason === "spam") {
             toast.error(
               "Your post was flagged to be potential spam. If you think this is a mistake, contact support.",
+            );
+            setIsLoading(false);
+            return;
+          } else if (error.response.data.extra.reason === "suspended") {
+            toast.error(
+              "You have been suspended from posting in this community. If you think this is a mistake, contact support.",
             );
             setIsLoading(false);
             return;
@@ -103,7 +116,7 @@ export default function PostCreateForm() {
                 )}
               />
             </div>
-            <PostCarousel imageUrls={urls}/>
+            <PostCarousel imageUrls={urls} />
 
             <div className="flex flex-col sm:flex-row gap-3 mt-3 pt-3 border-t justify-between">
               <FormField
@@ -122,6 +135,28 @@ export default function PostCreateForm() {
                 )}
               />
               <div className="flex flex-col sm:flex-row gap-2 sm:items-center">
+                <FormField
+                  control={form.control}
+                  name="privacy"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <Select {...field} value={field.value} onValueChange={field.onChange}>
+                          <SelectTrigger className="w-[250px] mb-0">
+                            <SelectValue placeholder="Select post privacy"/>
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="public">Public</SelectItem>
+                            <SelectItem value="members">
+                              Mutual Community Members Only
+                            </SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
                 <FormField
                   control={form.control}
                   name="community_id"

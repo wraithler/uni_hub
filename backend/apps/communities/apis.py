@@ -386,6 +386,7 @@ class CommunitySetRole(APIView):
 
         user_id = request.data.get("user_id")
         role = request.data.get("role")
+        is_suspended = request.data.get("is_suspended")
 
         if not user_id or not role:
             raise ApplicationError("Couldn't get user or role")
@@ -395,7 +396,7 @@ class CommunitySetRole(APIView):
         if not user:
             raise ApplicationError("Couldn't get user")
 
-        community_role_update(community=community, user=user, role=role)
+        community_role_update(community=community, user=user, role=role, is_suspended=is_suspended)
 
         return Response(status=status.HTTP_200_OK)
 
