@@ -5,6 +5,7 @@ import {
 } from "@/components/ui/avatar.tsx";
 import { User } from "@/api/users/userTypes.ts";
 import { nameToAvatarFallback } from "@/lib/utils.ts";
+import { Link } from "react-router-dom";
 
 export default function CommunityDashboardStaffCard({ user }: { user: User }) {
   const fullName = `${user.first_name} ${user.last_name}`;
@@ -16,7 +17,9 @@ export default function CommunityDashboardStaffCard({ user }: { user: User }) {
           <AvatarFallback>{nameToAvatarFallback(fullName)}</AvatarFallback>
         </Avatar>
         <div>
-          <p className="font-medium">{fullName}</p>
+          <Link to={`/profile/${user.id}`}>
+            <p className="font-medium">{fullName}</p>
+          </Link>
         </div>
       </div>
     </div>

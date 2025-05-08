@@ -73,6 +73,9 @@ class Community(BaseModel):
     def is_admin(self, user):
         return self.memberships.filter(user=user, is_admin=True).exists()
 
+    def is_suspended(self, user):
+        return self.memberships.filter(user=user, is_suspended=True).exists()
+
     def is_moderator(self, user):
         return (
             self.memberships.filter(user=user)
@@ -94,6 +97,7 @@ class CommunityMembership(BaseModel):
     )
     is_admin = models.BooleanField(default=False)
     is_moderator = models.BooleanField(default=False)
+    is_suspended = models.BooleanField(default=False)
 
     class Meta:
         unique_together = ["user", "community"]

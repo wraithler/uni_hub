@@ -1,9 +1,9 @@
-import { useNotifications } from '../useNotifications';
-import { NotificationItem } from './NotificationItem';
-import { Button } from '@/components/ui/button';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { Separator } from '@/components/ui/separator';
-import { type Notification } from '../index';
+import { useNotifications } from '../../api/notifications/useNotifications.ts';
+import { NotificationItem } from './NotificationItem.tsx';
+import { Button } from '@/components/ui/button.tsx';
+import { ScrollArea } from '@/components/ui/scroll-area.tsx';
+import { Separator } from '@/components/ui/separator.tsx';
+import { type Notification } from '../../api/notifications';
 import { type VariantProps } from 'class-variance-authority';
 
 export const NotificationList = () => {

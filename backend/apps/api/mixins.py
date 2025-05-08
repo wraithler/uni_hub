@@ -65,4 +65,3 @@ class AuthAPIView(APIView):
     #     SessionAsHeaderAuthentication
     # ]
     # permission_classes: PermissionClassesType = (IsAuthenticated,)
-

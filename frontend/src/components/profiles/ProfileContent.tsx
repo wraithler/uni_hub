@@ -45,7 +45,7 @@ export default function ProfileContent({
   return (
     <Layout>
       {/* Main Content */}
-      <ProfileBanner user={user} />
+      <ProfileBanner />
       <main className="container px-4 mx-auto">
         <div className="max-w-5xl mx-auto">
           {/* Profile Header */}

@@ -33,6 +33,7 @@ import {
 } from "@/components/ui/select.tsx";
 import { Loader2, PenSquare } from "lucide-react";
 import UserCombobox from "@/components/users/UserCombobox.tsx";
+import { Checkbox } from "@/components/ui/checkbox.tsx";
 
 type CommunityDashboardRoleDialogProps = {
   community_id: number;
@@ -41,6 +42,7 @@ type CommunityDashboardRoleDialogProps = {
 const Schema = z.object({
   role: z.string(),
   user_id: z.number(),
+  is_suspended: z.boolean(),
 });
 
 export default function CommunityDashboardRoleDialog({
@@ -64,6 +66,7 @@ export default function CommunityDashboardRoleDialog({
       role: data.role,
       user_id: data.user_id,
       community_id,
+      is_suspended: data.is_suspended,
     });
 
     if (error) {
@@ -132,6 +135,31 @@ export default function CommunityDashboardRoleDialog({
                           </SelectGroup>
                         </SelectContent>
                       </Select>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="is_suspended"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <div className="flex items-center space-x-2">
+                        <Checkbox
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                          id="suspended"
+                        />
+                        <label
+                          htmlFor="suspended"
+                          className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                        >
+                          Suspend user
+                        </label>
+                      </div>
                     </FormControl>
                     <FormMessage />
                   </FormItem>

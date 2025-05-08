@@ -17,8 +17,9 @@ class SpamDetectionClient:
 
         return response.json()
 
+
 client = SpamDetectionClient()
+
 
 def is_spam(text: str) -> bool:
     return client.check_spam(text)["spam"]
-

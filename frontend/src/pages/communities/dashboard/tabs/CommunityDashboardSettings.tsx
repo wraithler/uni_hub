@@ -331,6 +331,7 @@ export default function CommunityDashboardSettings({
                   </Button>
                 }
                 open={showDeleteDialog}
+                setOpen={() => console.log("a")}
               />
             </div>
           </div>

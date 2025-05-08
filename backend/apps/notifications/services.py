@@ -5,6 +5,7 @@ from .models import Notification
 from apps.notification_preferences.models import UserNotificationPreference
 from apps.emails.services import send_notification_email
 
+
 def get_user_preferences(user):
     """
     Get user's notification preferences.
@@ -13,6 +14,7 @@ def get_user_preferences(user):
         return user.notification_preferences
     except UserNotificationPreference.DoesNotExist:
         return None
+
 
 def should_send_notification(user, notification_type: str, channel: str) -> bool:
     """
@@ -23,58 +25,68 @@ def should_send_notification(user, notification_type: str, channel: str) -> bool
         return True  # Default to True if no preferences
 
     # Check if user has this type of notification
-    if notification_type == 'post' and not getattr(preferences, 'post_notifications', True):
+    if notification_type == "post" and not getattr(
+        preferences, "post_notifications", True
+    ):
         return False
-    if notification_type == 'event' and not getattr(preferences, 'event_updates', True):
+    if notification_type == "event" and not getattr(preferences, "event_updates", True):
         return False
-    if notification_type == 'announcement' and not getattr(preferences, 'announcements', True):
+    if notification_type == "announcement" and not getattr(
+        preferences, "announcements", True
+    ):
         return False
 
     # Check if user has  this channel
-    if channel == 'email' and not preferences.email_notifications:
+    if channel == "email" and not preferences.email_notifications:
         return False
-    if channel == 'in_app' and not preferences.in_app_notifications:
+    if channel == "in_app" and not preferences.in_app_notifications:
         return False
 
     return True
 
-def notification_create(*, 
-        recipient, 
-        notification_type, 
-        message, 
-        title=None, 
-        content_object=None, 
-        channel='in_app'):
+
+def notification_create(
+    *,
+    recipient,
+    notification_type,
+    message,
+    title=None,
+    content_object=None,
+    channel="in_app",
+):
     """
     Create a notification
     """
     # Check user preferences before creating
     if not should_send_notification(recipient, notification_type, channel):
         return None
-    
+
     # Prepare notification data
     notification_data = {
-        'recipient': recipient,
-        'title': title or (message[:50] + ('...' if len(message) > 50 else '')),
-        'message': message,
-        'notification_type': notification_type,
-        'channel': channel,
-        'status': 'sent',
+        "recipient": recipient,
+        "title": title or (message[:50] + ("..." if len(message) > 50 else "")),
+        "message": message,
+        "notification_type": notification_type,
+        "channel": channel,
+        "status": "sent",
     }
-    
+
     # Add content object data if provided
     if content_object:
-        notification_data['content_type'] = ContentType.objects.get_for_model(content_object)
-        notification_data['object_id'] = content_object.id
-    
+        notification_data["content_type"] = ContentType.objects.get_for_model(
+            content_object
+        )
+        notification_data["object_id"] = content_object.id
+
     # Create notification
     notification = Notification.objects.create(**notification_data)
 
     # Send email if channel is email
-    if channel == 'email':
+    if channel == "email":
         send_notification_email(notification)
-    
+
     return notification
+
 
 def notification_create_batch(
     *,
@@ -89,28 +101,29 @@ def notification_create_batch(
     Create one or more notifications for a recipient across multiple channels.
     """
     if channels is None:
-        channels = ['in_app']
-    
+        channels = ["in_app"]
+
     content_type = ContentType.objects.get_for_model(content_object)
-    
+
     notifications = []
     for channel in channels:
         # if user preferences don't allow this notification
         if not should_send_notification(recipient, notification_type, channel):
             continue
-            
+
         notification = Notification.objects.create(
             recipient=recipient,
             notification_type=notification_type,
             content_type=content_type,
             object_id=content_object.id,
-            title=title or (message[:50] + '...' if len(message) > 50 else message),
+            title=title or (message[:50] + "..." if len(message) > 50 else message),
             message=message,
-            channel=channel
+            channel=channel,
         )
         notifications.append(notification)
-    
+
     return notifications
+
 
 def notification_mark_as_read(*, notification_id):
     """
@@ -123,6 +136,7 @@ def notification_mark_as_read(*, notification_id):
     except Notification.DoesNotExist:
         return False
 
+
 def notification_mark_all_as_read(*, user):
     """
     Mark all notifications as read for a user
@@ -132,6 +146,7 @@ def notification_mark_all_as_read(*, user):
         is_read=True, read_at=now
     )
     return count > 0
+
 
 def notification_delete(*, notification_id):
     """
@@ -143,6 +158,7 @@ def notification_delete(*, notification_id):
         return True
     except Notification.DoesNotExist:
         return False
+
 
 def notification_delete_all(*, user):
     """

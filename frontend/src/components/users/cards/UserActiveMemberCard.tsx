@@ -6,7 +6,8 @@ import {
   AvatarImage,
 } from "@/components/ui/avatar.tsx";
 import { Button } from "@/components/ui/button.tsx";
-import {nameToAvatarFallback} from "@/lib/utils.ts";
+import { nameToAvatarFallback } from "@/lib/utils.ts";
+import { Link } from "react-router-dom";
 
 export default function UserActiveMemberCard({ user }: { user: User }) {
   const fullName = `${user.first_name} ${user.last_name}`;
@@ -26,7 +27,7 @@ export default function UserActiveMemberCard({ user }: { user: User }) {
       </CardHeader>
       <CardFooter className="p-4 pt-0">
         <Button variant="ghost" size="sm" className="w-full">
-          View Profile
+          <Link to={`/profile/${user.id}`}>View Profile</Link>
         </Button>
       </CardFooter>
     </Card>

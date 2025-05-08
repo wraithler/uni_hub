@@ -57,9 +57,12 @@ class BaseUserManager(_BaseUserManager):
 
 
 class UserInterest(BaseModel):
-    id = models.IntegerField(primary_key=True)
-    user = models.ForeignKey("users.BaseUser", on_delete=models.CASCADE, related_name="interests")
+    id = models.AutoField(primary_key=True)
+    user = models.ForeignKey(
+        "users.BaseUser", on_delete=models.CASCADE, related_name="interests"
+    )
     name = models.CharField(max_length=255)
+
 
 class BaseUser(BaseModel, AbstractBaseUser, PermissionsMixin):
     class Meta:
@@ -79,7 +82,6 @@ class BaseUser(BaseModel, AbstractBaseUser, PermissionsMixin):
 
     bio = models.TextField(blank=True, null=True)
     academic_department = models.TextField(blank=True, null=True)
-    year_of_study = models.IntegerField(blank=True, null=True)
 
     profile_picture = models.ForeignKey(
         "files.File",
@@ -122,21 +124,6 @@ class BaseUser(BaseModel, AbstractBaseUser, PermissionsMixin):
     def get_friend_count(self):
         return self.friends.count()
 
-    # Profile Stuff
-    GENDER_CHOICES = [
-        ("M", "Male"),
-        ("F", "Female"),
-        ("NB", "Non-binary"),
-        ("O", "Other"),
-        ("P", "Prefer not to say"),
-    ]
-
-    gender = models.CharField(max_length=2, choices=GENDER_CHOICES, blank=True, null=True)
-
-    website_url = models.URLField(blank=True, null=True)
-    github_url = models.URLField(blank=True, null=True)
-    linkedin_url = models.URLField(blank=True, null=True)
-
     contact_email = models.EmailField(blank=True, null=True)
     contact_phone = models.CharField(blank=True, null=True)
 
@@ -152,4 +139,8 @@ class BaseUser(BaseModel, AbstractBaseUser, PermissionsMixin):
         max_length=10,
     )
 
+    dob = models.DateField(null=True, blank=True)
 
+    address = models.TextField(null=True, blank=True)
+    post_code = models.CharField(max_length=20, null=True, blank=True)
+    country = models.CharField(max_length=100, null=True, blank=True)

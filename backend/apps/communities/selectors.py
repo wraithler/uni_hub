@@ -14,7 +14,8 @@ from apps.communities.models import (
     Community,
     CommunityTag,
     CommunityInvitation,
-    CommunityCategory, CommunityJoinRequest,
+    CommunityCategory,
+    CommunityJoinRequest,
 )
 from apps.users.models import BaseUser
 
@@ -65,12 +66,18 @@ def community_dashboard_get(*, community_id):
     community = community_get(community_id)
 
     total_members = community.memberships.count()
-    pending_requests = community.join_requests.filter((Q(is_accepted=False) & Q(is_rejected=False)))
+    pending_requests = community.join_requests.filter(
+        (Q(is_accepted=False) & Q(is_rejected=False))
+    )
     total_posts = community.posts.count()
     total_events = community.events.count()
     upcoming_events = community.events.all()[:3]
-    admins = BaseUser.objects.filter(memberships__community=community, memberships__is_admin=True)
-    moderators = BaseUser.objects.filter(memberships__community=community, memberships__is_moderator=True)
+    admins = BaseUser.objects.filter(
+        memberships__community=community, memberships__is_admin=True
+    )
+    moderators = BaseUser.objects.filter(
+        memberships__community=community, memberships__is_moderator=True
+    )
 
     member_growth = calculate_growth(community, "memberships", timedelta(days=30), 12)
     engagement = counts_by_delta(community, ["posts", "events"])
