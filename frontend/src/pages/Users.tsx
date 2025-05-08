@@ -29,13 +29,12 @@ export default function UsersPage() {
         />
 
         <>
-          <div className="flex justify-between items-center mb-6">
-            <h2 className="text-xl font-semibold">Community Members</h2>
+          <div className="flex justify-between items-center mb-6 w-full">
             <div className="relative">
               <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
               <Input
                 placeholder="Search members..."
-                className="pl-9 w-[250px]"
+                className="pl-9 w-full"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
