@@ -108,10 +108,9 @@ def send_notification_email(notification: Notification) -> Email:
     """
     # Render the email template
     html = render_to_string(
-        "emails/notifications-email.html",
-        {"notification": notification}
+        "emails/notifications-email.html", {"notification": notification}
     )
-    
+
     # Create email record
     email = Email.objects.create(
         to=notification.recipient.email,
@@ -120,8 +119,8 @@ def send_notification_email(notification: Notification) -> Email:
         plain_text=notification.message,
         status=Email.Status.SENDING,
     )
-    
+
     # Send email asynchronously
     email_send_task.delay(email.id)
-    
+
     return email

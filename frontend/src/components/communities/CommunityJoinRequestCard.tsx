@@ -32,8 +32,7 @@ export default function CommunityJoinRequestCard({
         <div>
           <p className="font-medium">{fullName}</p>
           <p className="text-sm text-muted-foreground">
-            {joinRequest.user.academic_department} •{" "}
-            {joinRequest.user.year_of_study}
+            {joinRequest.user.academic_department}
           </p>
         </div>
       </div>

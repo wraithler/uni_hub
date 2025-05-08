@@ -41,6 +41,7 @@ type CommunityDashboardRoleDialogProps = {
 const Schema = z.object({
   role: z.string(),
   user_id: z.number(),
+  is_suspended: z.boolean(),
 });
 
 export default function CommunityDashboardRoleDialog({

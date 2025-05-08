@@ -21,9 +21,7 @@ LOCAL_APPS = [
     "apps.events.apps.EventsConfig",
     "apps.files.apps.FilesConfig",
     "apps.posts.apps.PostsConfig",
-    "apps.feedback.apps.FeedbackConfig",
     "apps.friends.apps.FriendsConfig",
-    "apps.feed.apps.FeedConfig",
     "apps.reports.apps.ReportsConfig",
     "apps.reactions.apps.ReactionsConfig",
     "apps.notification_preferences.apps.NotificationPreferencesConfig",
@@ -133,10 +131,10 @@ STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 REST_FRAMEWORK = {
     "DEFAULT_FILTER_BACKENDS": ("django_filters.rest_framework.DjangoFilterBackend",),
     "DEFAULT_AUTHENTICATION_CLASSES": [
-        'rest_framework.authentication.SessionAuthentication',
+        "rest_framework.authentication.SessionAuthentication",
     ],
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
-    'EXCEPTION_HANDLER': "apps.errors.exception_handler.hacksoft_proposed_exception_handler"
+    "EXCEPTION_HANDLER": "apps.errors.exception_handler.hacksoft_proposed_exception_handler",
 }
 
 APP_DOMAIN = env("APP_DOMAIN", default="http://localhost:3001")

@@ -11,11 +11,22 @@ from apps.posts.models import PostImages
 from apps.posts.selectors import (
     post_get,
     post_list,
-    post_list_by_community,
-    post_list_by_user,
 )
 from apps.posts.services import post_create, post_update, post_delete
-from apps.users.apis import UserDetailApi
+
+
+class UserSerializer(serializers.Serializer):
+    id = serializers.IntegerField()
+    first_name = serializers.CharField()
+    last_name = serializers.CharField()
+
+
+class CommunitySerializer(serializers.Serializer):
+    id = serializers.IntegerField()
+    name = serializers.CharField()
+    description = serializers.CharField()
+    created_at = serializers.DateTimeField()
+    created_by = UserSerializer()
 
 
 class PostDetailApi(APIView):
@@ -23,7 +34,7 @@ class PostDetailApi(APIView):
         id = serializers.IntegerField()
         content = serializers.CharField()
         created_at = serializers.DateTimeField()
-        created_by = UserDetailApi.OutputSerializer()
+        created_by = UserSerializer()
         community = CommunityDetailApi.OutputSerializer()
 
     def get(self, request, post_id):
@@ -52,13 +63,13 @@ class PostListApi(APIView):
         id = serializers.IntegerField()
         content = serializers.CharField()
         created_at = serializers.DateTimeField()
-        created_by = UserDetailApi.OutputSerializer()
+        created_by = UserSerializer()
         community_id = serializers.IntegerField()
         like_count = serializers.SerializerMethodField()
         comment_count = serializers.SerializerMethodField()
         has_liked = serializers.SerializerMethodField()
         image_urls = serializers.SerializerMethodField()
-        community = CommunityDetailApi.OutputSerializer()
+        community = CommunitySerializer()
 
         def get_like_count(self, obj):
             return obj.likes.count()
@@ -70,7 +81,17 @@ class PostListApi(APIView):
             return obj.likes.filter(user=self.context.get("request").user).exists()
 
         def get_image_urls(self, obj):
-            return [f"https://uwe-uni-hub-bucket.s3.amazonaws.com{image.image.url}" for image in obj.images.all()]
+            return [
+                f"https://uwe-uni-hub-bucket.s3.amazonaws.com{image.image.url}"
+                for image in obj.images.all()
+            ]
+
+        def to_representation(self, instance):
+            user = self.context.get("request").user
+            if instance.privacy == "members" or instance.community.privacy == "members":
+                if not instance.community.memberships.filter(user=user).exists():
+                    raise Http404
+            return super().to_representation(instance)
 
     def get(self, request):
         filters_serializer = self.FilterSerializer(data=request.query_params)
@@ -140,35 +161,3 @@ class PostDeleteApi(APIView):
             raise Http404
         post_delete(post=post, user=request.user)
         return Response(status=204)
-
-
-class CommunityPostsListApi(APIView):
-    class Pagination(LimitOffsetPagination):
-        default_limit = 1
-
-    def get(self, request, community_id):
-        filters = {}
-        posts = post_list_by_community(community_id=community_id, filters=filters)
-        return get_paginated_response(
-            pagination_class=self.Pagination,
-            serializer_class=PostListApi.OutputSerializer,
-            queryset=posts,
-            request=request,
-            view=self,
-        )
-
-
-class UserPostsListApi(APIView):
-    class Pagination(LimitOffsetPagination):
-        default_limit = 1
-
-    def get(self, request, user_id):
-        filters = {}
-        posts = post_list_by_user(user_id=user_id, filters=filters)
-        return get_paginated_response(
-            pagination_class=self.Pagination,
-            serializer_class=PostListApi.OutputSerializer,
-            queryset=posts,
-            request=request,
-            view=self,
-        )

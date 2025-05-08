@@ -11,30 +11,35 @@ from apps.users.apis import UserDetailApi
 from apps.users.services import user_create
 
 
-@method_decorator(login_required, name='dispatch')
+@method_decorator(login_required, name="dispatch")
 class UserMeApi(APIView):
     def get(self, request):
-        data = UserDetailApi.OutputSerializer(request.user).data
+        data = UserDetailApi.OutputSerializer(request.user, context={"request": request}).data
 
         return Response(data)
 
 
 class UserLoginApi(APIView):
     def post(self, request):
-        email = request.data.get('email')
-        password = request.data.get('password')
+        email = request.data.get("email")
+        password = request.data.get("password")
 
         if not email or not password:
-            return ApplicationError("Required parameters were not supplied", extra={"reason": "validation"})
+            return ApplicationError(
+                "Required parameters were not supplied", extra={"reason": "validation"}
+            )
 
         user = authenticate(email=email, password=password)
 
         if user is not None:
             login(request, user)
-            data = UserDetailApi.OutputSerializer(user).data
+            data = UserDetailApi.OutputSerializer(user, context={"request": request}).data
             return Response(data=data, status=status.HTTP_200_OK)
 
-        return ApplicationError("Supplied credentials are not valid for any account", extra={"reason": "invalid"})
+        return ApplicationError(
+            "Supplied credentials are not valid for any account",
+            extra={"reason": "invalid"},
+        )
 
 
 class UserLogoutApi(APIView):
@@ -43,7 +48,7 @@ class UserLogoutApi(APIView):
         return Response(status=status.HTTP_200_OK)
 
 
-@method_decorator(ensure_csrf_cookie, name='dispatch')
+@method_decorator(ensure_csrf_cookie, name="dispatch")
 class UserCSRFCookieApi(APIView):
     def get(self, request):
         return Response(data={"detail": "Set CSRF token"}, status=status.HTTP_200_OK)
@@ -51,13 +56,15 @@ class UserCSRFCookieApi(APIView):
 
 class UserRegisterApi(APIView):
     def post(self, request):
-        first_name = request.data.get('first_name')
-        last_name = request.data.get('last_name')
-        email = request.data.get('email')
-        password = request.data.get('password')
+        first_name = request.data.get("first_name")
+        last_name = request.data.get("last_name")
+        email = request.data.get("email")
+        password = request.data.get("password")
 
         if not email or not password or not first_name or not last_name:
-            return ApplicationError("Required parameters were not supplied", extra={"reason": "validation"})
+            return ApplicationError(
+                "Required parameters were not supplied", extra={"reason": "validation"}
+            )
 
         user_create(
             first_name=first_name,

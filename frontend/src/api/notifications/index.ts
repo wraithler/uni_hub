@@ -1,5 +1,5 @@
 import api from '../apiClient';
-import { NotificationBell } from '@/api/notifications/components';
+import { NotificationBell } from 'src/components/notifications';
 
 export interface Notification {
   id: string;

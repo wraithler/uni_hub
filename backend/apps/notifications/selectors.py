@@ -6,14 +6,16 @@ def notification_list_by_user(*, user):
     """
     Get all notifications for a user.
     """
-    return Notification.objects.filter(recipient=user).order_by('-created_at')
+    return Notification.objects.filter(recipient=user).order_by("-created_at")
 
 
 def notification_list_unread_by_user(*, user):
     """
     Get all unread notifications for a user.
     """
-    return Notification.objects.filter(recipient=user, is_read=False).order_by('-created_at')
+    return Notification.objects.filter(recipient=user, is_read=False).order_by(
+        "-created_at"
+    )
 
 
 def notification_get(*, user, notification_id):

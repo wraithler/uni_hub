@@ -9,11 +9,13 @@ class NotificationFactory(factory.django.DjangoModelFactory):
         model = Notification
 
     recipient = factory.SubFactory(BaseUserFactory)
-    title = factory.Faker('sentence')
-    message = factory.Faker('paragraph')
-    notification_type = 'info'
-    channel = 'in_app'
-    status = 'sent'
+    title = factory.Faker("sentence")
+    message = factory.Faker("paragraph")
+    notification_type = "info"
+    channel = "in_app"
+    status = "sent"
     is_read = False
-    content_type = factory.LazyFunction(lambda: ContentType.objects.get_for_model(BaseUserFactory._meta.model))
+    content_type = factory.LazyFunction(
+        lambda: ContentType.objects.get_for_model(BaseUserFactory._meta.model)
+    )
     object_id = factory.Sequence(lambda n: n)

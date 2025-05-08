@@ -23,10 +23,16 @@ class EventDetailApi(APIView):
         description = serializers.CharField()
         starts_at = serializers.DateTimeField()
         ends_at = serializers.DateTimeField()
-        # community = CommunityDetailApi.OutputSerializer()
         location = serializers.CharField()
         is_virtual_event = serializers.BooleanField()
         virtual_link = serializers.URLField()
+
+        def to_representation(self, instance):
+            user = self.context.get("request").user
+            if instance.privacy == "members" or instance.community.privacy == "members":
+                if not instance.community.memberships.filter(user=user).exists():
+                    raise Http404
+            return super().to_representation(instance)
 
     def get(self, request, event_id):
         event = event_get(event_id)
@@ -34,7 +40,7 @@ class EventDetailApi(APIView):
         if event is None:
             raise Http404
 
-        data = self.OutputSerializer(event).data
+        data = self.OutputSerializer(event, context={"request": request}).data
         return Response(data)
 
 
@@ -62,7 +68,7 @@ class EventListApi(APIView):
                 "location",
                 "is_virtual_event",
                 "virtual_link",
-                "attendees"
+                "attendees",
             )
 
         attendees = serializers.SerializerMethodField()
@@ -74,7 +80,7 @@ class EventListApi(APIView):
         filters_serializer = self.FilterSerializer(data=request.query_params)
         filters_serializer.is_valid(raise_exception=True)
 
-        events = event_list(filters=filters_serializer.validated_data)
+        events = event_list(filters=filters_serializer.validated_data, request=request)
 
         return get_paginated_response(
             pagination_class=self.Pagination,
@@ -126,7 +132,7 @@ class EventUpdateApi(APIView):
             raise Http404
 
         event = event_update(event, **serializer.validated_data)
-        data = EventDetailApi.OutputSerializer(event).data
+        data = EventDetailApi.OutputSerializer(event, context={"request": request}).data
         return Response(data)
 
 

@@ -12,10 +12,18 @@ from apps.communities.models import Community, CommunityJoinRequest
 from apps.communities.selectors import (
     community_get,
     community_list,
-    community_dashboard_get, community_join_request_get,
+    community_dashboard_get,
+    community_join_request_get,
 )
-from apps.communities.services import community_create, community_update, community_join, community_leave, \
-    community_join_request_create, community_join_request_update, community_role_update
+from apps.communities.services import (
+    community_create,
+    community_update,
+    community_join,
+    community_leave,
+    community_join_request_create,
+    community_join_request_update,
+    community_role_update,
+)
 from apps.core.exceptions import ApplicationError
 from apps.events.apis import EventListApi, EventDetailApi
 from apps.events.selectors import event_list
@@ -68,11 +76,41 @@ class CommunityDetailApi(APIView):
         def get_guidelines(self, obj):
             return [guideline.content for guideline in obj.guidelines.all()]
 
+        def to_representation(self, instance):
+            user = self.context["request"].user
+            is_member = self.get_is_member(instance)
+            is_moderator = self.get_is_moderator(instance)
+            privacy = instance.privacy
+
+            if privacy == "restricted" and not is_member and not is_moderator:
+                return {
+                    "id": instance.id,
+                    "name": instance.name,
+                    "has_requested_to_join": instance.has_requested_to_join(user),
+                    "tags": self.get_tags(instance),
+                    "category": self.get_category(instance),
+                    "member_count": instance.memberships.count(),
+                    "post_count": instance.posts.count(),
+                    "description": instance.description,
+                    "privacy": instance.privacy,
+                }
+
+            if privacy == "private" and not is_member and not is_moderator:
+                raise Http404
+
+            return super().to_representation(instance)
+
     def get(self, request, community_id):
         community = community_get(community_id)
 
         if community is None:
             raise Http404
+
+        if community.privacy == "private" and not community.is_member(request.user):
+            return Response(
+                {"detail": "You are not a member of this community."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
 
         data = self.OutputSerializer(community, context={"request": request}).data
 
@@ -181,9 +219,13 @@ class CommunityUpdateApi(APIView):
         if community is None:
             raise Http404
 
-        community = community_update(community=community, data=serializer.validated_data)
+        community = community_update(
+            community=community, data=serializer.validated_data
+        )
 
-        data = CommunityDetailApi.OutputSerializer(community, context={"request": request}).data
+        data = CommunityDetailApi.OutputSerializer(
+            community, context={"request": request}
+        ).data
 
         return Response(data)
 
@@ -194,7 +236,7 @@ class CommunityEventsListApi(APIView):
 
     def get(self, request, community_id):
         filters = {"community_id": community_id}
-        events = event_list(filters=filters)
+        events = event_list(filters=filters, request=request)
 
         return get_paginated_response(
             pagination_class=self.Pagination,
@@ -216,7 +258,9 @@ class CommunityJoinApi(APIView):
 
         community_join(community=community, user=user)
 
-        data = CommunityDetailApi.OutputSerializer(community, context={"request": request}).data
+        data = CommunityDetailApi.OutputSerializer(
+            community, context={"request": request}
+        ).data
         return Response(data=data, status=status.HTTP_200_OK)
 
 
@@ -231,7 +275,9 @@ class CommunityLeaveApi(APIView):
 
         community_leave(community=community, user=user)
 
-        data = CommunityDetailApi.OutputSerializer(community, context={"request": request}).data
+        data = CommunityDetailApi.OutputSerializer(
+            community, context={"request": request}
+        ).data
         return Response(data=data, status=status.HTTP_200_OK)
 
 
@@ -250,7 +296,8 @@ class CommunityRequestJoinApi(APIView):
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = BaseUser
-        fields = ("id", "first_name", "last_name", "academic_department", "year_of_study")
+        fields = ("id", "first_name", "last_name", "academic_department")
+
 
 class PendingRequestSerializer(serializers.ModelSerializer):
     class Meta:
@@ -258,6 +305,7 @@ class PendingRequestSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
     user = UserSerializer()
+
 
 class CommunityDashboardDetailApi(AuthAPIView):
     class OutputSerializer(serializers.Serializer):
@@ -271,6 +319,11 @@ class CommunityDashboardDetailApi(AuthAPIView):
         admins = UserSerializer(many=True)
         moderators = UserSerializer(many=True)
 
+        def to_representation(self, obj):
+            self.upcoming_events = EventDetailApi.OutputSerializer(
+                many=True, context={"request": self.context.get("request")})
+            return super().to_representation(obj)
+
     def get(self, request, community_id):
         community = community_get(community_id)
 
@@ -281,7 +334,7 @@ class CommunityDashboardDetailApi(AuthAPIView):
             raise PermissionDenied
 
         dashboard_data = community_dashboard_get(community_id=community_id)
-        data = self.OutputSerializer(dashboard_data).data
+        data = self.OutputSerializer(dashboard_data, context={"request": request}).data
 
         return Response(data)
 
@@ -306,9 +359,13 @@ class CommunityJoinRequestRespond(APIView):
             raise ApplicationError("Response is None")
 
         if response == "accept":
-            community_join_request_update(join_request=join_request, data={"is_accepted": True})
+            community_join_request_update(
+                join_request=join_request, data={"is_accepted": True}
+            )
         elif response == "reject":
-            community_join_request_update(join_request=join_request, data={"is_rejected": True})
+            community_join_request_update(
+                join_request=join_request, data={"is_rejected": True}
+            )
         else:
             raise ApplicationError("Response is invalid")
 

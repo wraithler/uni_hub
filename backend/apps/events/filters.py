@@ -1,4 +1,5 @@
 import django_filters
+from django.db.models import Q
 from django.utils import timezone
 
 from apps.events.models import Event
@@ -33,3 +34,21 @@ class EventFilter(django_filters.FilterSet):
         if value:
             return queryset.filter(starts_at__gt=timezone.now())
         return queryset
+
+    def filter_queryset(self, queryset):
+        queryset = super().filter_queryset(queryset)
+
+        # Filter by community privacy
+        queryset = queryset.filter(
+            Q(community__privacy="public") |
+            Q(community__memberships__user=self.request.user)
+        )
+
+        # Filter by event privacy
+        queryset = queryset.filter(
+            Q(privacy="public") |
+            Q(privacy="members", community__memberships__user=self.request.user)
+        )
+
+        return queryset
+

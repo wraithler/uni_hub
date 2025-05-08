@@ -94,6 +94,7 @@ class CommunityMembership(BaseModel):
     )
     is_admin = models.BooleanField(default=False)
     is_moderator = models.BooleanField(default=False)
+    is_suspended = models.BooleanField(default=False)
 
     class Meta:
         unique_together = ["user", "community"]

@@ -11,13 +11,11 @@ import {
 } from "../ui/dropdown-menu";
 import {
   LogOut,
-  MessageSquare,
-  Settings,
   UserCircle,
   UserPen,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { NotificationBell } from "@/api/notifications/components";
+import {NotificationBell} from "@/components/notifications";
 
 export default function UserDropdownMenu() {
   const { user, logout } = useAuth();
@@ -43,16 +41,7 @@ export default function UserDropdownMenu() {
               <UserPen />
               Profile
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => navigate("/settings")}>
-              <Settings />
-              Settings
-            </DropdownMenuItem>
           </DropdownMenuGroup>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={() => navigate("/support")}>
-            <MessageSquare />
-            Support
-          </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem onClick={logout}>
             <LogOut />

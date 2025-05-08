@@ -1,12 +1,12 @@
 import { Bell } from 'lucide-react';
-import { useNotifications } from '../useNotifications';
-import { Button } from '@/components/ui/button';
+import { useNotifications } from '../../api/notifications/useNotifications.ts';
+import { Button } from '@/components/ui/button.tsx';
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from '@/components/ui/popover';
-import { NotificationList } from './NotificationList';
+} from '@/components/ui/popover.tsx';
+import { NotificationList } from './NotificationList.tsx';
 
 export const NotificationBell = () => {
   const { notificationCount, isLoading } = useNotifications();

@@ -23,6 +23,17 @@ class Event(BaseModel):
     is_virtual_event = models.BooleanField(default=False)
     virtual_link = models.URLField(blank=True, null=True)
 
+    PRIVACY_CHOICES = [
+        ("public", "Public"),
+        ("members", "Members Only"),
+    ]
+
+    privacy = models.CharField(
+        max_length=10,
+        choices=PRIVACY_CHOICES,
+        default="public",
+    )
+
     def __str__(self):
         return self.title
 
