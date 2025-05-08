@@ -6,7 +6,6 @@ from rest_framework.exceptions import PermissionDenied
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
-from rest_framework.views import APIView
 
 from apps.api.mixins import AuthAPIView
 from apps.api.pagination import get_paginated_response
@@ -14,7 +13,6 @@ from apps.communities.apis import CommunityListApi
 from apps.communities.models import Community
 from apps.communities.selectors import community_list
 from apps.emails.services import verification_email_create
-from apps.files.models import File
 from apps.users.models import BaseUser, UserInterest
 from apps.users.selectors import user_get, user_list
 from apps.users.services import user_create, user_update
@@ -120,7 +118,12 @@ class UserListApi(AuthAPIView):
     class OutputSerializer(serializers.ModelSerializer):
         class Meta:
             model = BaseUser
-            fields = ("id", "email", "first_name", "last_name", "bio")
+            fields = ("id", "email", "first_name", "last_name", "bio", "interests")
+
+        interests = serializers.SerializerMethodField()
+
+        def get_interests(self, obj):
+            return [interest.name for interest in obj.interests.all()]
 
     def get(self, request):
         filters_serializer = self.FilterSerializer(data=request.query_params)

@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button.tsx";
-import { Calendar, Home, Users } from "lucide-react";
+import {Calendar, Home, Users} from "lucide-react";
 import { useAuth } from "@/components/auth/SessionAuthProvider";
 import { Link } from "react-router-dom";
 import AdminHeader from "@/components/core/AdminHeader.tsx";
@@ -27,6 +27,11 @@ const tabs = {
       href: "/events",
       icon: <Calendar className="w-4 h-4" />,
     },
+    {
+      name: "Users",
+      href: "/users",
+      icon: <Users className="w-4 h-4"/>,
+    }
   ],
 };
 
