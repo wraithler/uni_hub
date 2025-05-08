@@ -7,7 +7,6 @@ import {
   CardTitle,
 } from "@/components/ui/card.tsx";
 import { Calendar, Clock, MapPin, Users } from "lucide-react";
-import { Badge } from "@/components/ui/badge.tsx";
 import { Button } from "@/components/ui/button.tsx";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar.tsx";
 import { Event } from "@/api/events/eventTypes.ts";
@@ -29,7 +28,6 @@ export default function EventCard({ event }: { event: Event }) {
               <span>{date}</span>
             </CardDescription>
           </div>
-          <Badge variant="outline">Placeholder</Badge>
         </div>
       </CardHeader>
       <CardContent className="p-4 pt-0">
