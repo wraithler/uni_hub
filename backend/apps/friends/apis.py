@@ -1,15 +1,19 @@
-from rest_framework.views import APIView
+from rest_framework import status, serializers
 from rest_framework.response import Response
-from rest_framework import serializers
+from rest_framework.views import APIView
 from django.http import Http404
 
-from apps.friends.models import FriendRequest
-from apps.friends.services import (
-    friend_request_send,
-    friend_request_accept,
-    friend_request_decline,
+from apps.users.models import BaseUser
+from apps.friends.models import FriendRequest, Friend
+from apps.friends.selectors import (
+    get_received_friend_requests,
+    get_user_friends,
 )
-from apps.friends.selectors import get_sent_friend_requests, user_friend_list
+from apps.friends.services import (
+    send_friend_request,
+    accept_friend_request,
+    unfriend_users,
+)
 
 
 class FriendRequestSendApi(APIView):
@@ -20,73 +24,89 @@ class FriendRequestSendApi(APIView):
         serializer = self.InputSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        friend_request = friend_request_send(
-            sender=request.user, receiver_id=serializer.validated_data["receiver_id"]
-        )
+        sender = request.user
+        receiver_id = serializer.validated_data["receiver_id"]
 
-        return Response({"id": friend_request.id, "status": "sent"})
+        if sender.id == receiver_id:
+            return Response({"detail": "You cannot add yourself as a friend."}, status=400)
+
+        try:
+            receiver = BaseUser.objects.get(id=receiver_id)
+        except BaseUser.DoesNotExist:
+            raise Http404("User not found.")
+
+        result = send_friend_request(sender, receiver)
+
+        return Response({"status": result}, status=200)
 
 
-class FriendRequestListApi(APIView):
+class ReceivedFriendRequestsListApi(APIView):
     class OutputSerializer(serializers.ModelSerializer):
+        sender_name = serializers.SerializerMethodField()
+        sender = serializers.SerializerMethodField() 
+
         class Meta:
             model = FriendRequest
-            fields = (
-                "id",
-                "sender",
-                "receiver",
-                "is_accepted",
-                "is_declined",
-                "created_at",
-            )
+            fields = ("id", "sender", "sender_name")
+
+        def get_sender_name(self, obj):
+            return f"{obj.sender.first_name} {obj.sender.last_name}"
+        
+        def get_sender(self, obj):
+            return {"id": obj.sender.id, "first_name": obj.sender.first_name, "last_name": obj.sender.last_name,}
 
     def get(self, request):
-        friend_requests = get_sent_friend_requests(user_id=request.user.id)
-        data = self.OutputSerializer(friend_requests, many=True).data
+        requests = get_received_friend_requests(request.user)
+        data = self.OutputSerializer(requests, many=True).data
         return Response(data)
 
 
-class FriendRequestRespondApi(APIView):
+class AcceptFriendRequestApi(APIView):
     class InputSerializer(serializers.Serializer):
-        is_accepted = serializers.BooleanField()
+        request_id = serializers.IntegerField()
 
-    def post(self, request, request_id):
+    def post(self, request):
         serializer = self.InputSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        try:
-            friend_request = FriendRequest.objects.get(
-                id=request_id, receiver=request.user
-            )
-        except FriendRequest.DoesNotExist:
-            raise Http404
+        request_id = serializer.validated_data["request_id"]
+        success = accept_friend_request(request.user, request_id)
 
-        if serializer.validated_data["is_accepted"]:
-            friend_request_accept(request=friend_request)
-            return Response({"status": "accepted"})
-        else:
-            friend_request_decline(request=friend_request)
-            return Response({"status": "declined"})
+        if not success:
+            return Response({"detail": "Invalid or unauthorized request."}, status=400)
+
+        return Response({"detail": "Friend request accepted."}, status=200)
+
+
+class UnfriendApi(APIView):
+    class InputSerializer(serializers.Serializer):
+        friend_id = serializers.IntegerField()
+
+    def post(self, request):
+        serializer = self.InputSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        friend_id = serializer.validated_data["friend_id"]
+        success = unfriend_users(request.user.id, friend_id)
+
+        if not success:
+            return Response({"detail": "Friend not found."}, status=404)
+
+        return Response({"detail": "Unfriended successfully."}, status=200)
 
 
 class FriendListApi(APIView):
-    class OutputSerializer(serializers.Serializer):
-        id = serializers.IntegerField(source="friend.id")
-        first_name = serializers.CharField(source="friend.first_name")
-        last_name = serializers.CharField(source="friend.last_name")
-        avatar_url = serializers.CharField(source="friend.avatar_url", allow_null=True)
+    class OutputSerializer(serializers.ModelSerializer):
+        full_name = serializers.SerializerMethodField()
+
+        class Meta:
+            model = BaseUser
+            fields = ("id", "full_name")
+
+        def get_full_name(self, obj):
+            return f"{obj.first_name} {obj.last_name}"
 
     def get(self, request):
-        user_id = request.query_params.get("user_id")
-
-        if user_id:
-            try:
-                user_id = int(user_id)
-            except ValueError:
-                return Response({"detail": "Invalid user_id"}, status=400)
-        else:
-            user_id = request.user.id
-
-        friends = user_friend_list(user_id=user_id)
+        friends = get_user_friends(request.user)
         data = self.OutputSerializer(friends, many=True).data
         return Response(data)

@@ -5,7 +5,21 @@ import {
 } from "@/components/ui/avatar.tsx";
 import { Badge } from "@/components/ui/badge.tsx";
 import { Button } from "@/components/ui/button.tsx";
-import { Calendar, GraduationCap, Mail } from "lucide-react";
+import FriendButton from "@/components/friends/FriendButton";
+import {
+  Calendar,
+  GraduationCap,
+  Mail,
+  MoreHorizontal,
+  Settings,
+  Shield,
+} from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu.tsx";
 import { nameToAvatarFallback } from "@/lib/utils.ts";
 import { User } from "@/api/users/userTypes.ts";
 import { formatTimestampRange } from "@/api";
@@ -44,7 +58,7 @@ export default function ProfileHeader({
           </div>
 
           <div className="flex items-center gap-2">
-            {!self && <Button>Add Friend</Button>}
+          {!self && <FriendButton user={user} />}
             {!self && user.contact_email && (
               <Button variant="outline" size="icon">
                 <Mail className="h-4 w-4" />

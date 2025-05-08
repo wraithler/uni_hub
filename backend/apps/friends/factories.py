@@ -1,22 +1,25 @@
-import factory
+import factory.django
+from faker import Faker
 
-from apps.friends.models import Friend, FriendRequest
-from apps.users.factories import BaseUserFactory
+from apps.friends.models import FriendRequest, Friend
+from apps.users.models import BaseUser
 
-
-class FriendFactory(factory.django.DjangoModelFactory):
-    class Meta:
-        model = Friend
-
-    user = factory.SubFactory(BaseUserFactory)
-    friend = factory.SubFactory(BaseUserFactory)
+fake = Faker()
 
 
 class FriendRequestFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = FriendRequest
 
-    sender = factory.SubFactory(BaseUserFactory)
-    receiver = factory.SubFactory(BaseUserFactory)
+    sender = factory.SubFactory("apps.users.factories.BaseUserFactory")
+    receiver = factory.SubFactory("apps.users.factories.BaseUserFactory")
     is_accepted = False
     is_declined = False
+
+
+class FriendFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = Friend
+
+    user = factory.SubFactory("apps.users.factories.BaseUserFactory")
+    friend = factory.SubFactory("apps.users.factories.BaseUserFactory")
