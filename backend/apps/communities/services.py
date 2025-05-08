@@ -215,7 +215,9 @@ def community_join_request_update(
 
 
 @transaction.atomic
-def community_role_update(*, community: Community, user: BaseUser, role: str, is_suspended: bool = False):
+def community_role_update(
+    *, community: Community, user: BaseUser, role: str, is_suspended: bool = False
+):
     if not community.is_member(user):
         raise ApplicationError("User is not a member of this community")
 

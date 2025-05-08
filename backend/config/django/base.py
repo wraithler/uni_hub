@@ -142,7 +142,6 @@ APP_DOMAIN = env("APP_DOMAIN", default="http://localhost:3001")
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 FIXTURE_DIRS = [os.path.join(BASE_DIR, "config", "fixtures")]
-
 # Import settings from other files
 
 from config.settings.celery import *  # noqa

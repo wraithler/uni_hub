@@ -17,4 +17,3 @@ def post_list(*, filters=None, request=None) -> QuerySet[Post]:
     filters = filters or {}
     qs = Post.objects.all()
     return PostFilter(filters, qs, request=request).qs
-

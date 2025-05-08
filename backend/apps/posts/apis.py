@@ -5,6 +5,7 @@ from rest_framework import serializers
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from apps.api.mixins import AuthAPIView
 from apps.api.pagination import LimitOffsetPagination, get_paginated_response
 from apps.communities.apis import CommunityDetailApi
 from apps.posts.models import PostImages
@@ -29,7 +30,7 @@ class CommunitySerializer(serializers.Serializer):
     created_by = UserSerializer()
 
 
-class PostDetailApi(APIView):
+class PostDetailApi(AuthAPIView):
     class OutputSerializer(serializers.Serializer):
         id = serializers.IntegerField()
         content = serializers.CharField()
@@ -45,7 +46,7 @@ class PostDetailApi(APIView):
         return Response(data)
 
 
-class PostListApi(APIView):
+class PostListApi(AuthAPIView):
     class Pagination(LimitOffsetPagination):
         default_limit = 1
 
@@ -108,7 +109,7 @@ class PostListApi(APIView):
         )
 
 
-class PostCreateApi(APIView):
+class PostCreateApi(AuthAPIView):
     class InputSerializer(serializers.Serializer):
         content = serializers.CharField()
         community_id = serializers.IntegerField()
@@ -139,7 +140,7 @@ class PostCreateApi(APIView):
         return Response(data)
 
 
-class PostUpdateApi(APIView):
+class PostUpdateApi(AuthAPIView):
     class InputSerializer(serializers.Serializer):
         content = serializers.CharField(required=False)
 
@@ -154,7 +155,7 @@ class PostUpdateApi(APIView):
         return Response(data)
 
 
-class PostDeleteApi(APIView):
+class PostDeleteApi(AuthAPIView):
     def post(self, request, post_id):
         post = post_get(post_id)
         if post is None:

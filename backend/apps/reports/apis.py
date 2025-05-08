@@ -3,6 +3,7 @@ from rest_framework import serializers
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from apps.api.mixins import AuthAPIView
 from apps.api.pagination import LimitOffsetPagination, get_paginated_response
 from apps.reports.models import Report, ReportStatus
 from apps.reports.selectors import report_get, report_list
@@ -14,7 +15,7 @@ from apps.reports.services import (
 )
 
 
-class ReportDetailApi(APIView):
+class ReportDetailApi(AuthAPIView):
     class OutputSerializer(serializers.ModelSerializer):
         status = serializers.ChoiceField(choices=ReportStatus.choices)
 
@@ -44,7 +45,7 @@ class ReportDetailApi(APIView):
         return Response(data)
 
 
-class ReportListApi(APIView):
+class ReportListApi(AuthAPIView):
     class Pagination(LimitOffsetPagination):
         default_limit = 10
 
@@ -88,7 +89,7 @@ class ReportListApi(APIView):
         )
 
 
-class ReportCreateApi(APIView):
+class ReportCreateApi(AuthAPIView):
     class InputSerializer(serializers.Serializer):
         title = serializers.CharField()
         description = serializers.CharField()
@@ -111,7 +112,7 @@ class ReportCreateApi(APIView):
         return Response(data)
 
 
-class ReportUpdateApi(APIView):
+class ReportUpdateApi(AuthAPIView):
     class InputSerializer(serializers.Serializer):
         title = serializers.CharField(required=False)
         description = serializers.CharField(required=False)
@@ -133,7 +134,7 @@ class ReportUpdateApi(APIView):
         return Response(data)
 
 
-class ReportResolveApi(APIView):
+class ReportResolveApi(AuthAPIView):
     class InputSerializer(serializers.Serializer):
         status = serializers.ChoiceField(choices=ReportStatus.choices)
         resolution_notes = serializers.CharField(required=False, allow_null=True)
@@ -156,7 +157,7 @@ class ReportResolveApi(APIView):
         return Response(data)
 
 
-class ReportAttachmentUploadApi(APIView):
+class ReportAttachmentUploadApi(AuthAPIView):
     class InputSerializer(serializers.Serializer):
         report = serializers.IntegerField()
         file = serializers.FileField()

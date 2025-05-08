@@ -34,7 +34,7 @@ export default function UserMeCard() {
                 className="text-muted-foreground p-0 m-0 h-auto"
                 asChild
               >
-                <Link to="/profile/update">
+                <Link to="/profile">
                   Finish setting up your profile...
                 </Link>
               </Button>

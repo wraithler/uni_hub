@@ -3,6 +3,7 @@ from rest_framework import serializers, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from apps.api.mixins import AuthAPIView
 from apps.api.pagination import LimitOffsetPagination, get_paginated_response
 from apps.communities.apis import UserSerializer
 from apps.posts.selectors import post_get
@@ -21,7 +22,7 @@ from apps.reactions.services import (
 from apps.reactions.services import like_create
 
 
-class CommentDetailApi(APIView):
+class CommentDetailApi(AuthAPIView):
     class OutputSerializer(serializers.Serializer):
         id = serializers.IntegerField()
         content = serializers.CharField()
@@ -37,7 +38,7 @@ class CommentDetailApi(APIView):
         return Response(data)
 
 
-class CommentListApi(APIView):
+class CommentListApi(AuthAPIView):
     class Pagination(LimitOffsetPagination):
         default_limit = 1
 
@@ -66,7 +67,7 @@ class CommentListApi(APIView):
         )
 
 
-class CommentCreateApi(APIView):
+class CommentCreateApi(AuthAPIView):
     class InputSerializer(serializers.Serializer):
         content = serializers.CharField()
         post_id = serializers.IntegerField()
@@ -79,7 +80,7 @@ class CommentCreateApi(APIView):
         return Response(data)
 
 
-class CommentUpdateApi(APIView):
+class CommentUpdateApi(AuthAPIView):
     class InputSerializer(serializers.Serializer):
         content = serializers.CharField(required=True)
 
@@ -94,7 +95,7 @@ class CommentUpdateApi(APIView):
         return Response(data)
 
 
-class CommentDeleteApi(APIView):
+class CommentDeleteApi(AuthAPIView):
     def post(self, request, comment_id):
         comment = comment_get(comment_id)
         if comment is None:
@@ -103,7 +104,7 @@ class CommentDeleteApi(APIView):
         return Response(status=204)
 
 
-class PostCommentsListApi(APIView):
+class PostCommentsListApi(AuthAPIView):
     class Pagination(LimitOffsetPagination):
         default_limit = 1
 
@@ -118,7 +119,7 @@ class PostCommentsListApi(APIView):
         )
 
 
-class UserCommentsListApi(APIView):
+class UserCommentsListApi(AuthAPIView):
     class Pagination(LimitOffsetPagination):
         default_limit = 1
 
@@ -133,7 +134,7 @@ class UserCommentsListApi(APIView):
         )
 
 
-class LikeCreateApi(APIView):
+class LikeCreateApi(AuthAPIView):
     class InputSerializer(serializers.Serializer):
         object_id = serializers.IntegerField()
 
@@ -152,7 +153,7 @@ class LikeCreateApi(APIView):
         return Response(status=status.HTTP_201_CREATED)
 
 
-class UnlikeApi(APIView):
+class UnlikeApi(AuthAPIView):
     class InputSerializer(serializers.Serializer):
         object_id = serializers.IntegerField()
 

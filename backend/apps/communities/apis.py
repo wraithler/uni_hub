@@ -25,13 +25,12 @@ from apps.communities.services import (
     community_role_update,
 )
 from apps.core.exceptions import ApplicationError
-from apps.events.apis import EventListApi, EventDetailApi
-from apps.events.selectors import event_list
+from apps.events.apis import EventDetailApi
 from apps.users.models import BaseUser
 from apps.users.selectors import user_get
 
 
-class CommunityDetailApi(APIView):
+class CommunityDetailApi(AuthAPIView):
     class OutputSerializer(serializers.Serializer):
         id = serializers.IntegerField()
         name = serializers.CharField()
@@ -117,7 +116,7 @@ class CommunityDetailApi(APIView):
         return Response(data)
 
 
-class CommunityListApi(APIView):
+class CommunityListApi(AuthAPIView):
     class Pagination(LimitOffsetPagination):
         default_limit = 10
 
@@ -128,6 +127,8 @@ class CommunityListApi(APIView):
         name = serializers.CharField(required=False, allow_null=True)
         sort_by = serializers.CharField(required=False, allow_null=True)
         user_id = serializers.IntegerField(required=False, allow_null=True)
+        is_accepted = serializers.BooleanField(required=False, allow_null=True)
+        is_declined = serializers.BooleanField(required=False, allow_null=True)
 
     class OutputSerializer(serializers.ModelSerializer):
         member_count = serializers.SerializerMethodField()
@@ -197,12 +198,14 @@ class CommunityCreateApi(AuthAPIView):
         serializer.validated_data["created_by"] = request.user
         community = community_create(**serializer.validated_data)
 
-        data = CommunityDetailApi.OutputSerializer(community).data
+        data = CommunityDetailApi.OutputSerializer(
+            community, context={"request": request}
+        ).data
 
         return Response(data)
 
 
-class CommunityUpdateApi(APIView):
+class CommunityUpdateApi(AuthAPIView):
     class InputSerializer(serializers.Serializer):
         name = serializers.CharField(required=False)
         description = serializers.CharField(required=False)
@@ -230,24 +233,7 @@ class CommunityUpdateApi(APIView):
         return Response(data)
 
 
-class CommunityEventsListApi(APIView):
-    class Pagination(LimitOffsetPagination):
-        default_limit = 1
-
-    def get(self, request, community_id):
-        filters = {"community_id": community_id}
-        events = event_list(filters=filters, request=request)
-
-        return get_paginated_response(
-            pagination_class=self.Pagination,
-            serializer_class=EventListApi.OutputSerializer,
-            queryset=events,
-            request=request,
-            view=self,
-        )
-
-
-class CommunityJoinApi(APIView):
+class CommunityJoinApi(AuthAPIView):
     def post(self, request, community_id):
         community = community_get(community_id)
 
@@ -264,7 +250,7 @@ class CommunityJoinApi(APIView):
         return Response(data=data, status=status.HTTP_200_OK)
 
 
-class CommunityLeaveApi(APIView):
+class CommunityLeaveApi(AuthAPIView):
     def post(self, request, community_id):
         community = community_get(community_id)
 
@@ -281,7 +267,7 @@ class CommunityLeaveApi(APIView):
         return Response(data=data, status=status.HTTP_200_OK)
 
 
-class CommunityRequestJoinApi(APIView):
+class CommunityRequestJoinApi(AuthAPIView):
     def post(self, request, community_id):
         community = community_get(community_id)
 
@@ -321,7 +307,8 @@ class CommunityDashboardDetailApi(AuthAPIView):
 
         def to_representation(self, obj):
             self.upcoming_events = EventDetailApi.OutputSerializer(
-                many=True, context={"request": self.context.get("request")})
+                many=True, context={"request": self.context.get("request")}
+            )
             return super().to_representation(obj)
 
     def get(self, request, community_id):
@@ -339,7 +326,7 @@ class CommunityDashboardDetailApi(AuthAPIView):
         return Response(data)
 
 
-class CommunityJoinRequestRespond(APIView):
+class CommunityJoinRequestRespond(AuthAPIView):
     def post(self, request, join_request_id):
         join_request = community_join_request_get(join_request_id=join_request_id)
 
@@ -372,7 +359,7 @@ class CommunityJoinRequestRespond(APIView):
         return Response(status=status.HTTP_200_OK)
 
 
-class CommunitySetRole(APIView):
+class CommunitySetRole(AuthAPIView):
     def post(self, request, community_id):
         community = community_get(community_id)
 
@@ -396,12 +383,14 @@ class CommunitySetRole(APIView):
         if not user:
             raise ApplicationError("Couldn't get user")
 
-        community_role_update(community=community, user=user, role=role, is_suspended=is_suspended)
+        community_role_update(
+            community=community, user=user, role=role, is_suspended=is_suspended
+        )
 
         return Response(status=status.HTTP_200_OK)
 
 
-class CommunityDeleteApi(APIView):
+class CommunityDeleteApi(AuthAPIView):
     def post(self, request, community_id):
         community = community_get(community_id)
 
@@ -414,3 +403,31 @@ class CommunityDeleteApi(APIView):
         community.delete()
 
         return Response(status=status.HTTP_200_OK)
+
+
+class CommunityApproveApi(AuthAPIView):
+    class InputSerializer(serializers.Serializer):
+        is_accepted = serializers.BooleanField(required=True)
+
+    def post(self, request, community_id):
+        if not request.user.is_superuser:
+            raise PermissionDenied
+
+        community = community_get(community_id)
+        if not community:
+            raise Http404
+
+        serializer = self.InputSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        if serializer.validated_data["is_accepted"]:
+            community.is_accepted = True
+        else:
+            community.is_declined = True
+
+        community.save()
+
+        data = CommunityDetailApi.OutputSerializer(
+            community, context={"request": request}
+        ).data
+        return Response(data, status=status.HTTP_200_OK)

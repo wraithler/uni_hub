@@ -28,6 +28,7 @@ type User = {
   address?: string;
   post_code?: string;
   country?: string;
+  is_email_verified?: boolean;
 };
 
 type UserStats = {

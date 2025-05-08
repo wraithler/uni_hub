@@ -48,6 +48,7 @@ api.interceptors.response.use(
     ) {
       window.location.href = "/login";
     }
+
     if (error.response && error.response.status == 404) {
       window.location.href = "/404";
     }
