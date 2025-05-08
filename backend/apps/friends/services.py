@@ -1,29 +1,46 @@
 from django.db import transaction
 from apps.friends.models import FriendRequest, Friend
-from apps.core.exceptions import ApplicationError
+
+
+def send_friend_request(sender, receiver):
+    existing = FriendRequest.objects.filter(sender=sender, receiver=receiver).first()
+    if existing:
+        if existing.is_accepted:
+            return "Already friends"
+        return "Request already sent"
+
+    reverse = FriendRequest.objects.filter(sender=receiver, receiver=sender).first()
+    if reverse:
+        return "They already sent you a request"
+
+    FriendRequest.objects.create(sender=sender, receiver=receiver)
+    return "Friend request sent"
 
 
 @transaction.atomic
-def friend_request_send(*, sender, receiver) -> FriendRequest:
-    if sender == receiver:
-        raise ApplicationError("You cannot send a friend request to yourself.")
+def accept_friend_request(current_user, request_id):
+    try:
+        fr = FriendRequest.objects.get(id=request_id, receiver=current_user, is_accepted=False)
+    except FriendRequest.DoesNotExist:
+        return False
 
-    if FriendRequest.objects.filter(sender=sender, receiver=receiver).exists():
-        raise ApplicationError("Friend request already sent.")
+    fr.is_accepted = True
+    fr.save()
 
-    return FriendRequest.objects.create(sender=sender, receiver=receiver)
+    Friend.objects.bulk_create([
+        Friend(user=fr.sender, friend=fr.receiver),
+        Friend(user=fr.receiver, friend=fr.sender),
+    ])
 
-
-@transaction.atomic
-def friend_request_accept(*, request: FriendRequest) -> None:
-    request.is_accepted = True
-    request.save()
-
-    Friend.objects.create(user=request.sender, friend=request.receiver)
-    Friend.objects.create(user=request.receiver, friend=request.sender)
+    return True
 
 
 @transaction.atomic
-def friend_request_decline(*, request: FriendRequest) -> None:
-    request.is_declined = True
-    request.save()
+def unfriend_users(user_id, friend_id):
+    deleted1 = Friend.objects.filter(user_id=user_id, friend_id=friend_id).delete()
+    deleted2 = Friend.objects.filter(user_id=friend_id, friend_id=user_id).delete()
+
+    FriendRequest.objects.filter(sender_id=user_id, receiver_id=friend_id).delete()
+    FriendRequest.objects.filter(sender_id=friend_id, receiver_id=user_id).delete()
+
+    return deleted1[0] > 0 and deleted2[0] > 0

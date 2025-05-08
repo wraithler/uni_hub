@@ -8,10 +8,13 @@ import {
 } from "@/components/ui/card";
 import { AvatarFallback } from "@/components/ui/avatar.tsx";
 import { Button } from "@/components/ui/button";
-import { Heart, MessageSquare } from "lucide-react";
-import {nameToAvatarFallback, timeAgo} from "@/lib/utils.ts";
+import { Heart } from "lucide-react";
+import { nameToAvatarFallback, timeAgo } from "@/lib/utils.ts";
+import CommentDialog from "@/components/reactions/CommentDialog.tsx";
+import PostActions from "@/components/posts/PostActions.tsx";
+import PostCarousel from "@/components/posts/PostCarousel.tsx";
 
-export default function PostListCard({ post }: { post: Post }) {
+export default function PostListCard({ post, showCommunity }: { post: Post, showCommunity?: boolean }) {
   return (
     <Card>
       <CardHeader>
@@ -24,15 +27,23 @@ export default function PostListCard({ post }: { post: Post }) {
               )}
             </AvatarFallback>
           </Avatar>
-          <div>
-            <span className="font-medium">
-              {post.created_by?.first_name} {post.created_by?.last_name}
-            </span>
-            <p className="text-xs text-muted-foreground">{timeAgo(post.created_at as string)}</p>
+          <div className="flex justify-between w-full">
+            <div>
+              <span className="font-medium">
+                {post.created_by?.first_name} {post.created_by?.last_name} {showCommunity ? `in ${post.community?.name}` : ""}
+              </span>
+              <p className="text-xs text-muted-foreground">
+                {timeAgo(post.created_at as string)}
+              </p>
+            </div>
+            <PostActions post={post} />
           </div>
         </div>
       </CardHeader>
-      <CardContent>{post.content}</CardContent>
+      <CardContent>
+        {post.content}
+        <PostCarousel imageUrls={post.image_urls || []} />
+      </CardContent>
       <CardFooter className="flex justify-between">
         <div className="flex items-center gap-4">
           <Button
@@ -43,14 +54,7 @@ export default function PostListCard({ post }: { post: Post }) {
             <Heart className="w-4 h-4" />
             <span>{post.like_count}</span>
           </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            className="flex items-center gap-1 h-8 px-2"
-          >
-            <MessageSquare className="w-4 h-4" />
-            <span>{post.comment_count}</span>
-          </Button>
+          <CommentDialog post={post} />
         </div>
       </CardFooter>
     </Card>

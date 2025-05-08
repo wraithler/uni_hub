@@ -43,12 +43,14 @@ class Community(BaseModel):
         on_delete=models.SET_NULL,
         related_name="community_avatar",
         null=True,
+        blank=True,
     )
     banner = models.ForeignKey(
         "files.File",
         on_delete=models.SET_NULL,
         related_name="community_banner",
         null=True,
+        blank=True,
     )
 
     PRIVACY_OPTIONS = (
@@ -131,6 +133,7 @@ class CommunityJoinRequest(BaseModel):
         "users.BaseUser", on_delete=models.CASCADE, related_name="join_requests"
     )
     is_accepted = models.BooleanField(default=False)
+    is_rejected = models.BooleanField(default=False)
 
     class Meta:
         unique_together = ["community", "user"]

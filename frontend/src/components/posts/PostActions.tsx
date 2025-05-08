@@ -69,6 +69,7 @@ export default function PostActions({ post }: PostActionsProps) {
           description="This action is irreversible."
           trigger={<></>}
           open={showDeleteDialog}
+          setOpen={setShowDeleteDialog}
           button={
             <Button
               variant="destructive"

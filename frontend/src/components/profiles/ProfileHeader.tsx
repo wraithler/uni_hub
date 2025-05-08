@@ -5,6 +5,7 @@ import {
 } from "@/components/ui/avatar.tsx";
 import { Badge } from "@/components/ui/badge.tsx";
 import { Button } from "@/components/ui/button.tsx";
+import FriendButton from "@/components/friends/FriendButton";
 import {
   Calendar,
   GraduationCap,
@@ -56,7 +57,7 @@ export default function ProfileHeader({
           </div>
 
           <div className="flex items-center gap-2">
-            {!self && <Button>Add Friend</Button>}
+          {!self && <FriendButton user={user} />}
             {!self && user.contact_email && (
               <Button variant="outline" size="icon">
                 <Mail className="h-4 w-4" />

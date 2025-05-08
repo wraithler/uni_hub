@@ -8,15 +8,12 @@ import {
   CardTitle,
 } from "@/components/ui/card.tsx";
 import {
-  Activity,
   BarChart3,
-  CheckCircle2,
   FileText,
   LineChart,
   PieChart,
   UserPlus,
   Users,
-  XCircle,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge.tsx";
 import { Button } from "@/components/ui/button.tsx";
@@ -27,30 +24,37 @@ import {
   Cell,
   Legend,
   Line,
+  LineChart as RechartsLineChart,
   Pie,
+  PieChart as RechartsPieChart,
   ResponsiveContainer,
   Tooltip,
   XAxis,
   YAxis,
 } from "recharts";
-import { LineChart as RechartsLineChart } from "recharts/types/chart/LineChart";
-import { PieChart as RechartsPieChart } from "recharts/types/chart/PieChart";
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "@/components/ui/avatar.tsx";
-import { TabsContent } from "@/components/ui/tabs.tsx";
+import CommunityJoinRequestCard from "@/components/communities/CommunityJoinRequestCard.tsx";
 
 export default function CommunityDashboardOverview({
   data,
 }: {
   data: CommunityDashboard;
 }) {
+  const postsThisWeek = data.engagement.reduce(
+    (total: number, day: any) => total + day.posts,
+    0,
+  );
+
+  const contentTypeData = [
+    { name: "Posts", value: data?.total_posts },
+    { name: "Events", value: data?.total_events },
+  ];
+
+  const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"];
+
   return (
-    <TabsContent value="overview">
+    <>
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
         <Card>
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
@@ -88,7 +92,7 @@ export default function CommunityDashboardOverview({
                   Pending Requests
                 </p>
                 <h3 className="text-2xl font-bold mt-1">
-                  {data.pending_requests}
+                  {data.pending_requests.length}
                 </h3>
               </div>
               <div className="p-2 bg-amber-100 rounded-full">
@@ -118,37 +122,10 @@ export default function CommunityDashboardOverview({
             </div>
             <div className="mt-4 flex items-center text-sm">
               <span className="text-muted-foreground">
-                <span className="font-medium text-green-600">+12</span> new
-                posts this week
-              </span>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">
-                  Engagement Rate
-                </p>
-                <h3 className="text-2xl font-bold mt-1">
-                  {communityData.engagement}%
-                </h3>
-              </div>
-              <div className="p-2 bg-green-100 rounded-full">
-                <Activity className="h-5 w-5 text-green-600" />
-              </div>
-            </div>
-            <div className="mt-4 flex items-center text-sm">
-              <Badge
-                variant="outline"
-                className="text-green-600 border-green-200 bg-green-50"
-              >
-                +5%
-              </Badge>
-              <span className="ml-2 text-muted-foreground">
-                from last month
+                <span className="font-medium text-green-600">
+                  +{postsThisWeek}
+                </span>{" "}
+                new posts this week
               </span>
             </div>
           </CardContent>
@@ -200,14 +177,14 @@ export default function CommunityDashboardOverview({
           <CardContent className="px-2">
             <div className="h-[300px]">
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={engagementData}>
+                <BarChart data={data.engagement.sort((a, b) => a.idx - b.idx)}>
                   <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="day" />
+                  <XAxis dataKey="label" />
                   <YAxis />
                   <Tooltip />
                   <Legend />
                   <Bar dataKey="posts" fill="#8884d8" name="Posts" />
-                  <Bar dataKey="comments" fill="#82ca9d" name="Comments" />
+                  <Bar dataKey="events" fill="#82ca9d" name="Comments" />
                 </BarChart>
               </ResponsiveContainer>
             </div>
@@ -272,57 +249,19 @@ export default function CommunityDashboardOverview({
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {pendingRequests.slice(0, 3).map((request) => (
-                <div
-                  key={request.id}
-                  className="flex items-center justify-between"
-                >
-                  <div className="flex items-center gap-3">
-                    <Avatar>
-                      <AvatarImage
-                        src={request.avatar || "/placeholder.svg"}
-                        alt={request.name}
-                      />
-                      <AvatarFallback>{request.name.charAt(0)}</AvatarFallback>
-                    </Avatar>
-                    <div>
-                      <p className="font-medium">{request.name}</p>
-                      <p className="text-sm text-muted-foreground">
-                        {request.major} • {request.year}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="border-green-200 text-green-700 hover:bg-green-50 hover:text-green-800"
-                      onClick={() => handleJoinRequest(request.id, "approve")}
-                    >
-                      <CheckCircle2 className="h-4 w-4 mr-1" />
-                      Approve
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="border-red-200 text-red-700 hover:bg-red-50 hover:text-red-800"
-                      onClick={() => handleJoinRequest(request.id, "reject")}
-                    >
-                      <XCircle className="h-4 w-4 mr-1" />
-                      Reject
-                    </Button>
-                  </div>
-                </div>
+              {data.pending_requests.slice(0, 3).map((request) => (
+                <CommunityJoinRequestCard joinRequest={request} />
               ))}
             </div>
           </CardContent>
           <CardFooter className="border-t bg-slate-50 px-6 py-3">
             <p className="text-sm text-muted-foreground">
-              Showing 3 of {pendingRequests.length} requests
+              Showing {Math.min(data.pending_requests.length, 3)} of{" "}
+              {data.pending_requests.length} requests
             </p>
           </CardFooter>
         </Card>
       </div>
-    </TabsContent>
+    </>
   );
 }

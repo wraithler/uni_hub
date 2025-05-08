@@ -1,42 +1,44 @@
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { User } from "@/api/users/userTypes";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import { useUnfriend } from "@/api/friends/useUnFriend";
 import { nameToAvatarFallback } from "@/lib/utils";
-import { Friend } from "@/api/friends/friendTypes";
-
-interface FriendCardProps {
-  friend: Friend;
-  onUnfriend?: () => void;
-  showUnfriendButton?: boolean;
-}
 
 export default function FriendCard({
   friend,
+  showUnfriend = false,
   onUnfriend,
-  showUnfriendButton = false,
-}: FriendCardProps) {
+}: {
+  friend: User;
+  showUnfriend?: boolean;
+  onUnfriend?: () => void;
+}) {
+  const { mutate } = useUnfriend();
+
+  const handleUnfriend = () => {
+    mutate(friend.id, {
+      onSuccess: () => {
+        if (onUnfriend) onUnfriend();
+      },
+    });
+  };
+
   return (
-    <div className="flex items-center justify-between gap-4 p-3 border rounded-md shadow-sm">
+    <div className="flex items-center justify-between p-3 border rounded-md shadow-sm">
       <div className="flex items-center gap-3">
         <Avatar className="w-10 h-10">
-          <AvatarImage src={friend.avatar_url} alt={friend.first_name} />
+          <AvatarImage src={friend.avatar} alt={friend.first_name} />
           <AvatarFallback>
-            {nameToAvatarFallback(`${friend.first_name} ${friend.last_name}`)}
+            {nameToAvatarFallback(friend.first_name + " " + friend.last_name)}
           </AvatarFallback>
         </Avatar>
         <div>
-          <p className="text-sm font-medium">
-            {friend.first_name} {friend.last_name}
-          </p>
+          <p className="font-medium">{friend.first_name} {friend.last_name}</p>
         </div>
       </div>
 
-      {showUnfriendButton && onUnfriend && (
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={onUnfriend}
-          className="text-xs"
-        >
+      {showUnfriend && (
+        <Button variant="outline" size="sm" onClick={handleUnfriend}>
           Unfriend
         </Button>
       )}
