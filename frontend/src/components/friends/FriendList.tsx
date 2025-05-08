@@ -3,8 +3,13 @@ import FriendCard from "./FriendCard";
 import { useUnfriend } from "@/api/friends/useUnFriend";
 import { Skeleton } from "@/components/ui/skeleton";
 
-export default function FriendList() {
-  const { data: friends, isLoading } = useFriendList();
+interface FriendListProps {
+  userId?: number;
+  showUnfriendButton?: boolean;
+}
+
+export default function FriendList({ userId, showUnfriendButton = false }: FriendListProps) {
+  const { data: friends, isLoading } = useFriendList(userId);
   const unfriend = useUnfriend();
 
   if (isLoading) {
@@ -27,7 +32,7 @@ export default function FriendList() {
         <FriendCard
           key={friend.id}
           friend={friend}
-          showUnfriendButton
+          showUnfriendButton={showUnfriendButton}
           onUnfriend={() => unfriend.mutate(friend.id)}
         />
       ))}

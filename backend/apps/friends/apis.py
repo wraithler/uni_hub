@@ -77,6 +77,16 @@ class FriendListApi(APIView):
         avatar_url = serializers.CharField(source="friend.avatar_url", allow_null=True)
 
     def get(self, request):
-        friends = user_friend_list(user_id=request.user.id)
+        user_id = request.query_params.get("user_id")
+
+        if user_id:
+            try:
+                user_id = int(user_id)
+            except ValueError:
+                return Response({"detail": "Invalid user_id"}, status=400)
+        else:
+            user_id = request.user.id
+
+        friends = user_friend_list(user_id=user_id)
         data = self.OutputSerializer(friends, many=True).data
         return Response(data)

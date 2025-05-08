@@ -26,7 +26,7 @@ services:
       - database
       - mailhog
       - redis
-      - spam-detection
+      # - spam-detection
     networks:
       - app-network
     volumes:
@@ -97,22 +97,22 @@ services:
     restart: unless-stopped
     env_file: .env
 
-  spam-detection:
-    container_name: spam-detection
-    build: ./services/spam-detection
-    ports:
-      - "8001:8000"
-    environment:
-      - NVIDIA_VISIBLE_DEVICES=all
-      - PYTHONPATH=/app
-    networks:
-      - app-network
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - capabilities: [ gpu ]
-    runtime: nvidia
+  # spam-detection:
+  #   container_name: spam-detection
+  #   build: ./services/spam-detection
+  #   ports:
+  #     - "8001:8000"
+  #   environment:
+  #     - NVIDIA_VISIBLE_DEVICES=all
+  #     - PYTHONPATH=/app
+  #   networks:
+  #     - app-network
+  #   deploy:
+  #     resources:
+  #       reservations:
+  #         devices:
+  #           - capabilities: [ gpu ]
+  #   runtime: nvidia
 
 networks:
   app-network:
