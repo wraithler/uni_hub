@@ -11,7 +11,7 @@ import CommunityJoinRequestCard from "@/components/communities/CommunityJoinRequ
 import CommunityDashboardStaffCard from "@/components/communities/CommunityDashboardStaffCard.tsx";
 import { CommunityDashboard } from "@/api/communities/communityTypes.ts";
 
-export default function CommunityDashboardMembers({ data }: { data: CommunityDashboard, id: number }) {
+export default function CommunityDashboardMembers({ data, id }: { data: CommunityDashboard, id: number }) {
   return (
     <div className="grid grid-cols-1 gap-6">
       {/* Member Management Header */}
@@ -25,7 +25,7 @@ export default function CommunityDashboardMembers({ data }: { data: CommunityDas
               </CardDescription>
             </div>
             <div className="flex flex-wrap gap-2">
-              <CommunityDashboardRoleDialog community_id={Number()} />
+              <CommunityDashboardRoleDialog community_id={Number(id)} />
             </div>
           </div>
         </CardHeader>

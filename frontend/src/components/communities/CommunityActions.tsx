@@ -1,5 +1,5 @@
 import { Community } from "@/api/communities/communityTypes";
-import { MessageSquare, MoreHorizontal, Share2, Users } from "lucide-react";
+import { MessageSquare, MoreHorizontal, Settings, Users } from "lucide-react";
 import CommunityJoinButton from "@/components/communities/buttons/CommunityJoinButton.tsx";
 import { Button } from "@/components/ui/button.tsx";
 import {
@@ -8,6 +8,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu.tsx";
+import { Link } from "react-router-dom";
 
 export default function CommunityActions({
   community,
@@ -29,9 +30,13 @@ export default function CommunityActions({
 
       <div className="flex items-center gap-2">
         <CommunityJoinButton community={community} />
-        <Button variant="outline" size="icon">
-          <Share2 className="h-4 w-4" />
-        </Button>
+        {(community.is_admin || community.is_moderator) && (
+          <Link to={`/communities/${community.id}/dashboard`}>
+            <Button variant="outline" size="icon">
+              <Settings className="h-4 w-4" />
+            </Button>
+          </Link>
+        )}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" size="icon">

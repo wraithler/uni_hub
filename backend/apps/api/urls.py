@@ -5,9 +5,11 @@ urlpatterns = [
     path("users/", include(("apps.users.urls", "users"))),
     path("communities/", include(("apps.communities.urls", "communities"))),
     path("events/", include(("apps.events.urls", "events"))),
-    path("feed/", include(("apps.feed.urls", "feed"))),
     path("friends/", include(("apps.friends.urls", "friends"))),
-    path("notification/", include(("apps.notification_preferences.urls", "notification_preferences"))),
+    path(
+        "notification/",
+        include(("apps.notification_preferences.urls", "notification_preferences")),
+    ),
     path("notifications/", include(("apps.notifications.urls", "notifications"))),
     path("posts/", include(("apps.posts.urls", "posts"))),
     path("files/", include(("apps.files.urls", "files"))),

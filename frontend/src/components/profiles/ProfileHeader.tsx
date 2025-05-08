@@ -5,23 +5,11 @@ import {
 } from "@/components/ui/avatar.tsx";
 import { Badge } from "@/components/ui/badge.tsx";
 import { Button } from "@/components/ui/button.tsx";
-import {
-  Calendar,
-  GraduationCap,
-  Mail,
-  MoreHorizontal,
-  Settings,
-  Shield,
-} from "lucide-react";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu.tsx";
+import { Calendar, GraduationCap, Mail } from "lucide-react";
 import { nameToAvatarFallback } from "@/lib/utils.ts";
 import { User } from "@/api/users/userTypes.ts";
-import { formatTimestampRange, getOrdinal } from "@/api";
+import { formatTimestampRange } from "@/api";
+import ProfileEditDialog from "@/components/profiles/ProfileEditDialog.tsx";
 
 export default function ProfileHeader({
   user,
@@ -62,25 +50,7 @@ export default function ProfileHeader({
                 <Mail className="h-4 w-4" />
               </Button>
             )}
-            {self && (
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="outline" size="icon">
-                    <MoreHorizontal className="h-4 w-4" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  <DropdownMenuItem>
-                    <Settings className="h-4 w-4 mr-2" />
-                    Edit Profile
-                  </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    <Shield className="h-4 w-4 mr-2" />
-                    Privacy Settings
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            )}
+            {self && <ProfileEditDialog user={user} />}
           </div>
         </div>
 
@@ -90,8 +60,7 @@ export default function ProfileHeader({
           <div className="flex items-center gap-1 text-muted-foreground">
             <GraduationCap className="h-4 w-4" />
             <span>
-              {user.academic_department}, {user.year_of_study}
-              {getOrdinal(user.year_of_study as number)} Year
+              {user.academic_department}
             </span>
           </div>
           <div className="flex items-center gap-1 text-muted-foreground">

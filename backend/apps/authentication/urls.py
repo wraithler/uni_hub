@@ -1,7 +1,11 @@
 from django.urls import path
 
 from apps.authentication.apis import (
-    UserMeApi, UserCSRFCookieApi, UserLoginApi, UserRegisterApi, UserLogoutApi,
+    UserMeApi,
+    UserCSRFCookieApi,
+    UserLoginApi,
+    UserRegisterApi,
+    UserLogoutApi,
 )
 
 urlpatterns = [

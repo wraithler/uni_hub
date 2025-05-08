@@ -56,11 +56,14 @@ def model_update(
 
     return instance, has_updated
 
+
 def counts_by_delta(model, attributes):
     data = []
 
     for i in reversed(range(7)):  # oldest to newest
-        day_start = (timezone.now() - timedelta(days=i)).replace(hour=0, minute=0, second=0, microsecond=0)
+        day_start = (timezone.now() - timedelta(days=i)).replace(
+            hour=0, minute=0, second=0, microsecond=0
+        )
         day_end = day_start + timedelta(days=1)
         label = day_start.strftime("%a")
 
@@ -71,13 +74,14 @@ def counts_by_delta(model, attributes):
 
         for attr in attributes:
             attr_queryset = getattr(model, attr).all()
-            filtered_count = attr_queryset.filter(created_at__gte=day_start, created_at__lt=day_end).count()
+            filtered_count = attr_queryset.filter(
+                created_at__gte=day_start, created_at__lt=day_end
+            ).count()
             day_data[attr] = filtered_count
 
         data.append(day_data)
 
     return data
-
 
 
 def calculate_growth(model, attribute, delta, n_delta):
@@ -88,6 +92,7 @@ def calculate_growth(model, attribute, delta, n_delta):
     :param delta: The delta to calculate the growth for (e.g. timedelta(days=30)
     :param n_delta: The number of deltas to calculate the growth for. (e.g. 12 where delta=timedelta(days=30) for 12 months)
     """
+
     def growth(previous, current):
         if previous == 0:
             return 100.0 if current > 0 else 0.0
@@ -108,11 +113,13 @@ def calculate_growth(model, attribute, delta, n_delta):
 
         period_growth = growth(attr_previous, attr_then)
 
-        data.append({
-            "label": label,
-            "count": attr_then,
-            "growth": period_growth,
-            "month": then.strftime("%B")[:3],
-        })
+        data.append(
+            {
+                "label": label,
+                "count": attr_then,
+                "growth": period_growth,
+                "month": then.strftime("%B")[:3],
+            }
+        )
 
     return data

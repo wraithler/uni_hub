@@ -12,7 +12,12 @@ from apps.reactions.selectors import (
     comment_list_by_post,
     comment_list_by_user,
 )
-from apps.reactions.services import comment_create, comment_update, comment_delete, like_delete
+from apps.reactions.services import (
+    comment_create,
+    comment_update,
+    comment_delete,
+    like_delete,
+)
 from apps.reactions.services import like_create
 
 

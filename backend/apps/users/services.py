@@ -6,7 +6,6 @@ from apps.common.services import model_update
 from apps.emails.services import verification_email_create
 from apps.notification_preferences.services import notification_preference_create
 from apps.users.models import BaseUser
-from apps.notification_preferences.models import UserNotificationPreference
 
 
 @transaction.atomic
@@ -34,7 +33,20 @@ def user_create(
 
 @transaction.atomic
 def user_update(*, user: BaseUser, data) -> BaseUser:
-    non_side_effect_fields: List[str] = ["first_name", "last_name", "is_email_verified"]
+    non_side_effect_fields: List[str] = [
+        "first_name",
+        "last_name",
+        "is_email_verified",
+        "bio",
+        "academic_department",
+        "contact_email",
+        "contact_phone",
+        "contact_detail_privacy",
+        "dob",
+        "address",
+        "post_code",
+        "country",
+    ]
 
     user, has_updated = model_update(
         instance=user, fields=non_side_effect_fields, data=data

@@ -12,7 +12,7 @@ type Post = {
   community?: Community;
   
   // Visibility
-  visibility?: 'public' | 'members';
+  privacy?: 'public' | 'members' | string;
   
   // Counts
   like_count?: number;

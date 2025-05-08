@@ -19,7 +19,7 @@ class Post(BaseModel):
     pinned = models.BooleanField(default=False)
 
     VISIBILITY_CHOICES = [("public", "Public"), ("members", "Members Only")]
-    visibility = models.CharField(
+    privacy = models.CharField(
         max_length=10, choices=VISIBILITY_CHOICES, default="public"
     )
 

@@ -4,7 +4,7 @@ from apps.friends.apis import (
     FriendRequestSendApi,
     FriendRequestListApi,
     FriendRequestRespondApi,
-    FriendListApi, 
+    FriendListApi,
 )
 
 urlpatterns = [

@@ -18,7 +18,6 @@ class BaseUserFactory(factory.django.DjangoModelFactory):
     password = factory.Faker("password")
     bio = factory.Faker("text")
     academic_department = factory.Faker("text")
-    year_of_study = factory.Faker("pyint", min_value=1, max_value=6)
 
     @factory.post_generation
     def post(self, create, extracted, **kwargs):

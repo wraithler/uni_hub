@@ -1,4 +1,5 @@
 import django_filters
+from django.db.models import Q
 
 from apps.posts.models import Post
 
@@ -15,7 +16,7 @@ class PostFilter(django_filters.FilterSet):
             "community__memberships__user",
             "community__id",
             "pinned",
-            "my"
+            "my",
         )
 
     my = django_filters.BooleanFilter(method="filter_my")
@@ -28,7 +29,13 @@ class PostFilter(django_filters.FilterSet):
 
     def filter_queryset(self, queryset):
         queryset = super(PostFilter, self).filter_queryset(queryset)
-        queryset = queryset.filter(community__memberships__user=self.request.user)
+
+        # Filter by post privacy
+        queryset = queryset.filter(
+            Q(privacy="public")
+            | Q(privacy="members", community__memberships__user=self.request.user)
+        )
+
         return queryset
 
     def filter_include_community(self, queryset, name, value):

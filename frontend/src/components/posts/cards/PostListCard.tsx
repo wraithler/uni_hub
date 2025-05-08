@@ -14,7 +14,13 @@ import CommentDialog from "@/components/reactions/CommentDialog.tsx";
 import PostActions from "@/components/posts/PostActions.tsx";
 import PostCarousel from "@/components/posts/PostCarousel.tsx";
 
-export default function PostListCard({ post, showCommunity }: { post: Post, showCommunity?: boolean }) {
+export default function PostListCard({
+  post,
+  showCommunity,
+}: {
+  post: Post;
+  showCommunity?: boolean;
+}) {
   return (
     <Card>
       <CardHeader>
@@ -30,7 +36,13 @@ export default function PostListCard({ post, showCommunity }: { post: Post, show
           <div className="flex justify-between w-full">
             <div>
               <span className="font-medium">
-                {post.created_by?.first_name} {post.created_by?.last_name} {showCommunity ? `in ${post.community?.name}` : ""}
+                {post.created_by?.first_name} {post.created_by?.last_name}
+                {showCommunity && post.community && (
+                  <span className="text-sm text-muted-foreground font-normal">
+                    {" "}
+                    in {post.community.name}
+                  </span>
+                )}
               </span>
               <p className="text-xs text-muted-foreground">
                 {timeAgo(post.created_at as string)}

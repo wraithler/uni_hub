@@ -13,9 +13,9 @@ def event_get(event_id) -> Optional[Event]:
     return event
 
 
-def event_list(*, filters=None) -> QuerySet[Event]:
+def event_list(*, filters=None, request) -> QuerySet[Event]:
     filters = filters or {}
 
     qs = Event.objects.all()
 
-    return EventFilter(filters, qs).qs
+    return EventFilter(filters, qs, request=request).qs
