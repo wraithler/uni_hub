@@ -26,6 +26,10 @@ type SessionAuthContextType = {
   register: (
     firstName: string,
     lastName: string,
+    dob: string,
+    address: string,
+    postCode: string,
+    country: string,
     email: string,
     password: string,
   ) => Promise<AuthResponseType>;
@@ -96,6 +100,10 @@ export const SessionAuthProvider: React.FC<SessionAuthProviderProps> = ({
   const register = async (
     firstName: string,
     lastName: string,
+    dob: string,
+    address: string,
+    postCode: string,
+    country: string,
     email: string,
     password: string,
   ): Promise<AuthResponseType> => {
@@ -110,6 +118,10 @@ export const SessionAuthProvider: React.FC<SessionAuthProviderProps> = ({
         last_name: lastName,
         email,
         password,
+        dob,
+        address,
+        post_code: postCode,
+        country,
       });
 
       setUser(response.data);
@@ -139,6 +151,7 @@ export const SessionAuthProvider: React.FC<SessionAuthProviderProps> = ({
       return { success: false, error: errorMessage };
     } finally {
       setLoading(false);
+      window.location.href = "/";
     }
   };
 

@@ -14,6 +14,5 @@ export function useCommunities(params: CommunitiesQueryParameters) {
   return useQuery({
     queryKey: [communityQueryKeys.all, params],
     queryFn: getCommunitiesFn,
-    placeholderData: (prev) => prev,
   });
 }

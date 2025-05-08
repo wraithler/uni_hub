@@ -26,7 +26,7 @@ interface FeaturedCommunityCardProps {
 export default function CommunityFeaturedCard({
   community,
 }: FeaturedCommunityCardProps) {
-  const config = categoryConfig[community.category];
+  const config = categoryConfig[community.category as string];
 
   return (
     <Card className="overflow-hidden flex flex-col">
@@ -51,7 +51,7 @@ export default function CommunityFeaturedCard({
       </CardHeader>
       <CardContent>
         <div className="flex flex-wrap gap-1 mb-3">
-          {community.tags.map((tag, index) => (
+          {community.tags && community.tags.map((tag, index) => (
             <Badge key={index} variant="secondary" className="text-xs">
               {tag}
             </Badge>

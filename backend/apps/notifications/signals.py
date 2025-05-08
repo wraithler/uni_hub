@@ -64,6 +64,7 @@ def handle_like_created(sender, instance, created, **kwargs):
                 content_object=instance.content_object,
             )
 
+
 @receiver(post_save, sender=Event)
 def handle_event_created(sender, instance, created, **kwargs):
     """Handle event creation and updates."""
@@ -90,6 +91,7 @@ def handle_event_created(sender, instance, created, **kwargs):
                     message=f"The event details have been updated",
                     content_object=instance,
                 )
+
 
 @receiver(post_save, sender=EventAttendee)
 def handle_event_attendee(sender, instance, created, **kwargs):

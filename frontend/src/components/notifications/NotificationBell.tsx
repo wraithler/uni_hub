@@ -1,5 +1,5 @@
 import { Bell } from 'lucide-react';
-import { useNotifications } from '../../api/notifications/useNotifications.ts';
+import { useNotifications } from '@/api/notifications/useNotifications.ts';
 import { Button } from '@/components/ui/button.tsx';
 import {
   Popover,
@@ -21,7 +21,7 @@ export const NotificationBell = () => {
           aria-label="Notifications"
         >
           <Bell className="h-5 w-5" />
-          {!isLoading && notificationCount?.count > 0 && (
+          {!isLoading && notificationCount && notificationCount?.count > 0 && (
             <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-red-500 text-[10px] font-medium text-white flex items-center justify-center">
               {notificationCount.count > 99 ? '99+' : notificationCount.count}
             </span>

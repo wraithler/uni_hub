@@ -1,8 +1,8 @@
 import { formatDistanceToNow } from 'date-fns';
 import { Trash2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { Notification } from '../../api/notifications';
-import { useNotifications } from '../../api/notifications/useNotifications.ts';
+import { Notification } from '@/api/notifications';
+import { useNotifications } from '@/api/notifications/useNotifications.ts';
 import { Button } from '@/components/ui/button.tsx';
 import { cn } from '@/lib/utils.ts';
 import { toast } from 'sonner';

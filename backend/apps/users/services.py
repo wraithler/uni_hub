@@ -16,6 +16,10 @@ def user_create(
     last_name: str,
     is_active: bool = True,
     password: Optional[str] = None,
+    dob: Optional[str] = None,
+    address: Optional[str] = None,
+    post_code: Optional[str] = None,
+    country: Optional[str] = None,
 ) -> BaseUser:
     user = BaseUser.objects.create_user(
         email=email,
@@ -23,6 +27,10 @@ def user_create(
         last_name=last_name,
         is_active=is_active,
         password=password,
+        dob=dob,
+        address=address,
+        post_code=post_code,
+        country=country,
     )
 
     verification_email_create(user=user)

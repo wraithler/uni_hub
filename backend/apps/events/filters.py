@@ -40,15 +40,14 @@ class EventFilter(django_filters.FilterSet):
 
         # Filter by community privacy
         queryset = queryset.filter(
-            Q(community__privacy="public") |
-            Q(community__memberships__user=self.request.user)
+            Q(community__privacy="public")
+            | Q(community__memberships__user=self.request.user)
         )
 
         # Filter by event privacy
         queryset = queryset.filter(
-            Q(privacy="public") |
-            Q(privacy="members", community__memberships__user=self.request.user)
+            Q(privacy="public")
+            | Q(privacy="members", community__memberships__user=self.request.user)
         )
 
         return queryset
-
