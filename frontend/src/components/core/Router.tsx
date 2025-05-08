@@ -17,6 +17,7 @@ import CommunityDashboardPage from "@/pages/communities/dashboard/CommunityDashb
 import ProfilePage from "@/pages/profiles/Profile.page.tsx";
 import ProfileOtherPage from "@/pages/profiles/ProfileOtherPage.page.tsx";
 import CommunityApprovalPage from "@/pages/communities/CommunityApprovalPage.tsx";
+import UsersPage from "@/pages/Users.tsx";
 
 const router = createBrowserRouter([
   {
@@ -129,10 +130,20 @@ const router = createBrowserRouter([
     children: [
       {
         path: "/communities/approval",
-        element: <CommunityApprovalPage/>
-      }
-    ]
-  }
+        element: <CommunityApprovalPage />,
+      },
+    ],
+  },
+  {
+    path: "/users",
+    element: <ProtectedRoute />,
+    children: [
+      {
+        path: "/users",
+        element: <UsersPage />,
+      },
+    ],
+  },
 ]);
 
 export function Router() {

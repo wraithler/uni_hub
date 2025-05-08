@@ -54,6 +54,7 @@ def user_update(*, user: BaseUser, data) -> BaseUser:
         "address",
         "post_code",
         "country",
+        "profile_picture_url",
     ]
 
     user, has_updated = model_update(

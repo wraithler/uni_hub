@@ -8,6 +8,7 @@ import {
 import { Button } from "@/components/ui/button.tsx";
 import { nameToAvatarFallback } from "@/lib/utils.ts";
 import { Link } from "react-router-dom";
+import { Badge } from "@/components/ui/badge.tsx";
 
 export default function UserActiveMemberCard({ user }: { user: User }) {
   const fullName = `${user.first_name} ${user.last_name}`;
@@ -21,8 +22,14 @@ export default function UserActiveMemberCard({ user }: { user: User }) {
           </Avatar>
           <div>
             <p className="font-medium text-sm">{fullName}</p>
-            <p className="text-xs text-muted-foreground">{/* todo: setup */}</p>
           </div>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          {user.interests.map((interest, index) => (
+            <Badge key={index} variant="secondary">
+              {interest}
+            </Badge>
+          ))}
         </div>
       </CardHeader>
       <CardFooter className="p-4 pt-0">

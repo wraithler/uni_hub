@@ -102,17 +102,17 @@ services:
     build: ./services/spam-detection
     ports:
       - "8001:8000"
-    environment:
-      - NVIDIA_VISIBLE_DEVICES=all
-      - PYTHONPATH=/app
     networks:
       - app-network
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - capabilities: [ gpu ]
-    runtime: nvidia
+#    environment:
+#      - NVIDIA_VISIBLE_DEVICES=all
+#      - PYTHONPATH=/app
+#    deploy:
+#      resources:
+#        reservations:
+#          devices:
+#            - capabilities: [ gpu ]
+#    runtime: nvidia
 
 networks:
   app-network:

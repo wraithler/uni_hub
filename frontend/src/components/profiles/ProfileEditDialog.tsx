@@ -30,6 +30,7 @@ import {
 } from "@/components/ui/select.tsx";
 import React, { useState } from "react";
 import { Badge } from "@/components/ui/badge.tsx";
+import FileUpload from "@/components/files/FileUpload.tsx";
 
 const Schema = z.object({
   first_name: z.string(),
@@ -44,10 +45,12 @@ const Schema = z.object({
   address: z.string(),
   post_code: z.string(),
   country: z.string(),
+  media: z.array(z.number()).optional(),
 });
 
 export default function ProfileEditDialog({ user }: { user: User }) {
-  const { mutate, error } = useUserUpdate();
+  const { mutate } = useUserUpdate();
+  const [urls, setUrls] = useState<string[]>([]);
   const form = useForm<z.infer<typeof Schema>>({
     resolver: zodResolver(Schema),
     defaultValues: {
@@ -102,15 +105,17 @@ export default function ProfileEditDialog({ user }: { user: User }) {
   };
 
   const handleSubmit = (data: z.infer<typeof Schema>) => {
-    mutate({
-      id: user.id,
-      ...data,
-      interests: data.interests.filter((interest) => interest !== ""),
-    });
-
-    if (!error) {
-      window.location.reload(); // hack because the user object is not updated in the context as it's in the auth provider
-    }
+    mutate(
+      {
+        id: user.id,
+        ...data,
+        interests: data.interests.filter((interest) => interest !== ""),
+        profile_picture_url: urls[0] || "",
+      },
+      // {
+      //   onSuccess: () => window.location.reload(),
+      // },
+    );
   };
 
   return (
@@ -129,7 +134,7 @@ export default function ProfileEditDialog({ user }: { user: User }) {
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(handleSubmit)}
-            className="flex flex-col gap-4"
+            className="grid grid-cols-2 gap-4"
           >
             <div className="grid grid-cols-2 gap-4">
               <FormField
@@ -334,6 +339,22 @@ export default function ProfileEditDialog({ user }: { user: User }) {
                       </Badge>
                     ))}
                   </div>
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="media"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <FileUpload
+                      value={field.value || []}
+                      onChange={field.onChange}
+                      setUrls={setUrls}
+                    />
+                  </FormControl>
                 </FormItem>
               )}
             />

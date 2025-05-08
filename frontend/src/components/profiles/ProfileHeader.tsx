@@ -6,20 +6,7 @@ import {
 import { Badge } from "@/components/ui/badge.tsx";
 import { Button } from "@/components/ui/button.tsx";
 import FriendButton from "@/components/friends/FriendButton";
-import {
-  Calendar,
-  GraduationCap,
-  Mail,
-  MoreHorizontal,
-  Settings,
-  Shield,
-} from "lucide-react";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu.tsx";
+import { Calendar, GraduationCap, Mail } from "lucide-react";
 import { nameToAvatarFallback } from "@/lib/utils.ts";
 import { User } from "@/api/users/userTypes.ts";
 import { formatTimestampRange } from "@/api";
@@ -36,7 +23,7 @@ export default function ProfileHeader({
   return (
     <div className="relative -mt-16 mb-6 flex flex-col md:flex-row gap-6 items-start">
       <Avatar className="w-32 h-32 border-4 border-white shadow-lg">
-        <AvatarImage src={user.avatar} alt={fullName} />
+        <AvatarImage src={user.profile_picture_url} alt={fullName} />
         <AvatarFallback className="text-3xl">
           {nameToAvatarFallback(fullName)}
         </AvatarFallback>
@@ -58,7 +45,7 @@ export default function ProfileHeader({
           </div>
 
           <div className="flex items-center gap-2">
-          {!self && <FriendButton user={user} />}
+            {!self && <FriendButton user={user} />}
             {!self && user.contact_email && (
               <Button variant="outline" size="icon">
                 <Mail className="h-4 w-4" />
@@ -73,9 +60,7 @@ export default function ProfileHeader({
         <div className="flex flex-wrap gap-6 mt-4">
           <div className="flex items-center gap-1 text-muted-foreground">
             <GraduationCap className="h-4 w-4" />
-            <span>
-              {user.academic_department}
-            </span>
+            <span>{user.academic_department}</span>
           </div>
           <div className="flex items-center gap-1 text-muted-foreground">
             <Calendar className="h-4 w-4" />

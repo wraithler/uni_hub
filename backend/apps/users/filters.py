@@ -16,11 +16,16 @@ class BaseUserFilter(django_filters.FilterSet):
 
     def filter_name(self, queryset, name, value):
         if value:
+            value = value.lower().strip()
             full_name = Concat(
                 "first_name", Value(" "), "last_name", output_field=CharField()
             )
-            return queryset.annotate(full_name=Lower(Trim(full_name))).filter(
-                full_name__icontains=value.lower().strip()
+            return (
+                queryset.annotate(full_name=Lower(Trim(full_name)))
+                .filter(
+                    Q(full_name__icontains=value) | Q(interests__name__icontains=value)
+                )
+                .distinct()
             )
         return queryset
 

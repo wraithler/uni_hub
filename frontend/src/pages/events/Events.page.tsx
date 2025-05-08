@@ -122,7 +122,7 @@ export default function EventsPage() {
           {events.results.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {events.results.map((event: Event) => (
-                <EventCard key={event.id} {...event} />
+                <EventCard key={event.id} event={event} />
               ))}
             </div>
           ) : (

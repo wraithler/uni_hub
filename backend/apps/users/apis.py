@@ -6,7 +6,6 @@ from rest_framework.exceptions import PermissionDenied
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
-from rest_framework.views import APIView
 
 from apps.api.mixins import AuthAPIView
 from apps.api.pagination import get_paginated_response
@@ -42,6 +41,7 @@ class UserDetailApi(AuthAPIView):
         address = serializers.CharField(required=False)
         post_code = serializers.CharField(required=False)
         country = serializers.CharField(required=False)
+        profile_picture_url = serializers.CharField(required=False)
 
         def get_posts(self, obj):
             return obj.posts.all().count()
@@ -118,7 +118,12 @@ class UserListApi(AuthAPIView):
     class OutputSerializer(serializers.ModelSerializer):
         class Meta:
             model = BaseUser
-            fields = ("id", "email", "first_name", "last_name", "bio")
+            fields = ("id", "email", "first_name", "last_name", "bio", "interests")
+
+        interests = serializers.SerializerMethodField()
+
+        def get_interests(self, obj):
+            return [interest.name for interest in obj.interests.all()]
 
     def get(self, request):
         filters_serializer = self.FilterSerializer(data=request.query_params)
@@ -172,6 +177,7 @@ class UserUpdateApi(AuthAPIView):
         address = serializers.CharField(required=False)
         post_code = serializers.CharField(required=False)
         country = serializers.CharField(required=False)
+        profile_picture_url = serializers.CharField(required=False)
 
     def post(self, request, user_id):
         serializer = self.InputSerializer(data=request.data)
