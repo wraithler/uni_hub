@@ -5,6 +5,7 @@ from rest_framework import serializers, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from apps.api.mixins import AuthAPIView
 from apps.api.pagination import LimitOffsetPagination, get_paginated_response
 from apps.events.models import Event, EventTicket
 from apps.events.selectors import event_get, event_list
@@ -16,7 +17,7 @@ from apps.events.services import (
 )
 
 
-class EventDetailApi(APIView):
+class EventDetailApi(AuthAPIView):
     class OutputSerializer(serializers.Serializer):
         id = serializers.IntegerField()
         title = serializers.CharField()
@@ -44,7 +45,7 @@ class EventDetailApi(APIView):
         return Response(data)
 
 
-class EventListApi(APIView):
+class EventListApi(AuthAPIView):
     class Pagination(LimitOffsetPagination):
         default_limit = 1
 
@@ -92,7 +93,7 @@ class EventListApi(APIView):
 
 
 @method_decorator(csrf_protect, name="dispatch")
-class EventCreateApi(APIView):
+class EventCreateApi(AuthAPIView):
     class InputSerializer(serializers.Serializer):
         title = serializers.CharField()
         description = serializers.CharField()
@@ -102,23 +103,27 @@ class EventCreateApi(APIView):
         location = serializers.CharField(required=False)
         is_virtual_event = serializers.BooleanField()
         virtual_link = serializers.URLField(required=False)
+        privacy = serializers.CharField()
 
     def post(self, request):
         serializer = self.InputSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        
+
         validated_data = serializer.validated_data.copy()
- 
-        if 'virtual_link' not in validated_data or validated_data['virtual_link'] is None:
-            validated_data['virtual_link'] = ''
-            
+
+        if (
+            "virtual_link" not in validated_data
+            or validated_data["virtual_link"] is None
+        ):
+            validated_data["virtual_link"] = ""
+
         event = event_create(**validated_data, created_by=request.user)
 
-        data = EventDetailApi.OutputSerializer(event).data
+        data = EventDetailApi.OutputSerializer(event, context={"request": request}).data
         return Response(data)
 
 
-class EventUpdateApi(APIView):
+class EventUpdateApi(AuthAPIView):
     class InputSerializer(serializers.Serializer):
         name = serializers.CharField()
         description = serializers.CharField()
@@ -141,7 +146,7 @@ class EventUpdateApi(APIView):
         return Response(data)
 
 
-class EventTicketCreateApi(APIView):
+class EventTicketCreateApi(AuthAPIView):
     class OutputSerializer(serializers.ModelSerializer):
         class Meta:
             model = EventTicket
@@ -158,7 +163,7 @@ class EventTicketCreateApi(APIView):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
-class EventTicketUpdateApi(APIView):
+class EventTicketUpdateApi(AuthAPIView):
     class InputSerializer(serializers.Serializer):
         used = serializers.BooleanField()
 

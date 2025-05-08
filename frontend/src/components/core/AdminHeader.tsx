@@ -1,7 +1,7 @@
 import { useAuth } from "@/components/auth/SessionAuthProvider";
 import { Button } from "@/components/ui/button.tsx";
-import { Badge } from "../ui/badge.tsx";
 import { Shield } from "lucide-react";
+import { Link } from "react-router-dom";
 
 export default function AdminHeader() {
   const { user } = useAuth();
@@ -17,46 +17,15 @@ export default function AdminHeader() {
               </span>
             </div>
             <div className="hidden md:flex items-center gap-4">
-              <Button
-                variant="link"
-                className="text-slate-200 p-0 h-auto text-sm"
-              >
-                User Management
-              </Button>
-              <Button
-                variant="link"
-                className="text-slate-200 p-0 h-auto text-sm"
-              >
-                Content Moderation
-              </Button>
-              <Button
-                variant="link"
-                className="text-slate-200 p-0 h-auto text-sm"
-              >
-                Analytics
-              </Button>
-              <Button
-                variant="link"
-                className="text-slate-200 p-0 h-auto text-sm"
-              >
-                Settings
-              </Button>
+              <Link to="/communities/approval">
+                <Button
+                  variant="link"
+                  className="text-slate-200 p-0 h-auto text-sm"
+                >
+                  Community Creation Requests
+                </Button>
+              </Link>
             </div>
-          </div>
-          <div className="flex items-center gap-3">
-            <Badge
-              variant="outline"
-              className="text-slate-200 border-slate-700"
-            >
-              {user?.is_admin ? "Admin" : "Moderator"}
-            </Badge>
-            <Button
-              variant="ghost"
-              size="sm"
-              className="h-7 text-xs border-slate-700 text-slate-200 hover:bg-slate-800 hover:text-slate-100"
-            >
-              Exit Admin Mode
-            </Button>
           </div>
         </div>
       </div>

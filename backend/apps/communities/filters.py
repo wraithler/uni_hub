@@ -14,7 +14,7 @@ class CommunityFilter(django_filters.FilterSet):
 
     class Meta:
         model = Community
-        fields = ("is_featured", "category_name", "name")
+        fields = ("is_featured", "category_name", "name", "is_accepted", "is_declined")
 
     def filter_my(self, queryset, name, value):
         if value:
@@ -53,6 +53,10 @@ class CommunityFilter(django_filters.FilterSet):
             | Q(privacy="restricted")
             | (Q(privacy="private") & Q(memberships__user=self.request.user))
         ).distinct()
+
+        # Exclude communities that are not is_accepted from the queryset for non-admin users
+        if not self.request.user.is_superuser:
+            queryset = queryset.exclude(is_accepted=False, is_declined=True)
 
         return queryset
 

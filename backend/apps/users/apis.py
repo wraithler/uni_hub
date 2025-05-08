@@ -19,7 +19,7 @@ from apps.users.selectors import user_get, user_list
 from apps.users.services import user_create, user_update
 
 
-class UserDetailApi(APIView):
+class UserDetailApi(AuthAPIView):
     class OutputSerializer(serializers.Serializer):
         id = serializers.IntegerField()
         email = serializers.EmailField()
@@ -66,9 +66,12 @@ class UserDetailApi(APIView):
             data = super().to_representation(instance)
 
             if (
-                instance.contact_detail_privacy == "MEMBERS"
-                and not is_in_mutual_community
-            ) or instance.contact_detail_privacy == "PRIVATE" and instance != user:
+                (
+                    instance.contact_detail_privacy == "MEMBERS"
+                    and not is_in_mutual_community
+                )
+                or instance.contact_detail_privacy == "PRIVATE"
+            ) and instance != user:
                 fields_to_remove = [
                     "contact_email",
                     "contact_phone",
@@ -103,7 +106,7 @@ class UserDetailApi(APIView):
         return Response(data)
 
 
-class UserListApi(APIView):
+class UserListApi(AuthAPIView):
     class Pagination(LimitOffsetPagination):
         default_limit = 1
 
@@ -132,7 +135,7 @@ class UserListApi(APIView):
         )
 
 
-class UserCreateApi(APIView):
+class UserCreateApi(AuthAPIView):
     authentication_classes = []
     permission_classes = [AllowAny]
 
@@ -148,12 +151,14 @@ class UserCreateApi(APIView):
 
         user = user_create(**serializer.validated_data)
 
-        data = UserDetailApi.OutputSerializer(user, context={"request": request}).data # Re-use serializer
+        data = UserDetailApi.OutputSerializer(
+            user, context={"request": request}
+        ).data  # Re-use serializer
 
         return Response(data)
 
 
-class UserUpdateApi(APIView):
+class UserUpdateApi(AuthAPIView):
     class InputSerializer(serializers.Serializer):
         first_name = serializers.CharField(required=False)
         last_name = serializers.CharField(required=False)
@@ -199,7 +204,7 @@ class UserUpdateApi(APIView):
         return Response(data)
 
 
-class UserCommunitiesListApi(APIView):
+class UserCommunitiesListApi(AuthAPIView):
     class Pagination(LimitOffsetPagination):
         default_limit = 1
 

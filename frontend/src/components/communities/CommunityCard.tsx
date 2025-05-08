@@ -16,13 +16,14 @@ import { MessageSquare, User } from "lucide-react";
 import { Button } from "@/components/ui/button.tsx";
 import { Community } from "@/api/communities/communityTypes.ts";
 import categoryConfig from "./CommunityStyling.tsx";
+import { Link } from "react-router-dom";
 
 interface CommunityCardProps {
   community: Community;
 }
 
 export function CommunityCard({ community }: CommunityCardProps) {
-  const config = categoryConfig[community.category];
+  const config = categoryConfig[community.category as string];
 
   return (
     <Card key={community.id} className="overflow-hidden flex flex-col">
@@ -49,7 +50,7 @@ export function CommunityCard({ community }: CommunityCardProps) {
             {community.description}
           </p>
           <div className="flex flex-wrap gap-1 mb-3">
-            {community.tags.map((tag, index) => (
+            {community.tags && community.tags.map((tag, index) => (
               <Badge key={index} variant="secondary" className="text-xs">
                 {tag}
               </Badge>
@@ -66,9 +67,11 @@ export function CommunityCard({ community }: CommunityCardProps) {
         </div>
       </CardContent>
       <CardFooter className="pt-0 mt-auto">
-        <Button variant="outline" size="sm" className="w-full">
-          View Community
-        </Button>
+        <Link to={`/communities/${community.id}`}>
+          <Button variant="outline" size="sm" className="w-full">
+            View Community
+          </Button>
+        </Link>
       </CardFooter>
     </Card>
   );

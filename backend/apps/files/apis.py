@@ -8,7 +8,7 @@ from apps.files.models import File
 from apps.files.services import FileStandardUploadService, FileDirectUploadService
 
 
-class FileStandardUploadApi(AuthAPIView, APIView):
+class FileStandardUploadApi(AuthAPIView):
     def post(self, request):
         service = FileStandardUploadService(
             user=request.user, _file=request.FILES["file"]
@@ -18,7 +18,7 @@ class FileStandardUploadApi(AuthAPIView, APIView):
         return Response(data={"id": file.id}, status=status.HTTP_201_CREATED)
 
 
-class FileDirectUploadStartApi(AuthAPIView, APIView):
+class FileDirectUploadStartApi(AuthAPIView):
     class InputSerializer(serializers.Serializer):
         file_name = serializers.CharField()
         file_type = serializers.CharField()
@@ -33,7 +33,7 @@ class FileDirectUploadStartApi(AuthAPIView, APIView):
         return Response(data=presigned_data)
 
 
-class FileDirectUploadLocalApi(AuthAPIView, APIView):
+class FileDirectUploadLocalApi(AuthAPIView):
     def post(self, request, file_id):
         file = get_object_or_404(File, id=file_id)
         _file = request.FILES["file"]
@@ -44,7 +44,7 @@ class FileDirectUploadLocalApi(AuthAPIView, APIView):
         return Response({"id": file.id})
 
 
-class FileDirectUploadFinishApi(AuthAPIView, APIView):
+class FileDirectUploadFinishApi(AuthAPIView):
     class InputSerializer(serializers.Serializer):
         file_id = serializers.CharField()
 

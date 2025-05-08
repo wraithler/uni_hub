@@ -8,7 +8,7 @@ from apps.notification_preferences.services import notification_preference_updat
 from apps.api.mixins import AuthAPIView
 
 
-class UserNotificationPreferenceDetailAPI(AuthAPIView, APIView):
+class UserNotificationPreferenceDetailAPI(AuthAPIView):
     class OutputSerializer(serializers.ModelSerializer):
         class Meta:
             model = UserNotificationPreference
@@ -26,7 +26,7 @@ class UserNotificationPreferenceDetailAPI(AuthAPIView, APIView):
         return Response(data)
 
 
-class UserNotificationPreferenceUpdateAPI(AuthAPIView, APIView):
+class UserNotificationPreferenceUpdateAPI(AuthAPIView):
     class InputSerializer(serializers.Serializer):
         email_notifications = serializers.BooleanField(required=False)
         sms_notifications = serializers.BooleanField(required=False)

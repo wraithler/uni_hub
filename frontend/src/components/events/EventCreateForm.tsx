@@ -4,67 +4,82 @@ import { z } from "zod";
 import { useState } from "react";
 import {
   Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
-  CardDescription,
-  CardContent,
-  CardFooter,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
   Form,
+  FormControl,
   FormField,
   FormItem,
   FormLabel,
-  FormControl,
   FormMessage,
 } from "@/components/ui/form";
 import { ChevronRight } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import { useAuth } from "@/components/auth/SessionAuthProvider";
-import { Navigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import { useEventCreate } from "@/api/events/useEventCreate";
-import EventFeaturedCard from "@/components/events/cards/EventFeaturedCard"
+import EventFeaturedCard from "@/components/events/cards/EventFeaturedCard";
 import CommunitiesCombobox from "@/components/communities/CommunitiesCombobox";
 import { Checkbox } from "@/components/ui/checkbox";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select.tsx";
+import { toast } from "sonner";
 
 const BasicInfoSchema = z.object({
   title: z.string().min(3, "Title must be at least 3 characters"),
   description: z.string().min(10, "Description is too short"),
   starts_at: z.string(),
   ends_at: z.string(),
+  privacy: z.enum(["public", "members"]),
 });
 
-const LocationSchema = z.object({
-  location: z.string().optional(),
-  is_virtual_event: z.boolean(),
-  virtual_link: z.string().optional(),
-}).superRefine((data, ctx) => {
-  if (!data.is_virtual_event && (!data.location || data.location.trim().length < 3)) {
-    ctx.addIssue({
-      code: z.ZodIssueCode.custom,
-      message: "Location is required for in-person events (min 3 characters)",
-      path: ["location"]
-    });
-  }
-
-  if (data.is_virtual_event) {
-    if (!data.virtual_link || data.virtual_link.trim() === "") {
+const LocationSchema = z
+  .object({
+    location: z.string().optional(),
+    is_virtual_event: z.boolean(),
+    virtual_link: z.string().optional(),
+  })
+  .superRefine((data, ctx) => {
+    if (
+      !data.is_virtual_event &&
+      (!data.location || data.location.trim().length < 3)
+    ) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
-        message: "Virtual link is required for virtual events",
-        path: ["virtual_link"]
-      });
-    } else if (data.virtual_link && !data.virtual_link.startsWith("http")) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "Please enter a valid URL (starting with http:// or https://)",
-        path: ["virtual_link"]
+        message: "Location is required for in-person events (min 3 characters)",
+        path: ["location"],
       });
     }
-  }
-});
+
+    if (data.is_virtual_event) {
+      if (!data.virtual_link || data.virtual_link.trim() === "") {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Virtual link is required for virtual events",
+          path: ["virtual_link"],
+        });
+      } else if (data.virtual_link && !data.virtual_link.startsWith("http")) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message:
+            "Please enter a valid URL (starting with http:// or https://)",
+          path: ["virtual_link"],
+        });
+      }
+    }
+  });
 
 const CommunitySchema = z.object({
   community: z.number(),
@@ -80,6 +95,7 @@ export default function EventCreateForm() {
   const [step, setStep] = useState(1);
   const { user } = useAuth();
   const createEvent = useEventCreate();
+  const navigate = useNavigate();
 
   const form = useForm<z.infer<typeof fullSchema>>({
     resolver: zodResolver(fullSchema),
@@ -89,6 +105,7 @@ export default function EventCreateForm() {
         description: "",
         starts_at: "",
         ends_at: "",
+        privacy: "public",
       },
       location: {
         location: "",
@@ -105,10 +122,13 @@ export default function EventCreateForm() {
 
   const nextStep = async () => {
     try {
-      const currentSection = Object.keys(fullSchema.shape)[step - 1] as "basic" | "location" | "community";
+      const currentSection = Object.keys(fullSchema.shape)[step - 1] as
+        | "basic"
+        | "location"
+        | "community";
 
       const valid = await form.trigger(currentSection);
-      
+
       if (valid) {
         setStep((s) => s + 1);
       } else {
@@ -184,6 +204,29 @@ export default function EventCreateForm() {
                   </FormItem>
                 )}
               />
+              <FormField
+                control={form.control}
+                name="basic.privacy"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Contact Info Privacy Settings</FormLabel>
+                    <FormControl>
+                      <Select {...field} value={field.value} onValueChange={field.onChange}>
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="public">Public</SelectItem>
+                          <SelectItem value="members">
+                            Mutual Community Members Only
+                          </SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
             </CardContent>
             <CardFooter className="flex justify-end">
               <Button type="button" onClick={nextStep}>
@@ -218,7 +261,7 @@ export default function EventCreateForm() {
                   </FormItem>
                 )}
               />
-              
+
               {!form.watch("location.is_virtual_event") && (
                 <FormField
                   control={form.control}
@@ -237,7 +280,7 @@ export default function EventCreateForm() {
                   )}
                 />
               )}
-              
+
               {form.watch("location.is_virtual_event") && (
                 <FormField
                   control={form.control}
@@ -246,15 +289,22 @@ export default function EventCreateForm() {
                     <FormItem>
                       <FormLabel>Virtual Link</FormLabel>
                       <FormControl>
-                        <Input 
-                          {...field} 
-                          placeholder="https://example.com" 
+                        <Input
+                          {...field}
+                          placeholder="https://example.com"
                           type="url"
                           onChange={(e) => {
                             let value = e.target.value;
-                            if (value && value.trim() !== "" && !value.match(/^https?:\/\//)) {
+                            if (
+                              value &&
+                              value.trim() !== "" &&
+                              !value.match(/^https?:\/\//)
+                            ) {
                               if (!value.startsWith("http")) {
-                                form.setValue("location.virtual_link", `https://${value}`);
+                                form.setValue(
+                                  "location.virtual_link",
+                                  `https://${value}`,
+                                );
                               }
                             } else {
                               field.onChange(e);
@@ -333,7 +383,8 @@ export default function EventCreateForm() {
                     description: form.getValues("basic.description"),
                     starts_at: form.getValues("basic.starts_at"),
                     ends_at: form.getValues("basic.ends_at"),
-                    location: form.getValues("location.location") || "Virtual Event",
+                    location:
+                      form.getValues("location.location") || "Virtual Event",
                     is_virtual_event: form.getValues(
                       "location.is_virtual_event",
                     ),
@@ -341,6 +392,7 @@ export default function EventCreateForm() {
                     community: form.getValues("community.community"),
                     attendees: 0,
                     timestamp: new Date().toISOString(),
+                    privacy: form.getValues("basic.privacy"),
                   }}
                 />
               </CardContent>
@@ -351,21 +403,31 @@ export default function EventCreateForm() {
                 <Button
                   type="submit"
                   onClick={form.handleSubmit((data) => {
-
                     const eventData = {
                       title: data.basic.title,
                       description: data.basic.description,
                       starts_at: data.basic.starts_at,
                       ends_at: data.basic.ends_at,
-                      location: data.location.is_virtual_event ? "Virtual Event" : data.location.location || "",
+                      location: data.location.is_virtual_event
+                        ? "Virtual Event"
+                        : data.location.location || "",
                       is_virtual_event: data.location.is_virtual_event,
-                      virtual_link: data.location.is_virtual_event ? data.location.virtual_link : undefined,
+                      virtual_link: data.location.is_virtual_event
+                        ? data.location.virtual_link
+                        : undefined,
                       community: data.community.community,
                       attendees: 0,
                       timestamp: new Date().toISOString(),
+                      privacy: data.basic.privacy,
                     };
-                    console.log("Submitting event:", eventData);
-                    createEvent.mutate(eventData);
+                    createEvent.mutate(eventData, {
+                      onSuccess: () => navigate("/events"),
+                      onError: () => {
+                        toast.error(
+                          "Something went wrong while creating the event, you might not have permission to create events in this community.",
+                        );
+                      },
+                    });
                   })}
                 >
                   Create Event

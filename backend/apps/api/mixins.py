@@ -60,8 +60,4 @@ else:
 
 
 class AuthAPIView(APIView):
-    pass
-    # authentication_classes: Sequence[Type[BaseAuthentication]] = [
-    #     SessionAsHeaderAuthentication
-    # ]
-    # permission_classes: PermissionClassesType = (IsAuthenticated,)
+    permission_classes = [IsAuthenticated]

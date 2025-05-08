@@ -21,6 +21,10 @@ const FormSchema = z
   .object({
     first_name: z.string().min(1, { message: "Please enter your first name" }),
     last_name: z.string().min(1, { message: "Please enter your last name" }),
+    dob: z.string(),
+    address: z.string(),
+    post_code: z.string(),
+    country: z.string(),
     email: z.string().email({ message: "Invalid email address" }),
     password: z
       .string()
@@ -54,13 +58,24 @@ export function RegisterForm() {
     setIsLoading(true);
 
     try {
-      await register(
+      const response = await register(
         data.first_name,
         data.last_name,
+        data.dob,
+        data.address,
+        data.post_code,
+        data.country,
         data.email,
         data.password,
       );
-      navigate("/feed");
+      if (response.success) {
+        navigate("/feed");
+      } else {
+        form.setError("password", {
+          type: "manual",
+          message: "Something went wrong, please try again later",
+        });
+      }
     } catch {
       form.setError("password", {
         type: "manual",
@@ -117,6 +132,64 @@ export function RegisterForm() {
             </FormItem>
           )}
         />
+
+        <FormField
+          control={form.control}
+          name="dob"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Date of Birth</FormLabel>
+              <FormControl>
+                <Input type="date" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="address"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Address</FormLabel>
+              <FormControl>
+                <Input {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <div className="grid grid-cols-2 gap-4">
+          <FormField
+            control={form.control}
+            name="post_code"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Post Code</FormLabel>
+                <FormControl>
+                  <Input {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="country"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Country</FormLabel>
+                <FormControl>
+                  <Input {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
 
         <FormField
           control={form.control}

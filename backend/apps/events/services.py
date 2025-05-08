@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.db import transaction
 
 from apps.common.services import model_update
@@ -6,8 +8,6 @@ from apps.communities.selectors import community_get
 from apps.core.exceptions import ApplicationError
 from apps.events.models import Event, EventTicket
 from apps.users.models import BaseUser
-from datetime import datetime
-from apps.communities.selectors import community_get
 
 
 @transaction.atomic
@@ -22,6 +22,7 @@ def event_create(
     community: Community | int,
     is_virtual_event: bool,
     virtual_link: str,
+    privacy: str,
 ):
     if isinstance(community, int):
         community = community_get(community_id=community)
@@ -29,8 +30,8 @@ def event_create(
     if not community.is_member(created_by):
         raise ApplicationError("User is not a member of the community")
 
-    # if not community.is_moderator(created_by) and not community.is_admin(created_by):
-    #     raise ApplicationError("User is not a moderator or admin of the community")
+    if not community.is_moderator(created_by) and not community.is_admin(created_by):
+        raise ApplicationError("User is not a moderator or admin of the community")
 
     event = Event.objects.create(
         title=title,
@@ -42,6 +43,7 @@ def event_create(
         community=community,
         is_virtual_event=is_virtual_event,
         virtual_link=virtual_link,
+        privacy=privacy,
     )
 
     return event

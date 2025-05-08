@@ -16,6 +16,8 @@ import VerifyEmailPage from "@/pages/email-verification/VerifyEmail.page.tsx";
 import CommunityDashboardPage from "@/pages/communities/dashboard/CommunityDashboard.page.tsx";
 import ProfilePage from "@/pages/profiles/Profile.page.tsx";
 import ProfileOtherPage from "@/pages/profiles/ProfileOtherPage.page.tsx";
+import FriendsTestPage from "@/pages/friends/FriendsTest.page";
+import CommunityApprovalPage from "@/pages/communities/CommunityApprovalPage.tsx";
 
 const router = createBrowserRouter([
   {
@@ -89,6 +91,16 @@ const router = createBrowserRouter([
     ],
   },
   {
+    path: "/friends-test",
+    element: <ProtectedRoute />,
+    children: [
+      {
+        path: "",
+        element: <FriendsTestPage />,
+      },
+    ],
+  },
+  {
     path: "/verification-email",
     element: <ProtectedRoute />,
     children: [
@@ -99,7 +111,7 @@ const router = createBrowserRouter([
       {
         path: "/verification-email/verify/:uid/:token",
         element: <VerifyEmailPage />,
-      },    
+      },
     ],
   },
   {
@@ -122,7 +134,16 @@ const router = createBrowserRouter([
     path: "*",
     element: <NotFoundPage />,
   },
-  
+  {
+    path: "/communities/approval",
+    element: <ProtectedRoute requireSuperuser={true} />,
+    children: [
+      {
+        path: "/communities/approval",
+        element: <CommunityApprovalPage/>
+      }
+    ]
+  }
 ]);
 
 export function Router() {

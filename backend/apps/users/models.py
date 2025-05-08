@@ -3,7 +3,6 @@ from django.contrib.auth.models import BaseUserManager as _BaseUserManager
 from django.contrib.auth.models import PermissionsMixin
 from django.db import models
 
-from apps import users
 from apps.common.models import BaseModel
 
 
@@ -16,6 +15,10 @@ class BaseUserManager(_BaseUserManager):
         password=None,
         is_active=True,
         is_superuser=False,
+        dob=None,
+        address=None,
+        post_code=None,
+        country=None,
     ):
         if not email:
             raise ValueError("Users must have an email address")
@@ -32,6 +35,10 @@ class BaseUserManager(_BaseUserManager):
             last_name=last_name,
             is_active=is_active,
             is_superuser=is_superuser,
+            dob=dob,
+            address=address,
+            post_code=post_code,
+            country=country,
         )
 
         if password:
@@ -109,7 +116,7 @@ class BaseUser(BaseModel, AbstractBaseUser, PermissionsMixin):
         choices=ROLE_OPTIONS,
         default="student",
     )
-    is_email_verified = models.BooleanField(default=False)
+    is_email_verified = models.BooleanField(default=True)
     is_active = models.BooleanField(
         default=True
     )  # (opposite of suspended for test cases)
