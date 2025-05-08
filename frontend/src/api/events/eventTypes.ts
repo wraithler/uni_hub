@@ -15,6 +15,7 @@ export type Event = {
   attendees: number;
   timestamp: string;
   privacy: string;
+  created_at?: string;
 };
 
 export type EventList = PaginationResponse & {

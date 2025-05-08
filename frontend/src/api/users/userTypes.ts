@@ -29,6 +29,8 @@ type User = {
   post_code?: string;
   country?: string;
   is_email_verified?: boolean;
+  media?: number[];
+  profile_picture_url?: string;
 };
 
 type UserStats = {

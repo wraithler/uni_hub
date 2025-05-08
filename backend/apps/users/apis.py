@@ -14,6 +14,7 @@ from apps.communities.apis import CommunityListApi
 from apps.communities.models import Community
 from apps.communities.selectors import community_list
 from apps.emails.services import verification_email_create
+from apps.files.models import File
 from apps.users.models import BaseUser, UserInterest
 from apps.users.selectors import user_get, user_list
 from apps.users.services import user_create, user_update
@@ -42,6 +43,7 @@ class UserDetailApi(AuthAPIView):
         address = serializers.CharField(required=False)
         post_code = serializers.CharField(required=False)
         country = serializers.CharField(required=False)
+        profile_picture_url = serializers.CharField(required=False)
 
         def get_posts(self, obj):
             return obj.posts.all().count()
@@ -172,6 +174,7 @@ class UserUpdateApi(AuthAPIView):
         address = serializers.CharField(required=False)
         post_code = serializers.CharField(required=False)
         country = serializers.CharField(required=False)
+        profile_picture_url = serializers.CharField(required=False)
 
     def post(self, request, user_id):
         serializer = self.InputSerializer(data=request.data)

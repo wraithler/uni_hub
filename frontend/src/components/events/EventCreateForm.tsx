@@ -43,6 +43,7 @@ const BasicInfoSchema = z.object({
   starts_at: z.string(),
   ends_at: z.string(),
   privacy: z.enum(["public", "members"]),
+  maximum_capacity: z.string(),
 });
 
 const LocationSchema = z
@@ -211,7 +212,11 @@ export default function EventCreateForm() {
                   <FormItem>
                     <FormLabel>Contact Info Privacy Settings</FormLabel>
                     <FormControl>
-                      <Select {...field} value={field.value} onValueChange={field.onChange}>
+                      <Select
+                        {...field}
+                        value={field.value}
+                        onValueChange={field.onChange}
+                      >
                         <SelectTrigger>
                           <SelectValue />
                         </SelectTrigger>
@@ -227,6 +232,21 @@ export default function EventCreateForm() {
                   </FormItem>
                 )}
               />
+
+              <FormField
+                control={form.control}
+                name="basic.maximum_capacity"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>End Time</FormLabel>
+                    <FormControl>
+                      <Input {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
             </CardContent>
             <CardFooter className="flex justify-end">
               <Button type="button" onClick={nextStep}>

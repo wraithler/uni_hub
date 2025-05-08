@@ -151,3 +151,5 @@ class BaseUser(BaseModel, AbstractBaseUser, PermissionsMixin):
     address = models.TextField(null=True, blank=True)
     post_code = models.CharField(max_length=20, null=True, blank=True)
     country = models.CharField(max_length=100, null=True, blank=True)
+
+    profile_picture_url = models.URLField(null=True, blank=True)

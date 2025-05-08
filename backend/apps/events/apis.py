@@ -27,6 +27,7 @@ class EventDetailApi(AuthAPIView):
         location = serializers.CharField()
         is_virtual_event = serializers.BooleanField()
         virtual_link = serializers.URLField()
+        created_at = serializers.DateTimeField()
 
         def to_representation(self, instance):
             user = self.context.get("request").user
