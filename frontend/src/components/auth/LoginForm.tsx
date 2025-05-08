@@ -41,8 +41,7 @@ export function LoginForm() {
   function onSubmit(data: z.infer<typeof FormSchema>) {
     setIsLoading(true);
     try {
-      login(data.email, data.password);
-      navigate("/feed");
+      login(data.email, data.password).then(r => r.success ? navigate("/feed") : form.setError("password", { type: "manual", message: r.error }));
     } catch {
       form.setError("password", {
         type: "manual",

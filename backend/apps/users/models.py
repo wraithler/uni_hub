@@ -116,7 +116,7 @@ class BaseUser(BaseModel, AbstractBaseUser, PermissionsMixin):
         choices=ROLE_OPTIONS,
         default="student",
     )
-    is_email_verified = models.BooleanField(default=False)
+    is_email_verified = models.BooleanField(default=True)
     is_active = models.BooleanField(
         default=True
     )  # (opposite of suspended for test cases)

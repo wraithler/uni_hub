@@ -58,7 +58,7 @@ export function RegisterForm() {
     setIsLoading(true);
 
     try {
-      await register(
+      const response = await register(
         data.first_name,
         data.last_name,
         data.dob,
@@ -68,7 +68,14 @@ export function RegisterForm() {
         data.email,
         data.password,
       );
-      navigate("/feed");
+      if (response.success) {
+        navigate("/feed");
+      } else {
+        form.setError("password", {
+          type: "manual",
+          message: "Something went wrong, please try again later",
+        });
+      }
     } catch {
       form.setError("password", {
         type: "manual",

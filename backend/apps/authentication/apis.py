@@ -29,7 +29,7 @@ class UserLoginApi(APIView):
         password = request.data.get("password")
 
         if not email or not password:
-            return ApplicationError(
+            raise ApplicationError(
                 "Required parameters were not supplied", extra={"reason": "validation"}
             )
 
@@ -42,7 +42,7 @@ class UserLoginApi(APIView):
             ).data
             return Response(data=data, status=status.HTTP_200_OK)
 
-        return ApplicationError(
+        raise ApplicationError(
             "Supplied credentials are not valid for any account",
             extra={"reason": "invalid"},
         )

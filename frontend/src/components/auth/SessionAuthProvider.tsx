@@ -83,14 +83,10 @@ export const SessionAuthProvider: React.FC<SessionAuthProviderProps> = ({
       await api.get("/auth/get-csrf-token/");
 
       const response = await api.post("/auth/login/", { email, password });
-      console.log(response);
       setUser(response.data);
       return { success: true };
-    } catch (err) {
-      let errorMessage = "Login failed. Please try again.";
-      if (axios.isAxiosError(err)) {
-        errorMessage = err.response?.data?.detail;
-      }
+    } catch  {
+      const errorMessage = "Login failed. Invalid credentials or you may be suspended.";
       return { success: false, error: errorMessage };
     } finally {
       setLoading(false);
@@ -126,11 +122,8 @@ export const SessionAuthProvider: React.FC<SessionAuthProviderProps> = ({
 
       setUser(response.data);
       return { success: true };
-    } catch (err) {
-      let errorMessage = "Registration failed. Please try again.";
-      if (axios.isAxiosError(err)) {
-        errorMessage = err.response?.data?.detail;
-      }
+    } catch {
+      const errorMessage = "Registration failed. Please try again.";
       return { success: false, error: errorMessage };
     } finally {
       setLoading(false);
