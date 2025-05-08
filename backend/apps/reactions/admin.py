@@ -6,7 +6,7 @@ from apps.reactions.models import Comment
 @admin.register(Comment)
 class CommentAdmin(admin.ModelAdmin):
     list_display = ("post", "created_by", "content", "created_at")
-    search_fields = ("content", "post__title")
+    search_fields = ("content",)
     list_filter = ("post__community", "created_by")
     fieldsets = ((None, {"fields": ("content", "post", "created_by")}),)
     readonly_fields = ("created_at", "updated_at")

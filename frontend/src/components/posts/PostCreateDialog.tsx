@@ -15,7 +15,7 @@ export default function PostCreateDialog() {
       <DialogTrigger asChild>
         <Button>Create Post</Button>
       </DialogTrigger>
-      <DialogContent className="w-[800px]">
+      <DialogContent className="flex flex-col min-w-[56rem]">
         <DialogHeader>
           <DialogTitle>Create a Post</DialogTitle>
           <DialogDescription>Create a post in one of your communities</DialogDescription>

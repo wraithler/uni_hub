@@ -64,34 +64,33 @@ def handle_like_created(sender, instance, created, **kwargs):
                 content_object=instance.content_object
             )
 
-
-# @receiver(post_save, sender=Event)
-# def handle_event_created(sender, instance, created, **kwargs):
-#     """Handle event creation and updates."""
-#     if created:
-#         # Notify community members about new event
-#         if hasattr(instance, 'community') and instance.community:
-#             for membership in instance.community.memberships.all():
-#                 if membership.user != instance.organizer:  # Don't notify the organizer
-#                     notification_create(
-#                         recipient=membership.user,
-#                         notification_type='info',
-#                         title=f"New event in {instance.community.name}",
-#                         message=f"New event: {instance.title} on {instance.starts_at.strftime('%b %d, %Y')}",
-#                         content_object=instance
-#                     )
-#     else:
-#         # Notify attendees about event updates
-#         for attendee in instance.attendees.all():
-#             if attendee != instance.organizer:  # Don't notify the organizer
-#                 notification_create(
-#                     recipient=attendee,
-#                     notification_type='info',
-#                     title=f"Event update: {instance.title}",
-#                     message=f"The event details have been updated",
-#                     content_object=instance
-#                 )
-
+@receiver(post_save, sender=Event)
+def handle_event_created(sender, instance, created, **kwargs):
+    """Handle event creation and updates."""
+    if created:
+        # Notify community members about new event
+        if hasattr(instance, 'community') and instance.community:
+            for membership in instance.community.memberships.all():
+                if membership.user != instance.created_by:  # Don't notify the creator
+                    notification_create(
+                        recipient=membership.user,
+                        notification_type='info',
+                        title=f"New event in {instance.community.name}",
+                        message=f"New event: {instance.title} on {instance.starts_at.strftime('%b %d, %Y')}",
+                        content_object=instance
+                    )
+    else:
+        # Notify attendees about event updates
+        for attendee in instance.attendees.all():
+            if attendee.user != instance.created_by:  # Don't notify the creator
+                notification_create(
+                    recipient=attendee.user,
+                    notification_type='info',
+                    title=f"Event update: {instance.title}",
+                    message=f"The event details have been updated",
+                    content_object=instance
+                )
+                
 @receiver(post_save, sender=EventAttendee)
 def handle_event_attendee(sender, instance, created, **kwargs):
     """Handle event attendee creation and send notifications."""

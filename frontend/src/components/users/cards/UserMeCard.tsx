@@ -43,15 +43,15 @@ export default function UserMeCard() {
         </div>
         <div className="grid grid-cols-3 gap-2 text-center mb-4">
           <div className="p-2">
-            <p className="font-bold">{user?.community_count || 0}</p>
+            <p className="font-bold">{user?.communities || 0}</p>
             <p className="text-xs text-muted-foreground">Communities</p>
           </div>
           <div className="p-2">
-            <p className="font-bold">{user?.friend_count || 0}</p>
+            <p className="font-bold">{user?.friends || 0}</p>
             <p className="text-xs text-muted-foreground">Friends</p>
           </div>
           <div className="p-2">
-            <p className="font-bold">{user?.post_count || 0}</p>
+            <p className="font-bold">{user?.posts || 0}</p>
             <p className="text-xs text-muted-foreground">Posts</p>
           </div>
         </div>
