@@ -77,4 +77,3 @@ export default function EventPage() {
       </main>
     </Layout>
   );
-}

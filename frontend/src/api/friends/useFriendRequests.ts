@@ -1,10 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
-import { axios } from "@/lib/axios";
+import api from "@/api/apiClient";
 import { FriendRequest } from "./friendTypes";
 import { friendKeys } from "./friendQueryKeys";
 
 const getFriendRequests = async (): Promise<FriendRequest[]> => {
-  const response = await axios.get("/requests/");
+  const response = await api.get("/requests/");
   return response.data;
 };
 

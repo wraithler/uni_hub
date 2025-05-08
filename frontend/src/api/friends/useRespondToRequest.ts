@@ -1,5 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
-import { axios } from "@/lib/axios";
+import api from "@/api/apiClient";
 import { friendKeys } from "./friendQueryKeys";
 
 interface RespondToRequestDTO {
@@ -14,7 +14,7 @@ interface RespondToRequestResponse {
 const respondToFriendRequest = async (
   data: RespondToRequestDTO
 ): Promise<RespondToRequestResponse> => {
-  const response = await axios.post(`/requests/${data.request_id}/respond/`, {
+  const response = await api.post(`/requests/${data.request_id}/respond/`, {
     is_accepted: data.is_accepted,
   });
 
